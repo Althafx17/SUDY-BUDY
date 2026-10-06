@@ -770,6 +770,12 @@ export default function SubjectView({
           subject={subject}
           semesterKey={semesterKey}
           onUpdateSubject={onUpdateSubject}
+          onNavigateToModule={(moduleId) => {
+            if (moduleId) {
+              setSelectedModuleId(moduleId);
+            }
+            setActiveTab('syllabus');
+          }}
         />
       )}
 

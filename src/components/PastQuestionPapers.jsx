@@ -20,7 +20,12 @@ import {
   Filter,
   Flame,
   CheckSquare,
-  BookOpen
+  BookOpen,
+  Copy,
+  Check,
+  ExternalLink,
+  FolderPlus,
+  ArrowRight
 } from 'lucide-react';
 import Modal from './Modal';
 import { getModuleRainbowColor } from '../constants/initialData';
@@ -28,7 +33,9 @@ import PdfMasterManager from './PdfMasterManager';
 
 export default function PastQuestionPapers({ 
   subject, 
-  onUpdateSubject 
+  semesterKey,
+  onUpdateSubject,
+  onNavigateToModule
 }) {
   const [viewMode, setViewMode] = useState('by-module'); // 'by-module' | 'by-year'
   const [selectedYear, setSelectedYear] = useState('ALL');
@@ -42,6 +49,13 @@ export default function PastQuestionPapers({
   const [filterStatus, setFilterStatus] = useState('all'); // 'all' | 'solved' | 'unsolved' | 'high-yield'
   const [selectedModuleFilter, setSelectedModuleFilter] = useState('ALL'); // 'ALL' | 1 | 2 | 3 | 4 | 5
 
+  // Module filters for individual papers in By-Year mode: { [paperId]: 'ALL' | 1 | 2 | 3 | 4 | 5 }
+  const [paperModuleFilters, setPaperModuleFilters] = useState({});
+
+  // Clipboard copy and toast notification feedback
+  const [copiedId, setCopiedId] = useState(null);
+  const [toastMessage, setToastMessage] = useState(null);
+
   // Add Question Paper Modal
   const [isAddPaperOpen, setIsAddPaperOpen] = useState(false);
   const [newPaperTitle, setNewPaperTitle] = useState('');
@@ -49,6 +63,276 @@ export default function PastQuestionPapers({
   const [newPaperType, setNewPaperType] = useState('End-Semester Final');
   const [newPaperMarks, setNewPaperMarks] = useState('100');
   const [newPaperQuestionsText, setNewPaperQuestionsText] = useState('');
+
+  const showToast = (message) => {
+    setToastMessage(message);
+    setTimeout(() => {
+      setToastMessage(null);
+    }, 3500);
+  };
+
+  // Clipboard copy utility
+  const handleCopyText = async (text, id, successLabel = 'Copied to clipboard!') => {
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.focus();
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+      }
+      setCopiedId(id);
+      setTimeout(() => setCopiedId(null), 2000);
+      showToast(successLabel);
+    } catch (err) {
+      console.error('Failed to copy text: ', err);
+    }
+  };
+
+  // Resolve question module number with KTU scheme fallbacks
+  const resolveQuestionModuleNumber = (q) => {
+    if (q.moduleNumber) return parseInt(q.moduleNumber) || 1;
+    if (q.moduleId) {
+      const m = (subject.modules || []).find(mod => mod.id === q.moduleId);
+      if (m && m.number) return m.number;
+    }
+    if (q.topicId) {
+      const m = (subject.modules || []).find(mod => (mod.topics || []).some(t => t.id === q.topicId));
+      if (m && m.number) return m.number;
+    }
+    if (q.topicName) {
+      const m = (subject.modules || []).find(mod => (mod.topics || []).some(t => t.name.toLowerCase() === q.topicName.toLowerCase()));
+      if (m && m.number) return m.number;
+    }
+    if (q.number) {
+      const numMatch = q.number.match(/\d+/);
+      if (numMatch) {
+        const num = parseInt(numMatch[0]);
+        if (num <= 2) return 1;
+        if (num <= 4) return 2;
+        if (num <= 6) return 3;
+        if (num <= 8) return 4;
+        if (num <= 10) return 5;
+        if (num <= 12) return 1;
+        if (num <= 14) return 2;
+        if (num <= 16) return 3;
+        if (num <= 18) return 4;
+        if (num <= 20) return 5;
+      }
+    }
+    return 1;
+  };
+
+  // Format single question for clipboard
+  const formatQuestionText = (paper, q, modNum) => {
+    const paperTitle = paper ? `${paper.year} ${paper.examType || paper.title}` : `KTU ${q.year || ''}`;
+    const modHeader = `[${subject.name} (${subject.code || 'KTU'}) | ${paperTitle} | Module ${modNum || q.moduleNumber || '1'} | ${q.marks || 14} Marks]`;
+    let res = `${modHeader}\n${q.number || 'Q'}. ${q.text}`;
+    if (q.hint) {
+      res += `\nSolution Hint / Formulas: ${q.hint}`;
+    }
+    return res;
+  };
+
+  // Format all questions of a module for clipboard
+  const formatModuleQuestionsText = (paper, modNum, questions, modName) => {
+    const paperTitle = paper ? `${paper.title || paper.year} (${paper.examType || ''})` : `KTU University Exam Papers`;
+    const header = `APJ ABDUL KALAM TECHNOLOGICAL UNIVERSITY (KTU)\nCOURSE: ${subject.name} (${subject.code || 'COURSE'})\nEXAM: ${paperTitle}\nMODULE ${modNum}: ${modName ? modName.toUpperCase() : `MODULE ${modNum}`}\nTotal: ${questions.length} Questions | ${questions.reduce((acc, q) => acc + (parseInt(q.marks) || 0), 0)} Marks\n` + '-'.repeat(55);
+    
+    const items = questions.map((q, idx) => {
+      let item = `\n${idx + 1}. [${q.number || `Q${idx + 1}`} - ${q.marks || 14} Marks] ${q.text}`;
+      if (q.hint) {
+        item += `\n   💡 Solution Hint: ${q.hint}`;
+      }
+      return item;
+    }).join('\n');
+
+    return `${header}\n${items}\n`;
+  };
+
+  // Check if a question already exists in subject.modules syllabus topics
+  const isQuestionInModuleSection = (q) => {
+    for (const mod of (subject.modules || [])) {
+      for (const top of (mod.topics || [])) {
+        if ((top.previousQuestions || []).some(pq => 
+          pq.id === q.id || 
+          (pq.text && q.text && pq.text.trim().toLowerCase() === q.text.trim().toLowerCase())
+        )) {
+          return { inModule: true, module: mod, topic: top };
+        }
+      }
+    }
+    return { inModule: false, module: null, topic: null };
+  };
+
+  // Copy single question into Module Section in Syllabus
+  const handleCopyQuestionToModuleSection = (paper, q, modNum) => {
+    const resolvedModNum = modNum || resolveQuestionModuleNumber(q);
+    const targetModule = (subject.modules || []).find(m => 
+      (m.number && m.number === resolvedModNum) || 
+      (m.id && m.id === q.moduleId)
+    ) || (subject.modules && subject.modules[0]);
+
+    if (!targetModule) {
+      alert('No module found in syllabus to copy this question into.');
+      return;
+    }
+
+    let targetTopic = (targetModule.topics || []).find(t => 
+      (q.topicId && t.id === q.topicId) || 
+      (q.topicName && t.name.toLowerCase() === q.topicName.toLowerCase())
+    );
+
+    if (!targetTopic && targetModule.topics && targetModule.topics.length > 0) {
+      targetTopic = targetModule.topics[0];
+    }
+
+    if (!targetTopic) {
+      alert(`Module ${resolvedModNum} has no topics yet. Please add a topic in the syllabus first.`);
+      return;
+    }
+
+    const existingPQs = targetTopic.previousQuestions || [];
+    const alreadyExists = existingPQs.some(pq => 
+      pq.id === q.id || 
+      (pq.text && q.text && pq.text.trim().toLowerCase() === q.text.trim().toLowerCase())
+    );
+
+    if (alreadyExists) {
+      showToast(`Question is already in Module ${resolvedModNum} → ${targetTopic.name}`);
+      return;
+    }
+
+    const newPQ = {
+      id: q.id || `pq-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
+      year: paper ? paper.year : (q.year || new Date().getFullYear()),
+      exam: paper ? (paper.examType || paper.title) : (q.exam || 'KTU Exam'),
+      marks: parseInt(q.marks) || 14,
+      text: q.text,
+      frequency: paper ? `KTU ${paper.year} (${paper.examType || 'Final'})` : (q.frequency || 'KTU Exam Question'),
+      solved: !!q.solved,
+      hint: q.hint || ''
+    };
+
+    const updatedModules = (subject.modules || []).map(mod => {
+      if (mod.id !== targetModule.id) return mod;
+      const updatedTopics = (mod.topics || []).map(top => {
+        if (top.id !== targetTopic.id) return top;
+        return {
+          ...top,
+          previousQuestions: [newPQ, ...(top.previousQuestions || [])]
+        };
+      });
+      return { ...mod, topics: updatedTopics };
+    });
+
+    onUpdateSubject({
+      ...subject,
+      modules: updatedModules
+    });
+
+    showToast(`✓ Copied into Module ${resolvedModNum} (${targetModule.name.replace(/^Module\s*\d+\s*:\s*/i, '')}) → ${targetTopic.name}!`);
+  };
+
+  // Copy all questions of a module from this paper into Module Section in Syllabus
+  const handleCopyAllModuleQuestionsToModuleSection = (paper, modNum, questions) => {
+    const targetModule = (subject.modules || []).find(m => 
+      (m.number && m.number === modNum) || 
+      (m.id && questions[0]?.moduleId === m.id)
+    ) || (subject.modules && subject.modules[0]);
+
+    if (!targetModule || !targetModule.topics || targetModule.topics.length === 0) {
+      alert(`No syllabus topics found in Module ${modNum} to copy into.`);
+      return;
+    }
+
+    let addedCount = 0;
+    const updatedModules = (subject.modules || []).map(mod => {
+      if (mod.id !== targetModule.id) return mod;
+
+      const updatedTopics = (mod.topics || []).map((top, idx) => {
+        const matchingQs = questions.filter(q => 
+          (q.topicId && q.topicId === top.id) ||
+          (q.topicName && q.topicName.toLowerCase() === top.name.toLowerCase())
+        );
+
+        let qsForThisTopic = [...matchingQs];
+        if (idx === 0) {
+          const unassigned = questions.filter(q => 
+            !mod.topics.some(t => t.id === q.topicId || (q.topicName && t.name.toLowerCase() === q.topicName.toLowerCase()))
+          );
+          qsForThisTopic.push(...unassigned);
+        }
+
+        const existingPQs = top.previousQuestions || [];
+        const newItems = [];
+
+        qsForThisTopic.forEach(q => {
+          const exists = existingPQs.some(pq => 
+            pq.id === q.id || 
+            (pq.text && q.text && pq.text.trim().toLowerCase() === q.text.trim().toLowerCase())
+          );
+          if (!exists) {
+            newItems.push({
+              id: q.id || `pq-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
+              year: paper ? paper.year : (q.year || new Date().getFullYear()),
+              exam: paper ? (paper.examType || paper.title) : 'KTU Exam',
+              marks: parseInt(q.marks) || 14,
+              text: q.text,
+              frequency: paper ? `KTU ${paper.year} (${paper.examType || 'Final'})` : 'KTU Exam Question',
+              solved: !!q.solved,
+              hint: q.hint || ''
+            });
+            addedCount++;
+          }
+        });
+
+        if (newItems.length > 0) {
+          return {
+            ...top,
+            previousQuestions: [...newItems, ...existingPQs]
+          };
+        }
+        return top;
+      });
+
+      return { ...mod, topics: updatedTopics };
+    });
+
+    if (addedCount > 0) {
+      onUpdateSubject({
+        ...subject,
+        modules: updatedModules
+      });
+      showToast(`✓ Copied ${addedCount} questions into Module ${modNum} (${targetModule.name.replace(/^Module\s*\d+\s*:\s*/i, '')})!`);
+    } else {
+      showToast(`All questions are already present in Module ${modNum} syllabus.`);
+    }
+  };
+
+  // Navigate directly to module section in syllabus
+  const handleNavigateToModuleSection = (moduleId, modNum) => {
+    if (onNavigateToModule) {
+      let targetId = moduleId;
+      if (!targetId && modNum) {
+        const targetMod = (subject.modules || []).find(m => m.number === modNum);
+        targetId = targetMod?.id;
+      }
+      onNavigateToModule(targetId);
+      showToast(`Navigated to Module ${modNum || ''} in Syllabus section.`);
+    } else {
+      setViewMode('by-module');
+      if (modNum) {
+        setSelectedModuleFilter(modNum.toString());
+      }
+    }
+  };
 
   const pastPapers = subject.pastPapers || [];
 
@@ -664,10 +948,42 @@ export default function PastQuestionPapers({
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2 self-start sm:self-auto">
+                    <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto">
                       <span className={`text-xs font-bold px-2.5 py-1 rounded-lg border ${modRainbow.badgeBg}`}>
                         {mGroup.solvedCount}/{mGroup.totalQuestionsCount} Solved ({mGroup.totalMarks} Marks)
                       </span>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const text = formatModuleQuestionsText(null, mGroup.moduleNumber, mGroup.allQuestions, mGroup.module.name);
+                          handleCopyText(text, `bm-header-${mGroup.moduleNumber}`, `Module ${mGroup.moduleNumber} questions copied!`);
+                        }}
+                        className="px-2.5 py-1 rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 text-xs font-bold flex items-center gap-1.5 shadow-2xs transition-colors"
+                        title="Copy all questions in this module to clipboard"
+                      >
+                        {copiedId === `bm-header-${mGroup.moduleNumber}` ? (
+                          <>
+                            <Check className="w-3.5 h-3.5 text-emerald-600" />
+                            <span className="text-emerald-700">Copied!</span>
+                          </>
+                        ) : (
+                          <>
+                            <Copy className="w-3.5 h-3.5 text-indigo-600" />
+                            <span>Copy Module Qs</span>
+                          </>
+                        )}
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => handleNavigateToModuleSection(mGroup.module.id, mGroup.moduleNumber)}
+                        className="px-2.5 py-1 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 text-xs font-bold flex items-center gap-1.5 transition-colors"
+                        title="Jump straight to this Module in Syllabus section"
+                      >
+                        <ExternalLink className="w-3.5 h-3.5 text-purple-600" />
+                        <span>View in Syllabus</span>
+                      </button>
                     </div>
                   </div>
 
@@ -774,6 +1090,45 @@ export default function PastQuestionPapers({
                                         {q.hint}
                                       </div>
                                     )}
+
+                                    {/* Question Action Footer */}
+                                    <div className="flex flex-wrap items-center gap-2 mt-2.5 pt-2 border-t border-slate-100">
+                                      <button
+                                        type="button"
+                                        onClick={(e) => {
+                                          e.preventDefault();
+                                          const text = formatQuestionText(null, q, mGroup.moduleNumber);
+                                          handleCopyText(text, `bm-q-${q.id}`, 'Question copied to clipboard!');
+                                        }}
+                                        className="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 flex items-center gap-1 transition-colors"
+                                        title="Copy question text"
+                                      >
+                                        {copiedId === `bm-q-${q.id}` ? (
+                                          <>
+                                            <Check className="w-3 h-3 text-emerald-600" />
+                                            <span className="text-emerald-700">Copied!</span>
+                                          </>
+                                        ) : (
+                                          <>
+                                            <Copy className="w-3 h-3 text-slate-500" />
+                                            <span>Copy Question</span>
+                                          </>
+                                        )}
+                                      </button>
+
+                                      <button
+                                        type="button"
+                                        onClick={(e) => {
+                                          e.preventDefault();
+                                          handleNavigateToModuleSection(mGroup.module.id, mGroup.moduleNumber);
+                                        }}
+                                        className="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 flex items-center gap-1 transition-colors ml-auto"
+                                        title="View in Syllabus Module"
+                                      >
+                                        <span>View in Syllabus</span>
+                                        <ExternalLink className="w-2.5 h-2.5 text-purple-600" />
+                                      </button>
+                                    </div>
                                   </div>
                                 </label>
                               </div>
@@ -940,87 +1295,374 @@ export default function PastQuestionPapers({
                           </div>
 
                           {/* Expanded Questions Content */}
-                          {isExpanded && (
-                            <div className="p-5 sm:p-6 bg-slate-50/70 border-t border-slate-100 space-y-4">
-                              <div className="flex items-center justify-between pb-2 border-b border-slate-200/80">
-                                <h4 className="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
-                                  <Sparkles className="w-3.5 h-3.5 text-violet-600" />
-                                  <span>Questions from this Paper ({paper.year} {paper.examType})</span>
-                                </h4>
-                                <span className="text-xs text-slate-500 font-medium">
-                                  Mark questions as solved as you practice
-                                </span>
-                              </div>
+                          {isExpanded && (() => {
+                            // Group this paper's questions by module
+                            const questionsByModuleMap = {};
+                            [1, 2, 3, 4, 5].forEach(num => {
+                              const modObj = (subject.modules || []).find(m => m.number === num) || {
+                                id: `mod-${num}`,
+                                number: num,
+                                name: `Module ${num}`
+                              };
+                              questionsByModuleMap[num] = {
+                                module: modObj,
+                                moduleNumber: num,
+                                questions: []
+                              };
+                            });
 
-                              {/* Questions List */}
-                              <div className="space-y-3">
-                                {(paper.questions || []).map((q, idx) => (
-                                  <div
-                                    key={q.id || idx}
-                                    className={`p-4 rounded-2xl border transition-all ${
-                                      q.solved
-                                        ? 'bg-emerald-50/60 border-emerald-200 shadow-2xs'
-                                        : 'bg-white border-slate-200/80 hover:border-slate-300 shadow-xs'
+                            (paper.questions || []).forEach(q => {
+                              const mNum = resolveQuestionModuleNumber(q);
+                              if (!questionsByModuleMap[mNum]) {
+                                const modObj = (subject.modules || []).find(m => m.number === mNum) || {
+                                  id: `mod-${mNum}`,
+                                  number: mNum,
+                                  name: `Module ${mNum}`
+                                };
+                                questionsByModuleMap[mNum] = {
+                                  module: modObj,
+                                  moduleNumber: mNum,
+                                  questions: []
+                                };
+                              }
+                              questionsByModuleMap[mNum].questions.push(q);
+                            });
+
+                            const currentPaperModFilter = paperModuleFilters[paper.id] || 'ALL';
+                            const displayedModuleGroups = Object.values(questionsByModuleMap)
+                              .filter(g => {
+                                if (currentPaperModFilter !== 'ALL') {
+                                  return g.moduleNumber.toString() === currentPaperModFilter.toString();
+                                }
+                                return g.questions.length > 0;
+                              })
+                              .sort((a, b) => a.moduleNumber - b.moduleNumber);
+
+                            return (
+                              <div className="p-5 sm:p-6 bg-slate-50/70 border-t border-slate-100 space-y-5">
+                                {/* Header & Paper Actions */}
+                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-200">
+                                  <div>
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-xs font-black uppercase tracking-wider text-violet-700 bg-violet-100 px-2.5 py-0.5 rounded-lg border border-violet-200 flex items-center gap-1.5">
+                                        <Sparkles className="w-3.5 h-3.5 text-violet-600" />
+                                        Module-Wise Paper Breakdown ({paper.year} {paper.examType})
+                                      </span>
+                                    </div>
+                                    <p className="text-xs text-slate-500 font-medium mt-1">
+                                      Questions organized by syllabus modules. Copy questions to clipboard or directly import into the module syllabus section.
+                                    </p>
+                                  </div>
+
+                                  <div className="flex items-center gap-2 shrink-0">
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        const fullPaperText = (paper.questions || []).map((q, idx) => {
+                                          let text = `${idx + 1}. [${q.number || `Q${idx + 1}`} - Module ${resolveQuestionModuleNumber(q)} - ${q.marks || 14}M] ${q.text}`;
+                                          if (q.hint) text += `\n   💡 Solution Hint: ${q.hint}`;
+                                          return text;
+                                        }).join('\n\n');
+                                        const header = `APJ ABDUL KALAL TECHNOLOGICAL UNIVERSITY (KTU)\nCOURSE: ${subject.name} (${subject.code || 'COURSE'})\nEXAM: ${paper.title || `${paper.year} ${paper.examType}`}\n` + '='.repeat(55) + '\n\n' + fullPaperText;
+                                        handleCopyText(header, `full-paper-${paper.id}`, 'Full question paper copied to clipboard!');
+                                      }}
+                                      className="px-3 py-1.5 rounded-xl bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 text-xs font-bold flex items-center gap-1.5 shadow-2xs transition-colors"
+                                      title="Copy all questions from this paper"
+                                    >
+                                      {copiedId === `full-paper-${paper.id}` ? (
+                                        <>
+                                          <Check className="w-3.5 h-3.5 text-emerald-600" />
+                                          <span className="text-emerald-700">Copied Paper!</span>
+                                        </>
+                                      ) : (
+                                        <>
+                                          <Copy className="w-3.5 h-3.5 text-slate-600" />
+                                          <span>Copy Full Paper</span>
+                                        </>
+                                      )}
+                                    </button>
+                                  </div>
+                                </div>
+
+                                {/* Module Filter Pills for this Paper */}
+                                <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
+                                  <span className="text-[11px] font-bold text-slate-400 uppercase mr-1 flex items-center gap-1 shrink-0">
+                                    <Filter className="w-3.5 h-3.5 text-slate-500" />
+                                    Filter Module:
+                                  </span>
+                                  <button
+                                    type="button"
+                                    onClick={() => setPaperModuleFilters(prev => ({ ...prev, [paper.id]: 'ALL' }))}
+                                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 ${
+                                      currentPaperModFilter === 'ALL'
+                                        ? 'bg-violet-600 text-white shadow-sm'
+                                        : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'
                                     }`}
                                   >
-                                    <div className="flex items-start justify-between gap-3">
-                                      <label className="flex items-start gap-3 flex-1 min-w-0 cursor-pointer">
-                                        <input
-                                          type="checkbox"
-                                          checked={q.solved}
-                                          onChange={() => handleToggleQuestionInPaper(paper.id, q.id)}
-                                          className="mt-0.5 w-4 h-4 rounded border-slate-300 text-violet-600 focus:ring-0 cursor-pointer shrink-0"
-                                        />
-                                        <div className="flex-1 min-w-0">
-                                          <div className="flex items-center gap-2 mb-1">
-                                            <span className="text-xs font-black text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-md border border-indigo-200/60">
-                                              {q.number || `Q${idx + 1}`}
+                                    All 5 Modules ({totalQuestions})
+                                  </button>
+                                  {[1, 2, 3, 4, 5].map(modNum => {
+                                    const group = questionsByModuleMap[modNum];
+                                    const count = group ? group.questions.length : 0;
+                                    const modRainbow = getModuleRainbowColor(modNum);
+                                    const isSelected = currentPaperModFilter.toString() === modNum.toString();
+
+                                    return (
+                                      <button
+                                        key={modNum}
+                                        type="button"
+                                        onClick={() => setPaperModuleFilters(prev => ({ ...prev, [paper.id]: modNum.toString() }))}
+                                        className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 flex items-center gap-1.5 ${
+                                          isSelected
+                                            ? modRainbow.chipActive
+                                            : modRainbow.chipInactive
+                                        }`}
+                                      >
+                                        <span>Module {modNum}</span>
+                                        <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
+                                          isSelected ? 'bg-black/20 text-white' : 'bg-white/80 text-slate-700'
+                                        }`}>
+                                          {count}
+                                        </span>
+                                      </button>
+                                    );
+                                  })}
+                                </div>
+
+                                {/* Module Sections Cards */}
+                                {displayedModuleGroups.length === 0 ? (
+                                  <div className="p-8 text-center bg-white rounded-2xl border border-slate-200 text-slate-400 text-xs font-medium">
+                                    No questions found for Module {currentPaperModFilter} in this paper.
+                                  </div>
+                                ) : (
+                                  displayedModuleGroups.map(modGroup => {
+                                    const modNum = modGroup.moduleNumber;
+                                    const modRainbow = getModuleRainbowColor(modNum);
+                                    const modQuestions = modGroup.questions;
+                                    const modSolvedCount = modQuestions.filter(q => q.solved).length;
+                                    const modTotalMarks = modQuestions.reduce((acc, q) => acc + (parseInt(q.marks) || 0), 0);
+                                    const modModuleInfo = modGroup.module;
+
+                                    return (
+                                      <div
+                                        key={modNum}
+                                        className={`rounded-2xl border ${modRainbow.cardBorder} bg-white shadow-xs overflow-hidden transition-all`}
+                                      >
+                                        {/* Module Section Header Banner */}
+                                        <div className={`p-4 ${modRainbow.bg} border-b border-slate-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3`}>
+                                          <div className="flex items-center gap-3">
+                                            <span className={`w-8 h-8 rounded-xl bg-gradient-to-br ${modRainbow.gradient} text-white flex items-center justify-center font-black text-xs shadow-sm shrink-0`}>
+                                              M{modNum}
                                             </span>
-                                            <span className="text-xs font-bold text-slate-500">
-                                              [{q.marks || 14} Marks]
-                                            </span>
-                                            {q.moduleNumber && (
-                                              <span className="text-[10px] font-bold text-violet-700 bg-violet-50 px-2 py-0.5 rounded-md border border-violet-200">
-                                                Module {q.moduleNumber}
+                                            <div>
+                                              <div className="flex flex-wrap items-center gap-2">
+                                                <h5 className={`text-xs font-black ${modRainbow.headerText}`}>
+                                                  {modModuleInfo.name}
+                                                </h5>
+                                                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md border ${modRainbow.badgeBg}`}>
+                                                  {modQuestions.length} Questions • {modTotalMarks} Marks
+                                                </span>
+                                              </div>
+                                              <span className="text-[11px] text-slate-500 font-medium">
+                                                {modSolvedCount}/{modQuestions.length} Solved in this Paper
                                               </span>
-                                            )}
-                                            {q.topicName && (
-                                              <span className="text-[10px] font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200">
-                                                {q.topicName}
-                                              </span>
-                                            )}
+                                            </div>
                                           </div>
 
-                                          <p className={`text-xs font-medium leading-relaxed ${
-                                            q.solved ? 'line-through text-slate-400' : 'text-slate-800'
-                                          }`}>
-                                            {q.text}
-                                          </p>
+                                          {/* Module Action Buttons */}
+                                          <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto">
+                                            {/* 1. Copy All Questions in this Module to Clipboard */}
+                                            <button
+                                              type="button"
+                                              onClick={() => {
+                                                const text = formatModuleQuestionsText(paper, modNum, modQuestions, modModuleInfo.name);
+                                                handleCopyText(text, `mod-${paper.id}-${modNum}`, `Module ${modNum} questions copied to clipboard!`);
+                                              }}
+                                              className="px-2.5 py-1.5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 text-xs font-bold flex items-center gap-1.5 shadow-2xs transition-colors"
+                                              title="Copy all questions in this module to clipboard"
+                                            >
+                                              {copiedId === `mod-${paper.id}-${modNum}` ? (
+                                                <>
+                                                  <Check className="w-3.5 h-3.5 text-emerald-600" />
+                                                  <span className="text-emerald-700">Copied!</span>
+                                                </>
+                                              ) : (
+                                                <>
+                                                  <Copy className="w-3.5 h-3.5 text-indigo-600" />
+                                                  <span>Copy Module Qs</span>
+                                                </>
+                                              )}
+                                            </button>
+
+                                            {/* 2. Copy All to Module Section in Syllabus */}
+                                            <button
+                                              type="button"
+                                              onClick={() => handleCopyAllModuleQuestionsToModuleSection(paper, modNum, modQuestions)}
+                                              className="px-2.5 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 text-xs font-bold flex items-center gap-1.5 transition-colors"
+                                              title="Copy / import all questions of this module into the Syllabus module section"
+                                            >
+                                              <FolderPlus className="w-3.5 h-3.5 text-indigo-600" />
+                                              <span>Copy All to Module Section</span>
+                                            </button>
+
+                                            {/* 3. View Module in Syllabus */}
+                                            <button
+                                              type="button"
+                                              onClick={() => handleNavigateToModuleSection(modModuleInfo.id, modNum)}
+                                              className="px-2.5 py-1.5 rounded-xl bg-white hover:bg-slate-50 text-purple-700 border border-purple-200 text-xs font-bold flex items-center gap-1.5 shadow-2xs transition-colors"
+                                              title="Jump straight to this Module in Syllabus section"
+                                            >
+                                              <ExternalLink className="w-3.5 h-3.5 text-purple-600" />
+                                              <span>View Module Section</span>
+                                            </button>
+                                          </div>
                                         </div>
-                                      </label>
 
-                                      {q.hint && (
-                                        <button
-                                          onClick={() => toggleHint(q.id)}
-                                          className="p-1.5 rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 transition-colors shrink-0"
-                                          title="Toggle Solution Hint"
-                                        >
-                                          {showHintMap[q.id] ? <EyeOff className="w-4 h-4" /> : <HelpCircle className="w-4 h-4 text-indigo-500" />}
-                                        </button>
-                                      )}
-                                    </div>
+                                        {/* Module Questions List */}
+                                        <div className="p-4 space-y-3 bg-slate-50/40">
+                                          {modQuestions.length === 0 ? (
+                                            <p className="text-xs text-slate-400 italic py-1">
+                                              No questions in this module.
+                                            </p>
+                                          ) : (
+                                            modQuestions.map((q, idx) => {
+                                              const moduleStatus = isQuestionInModuleSection(q);
 
-                                    {q.hint && showHintMap[q.id] && (
-                                      <div className="mt-3 p-3 bg-indigo-50 rounded-xl border border-indigo-200/80 text-xs text-indigo-900 font-mono leading-relaxed">
-                                        <span className="font-bold block text-indigo-700 mb-0.5">💡 Solution Hint / Key Formula:</span>
-                                        {q.hint}
+                                              return (
+                                                <div
+                                                  key={q.id || idx}
+                                                  className={`p-4 rounded-xl border transition-all ${
+                                                    q.solved
+                                                      ? 'bg-emerald-50/60 border-emerald-200 shadow-2xs'
+                                                      : 'bg-white border-slate-200 hover:border-slate-300 shadow-xs'
+                                                  }`}
+                                                >
+                                                  <div className="flex items-start justify-between gap-3">
+                                                    <label className="flex items-start gap-3 flex-1 min-w-0 cursor-pointer">
+                                                      <input
+                                                        type="checkbox"
+                                                        checked={q.solved}
+                                                        onChange={() => handleToggleQuestionInPaper(paper.id, q.id)}
+                                                        className="mt-0.5 w-4 h-4 rounded border-slate-300 text-violet-600 focus:ring-0 cursor-pointer shrink-0"
+                                                      />
+                                                      <div className="flex-1 min-w-0">
+                                                        <div className="flex flex-wrap items-center gap-2 mb-1.5">
+                                                          <span className="text-xs font-black text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-md border border-indigo-200/60">
+                                                            {q.number || `Q${idx + 1}`}
+                                                          </span>
+                                                          <span className="text-xs font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200">
+                                                            [{q.marks || 14} Marks]
+                                                          </span>
+                                                          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md border ${modRainbow.badgeBg}`}>
+                                                            Module {modNum}
+                                                          </span>
+                                                          {q.topicName && (
+                                                            <span className="text-[10px] font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200">
+                                                              {q.topicName}
+                                                            </span>
+                                                          )}
+                                                        </div>
+
+                                                        <p className={`text-xs font-medium leading-relaxed ${
+                                                          q.solved ? 'line-through text-slate-400' : 'text-slate-800'
+                                                        }`}>
+                                                          {q.text}
+                                                        </p>
+                                                      </div>
+                                                    </label>
+
+                                                    {q.hint && (
+                                                      <button
+                                                        type="button"
+                                                        onClick={() => toggleHint(q.id)}
+                                                        className="p-1.5 rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 transition-colors shrink-0"
+                                                        title="Toggle Solution Hint"
+                                                      >
+                                                        {showHintMap[q.id] ? <EyeOff className="w-4 h-4" /> : <HelpCircle className="w-4 h-4 text-indigo-500" />}
+                                                      </button>
+                                                    )}
+                                                  </div>
+
+                                                  {/* Solution Hint */}
+                                                  {q.hint && showHintMap[q.id] && (
+                                                    <div className="mt-3 p-3 bg-indigo-50 rounded-xl border border-indigo-200/80 text-xs text-indigo-900 font-mono leading-relaxed">
+                                                      <span className="font-bold block text-indigo-700 mb-0.5">💡 Solution Hint / Key Formula:</span>
+                                                      {q.hint}
+                                                    </div>
+                                                  )}
+
+                                                  {/* Question Action Footer: Copy Question, Copy into Module Section, View in Module */}
+                                                  <div className="flex flex-wrap items-center gap-2 mt-3 pt-2.5 border-t border-slate-100">
+                                                    {/* Copy Question Text */}
+                                                    <button
+                                                      type="button"
+                                                      onClick={() => {
+                                                        const text = formatQuestionText(paper, q, modNum);
+                                                        handleCopyText(text, q.id, `${q.number || 'Question'} copied to clipboard!`);
+                                                      }}
+                                                      className="text-[11px] font-bold px-2.5 py-1 rounded-lg bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 flex items-center gap-1.5 transition-colors shadow-2xs"
+                                                      title="Copy question text with marks and hint to clipboard"
+                                                    >
+                                                      {copiedId === q.id ? (
+                                                        <>
+                                                          <Check className="w-3.5 h-3.5 text-emerald-600" />
+                                                          <span className="text-emerald-700">Copied!</span>
+                                                        </>
+                                                      ) : (
+                                                        <>
+                                                          <Copy className="w-3.5 h-3.5 text-slate-500" />
+                                                          <span>Copy Question</span>
+                                                        </>
+                                                      )}
+                                                    </button>
+
+                                                    {/* Copy into Module Section OR Already Present Badge */}
+                                                    {moduleStatus.inModule ? (
+                                                      <button
+                                                        type="button"
+                                                        onClick={() => handleNavigateToModuleSection(moduleStatus.module?.id, modNum)}
+                                                        className="text-[11px] font-bold px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1.5 hover:bg-emerald-100 transition-colors"
+                                                        title={`Already saved in Module ${modNum} (${moduleStatus.topic?.name || ''}). Click to view in Syllabus.`}
+                                                      >
+                                                        <Check className="w-3.5 h-3.5 text-emerald-600" />
+                                                        <span>In Module Section</span>
+                                                        <ExternalLink className="w-2.5 h-2.5 opacity-60 ml-0.5" />
+                                                      </button>
+                                                    ) : (
+                                                      <button
+                                                        type="button"
+                                                        onClick={() => handleCopyQuestionToModuleSection(paper, q, modNum)}
+                                                        className="text-[11px] font-bold px-2.5 py-1 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 flex items-center gap-1.5 transition-colors"
+                                                        title="Copy this question directly into the Syllabus Module section"
+                                                      >
+                                                        <FolderPlus className="w-3.5 h-3.5 text-indigo-600" />
+                                                        <span>Copy to Module Section</span>
+                                                      </button>
+                                                    )}
+
+                                                    {/* View in Syllabus Module Section */}
+                                                    <button
+                                                      type="button"
+                                                      onClick={() => handleNavigateToModuleSection(moduleStatus.module?.id || modModuleInfo.id, modNum)}
+                                                      className="text-[11px] font-bold px-2.5 py-1 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-200 flex items-center gap-1 transition-colors ml-auto"
+                                                      title="Jump to this Module in Syllabus section"
+                                                    >
+                                                      <span>View in Module</span>
+                                                      <ExternalLink className="w-3 h-3 text-slate-500" />
+                                                    </button>
+                                                  </div>
+                                                </div>
+                                              );
+                                            })
+                                          )}
+                                        </div>
                                       </div>
-                                    )}
-                                  </div>
-                                ))}
+                                    );
+                                  })
+                                )}
                               </div>
-                            </div>
-                          )}
+                            );
+                          })()}
                         </div>
                       );
                     })}
@@ -1128,6 +1770,14 @@ export default function PastQuestionPapers({
           </div>
         </form>
       </Modal>
+
+      {/* Floating Toast Notification for Copy & Syllabus Actions */}
+      {toastMessage && (
+        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 px-4 py-3 bg-slate-900/95 backdrop-blur-md text-white rounded-2xl shadow-2xl border border-slate-700 text-xs font-bold animate-in fade-in slide-in-from-bottom-2 duration-200">
+          <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+          <span>{toastMessage}</span>
+        </div>
+      )}
     </div>
   );
 }
