@@ -46,8 +46,14 @@ export default function Navbar({
 
   const activeThemeObj = THEMES.find(t => t.id === currentTheme) || THEMES[0];
 
+  const isLight = currentTheme === 'monochrome-light';
+
   return (
-    <header className="sticky top-0 z-30 w-full backdrop-blur-2xl bg-white/80 border-b border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.03)] transition-all">
+    <header className={`sticky top-0 z-30 w-full backdrop-blur-2xl transition-all ${
+      isLight 
+        ? 'bg-white/90 border-b border-zinc-200 shadow-2xs' 
+        : 'bg-[#09090b]/90 border-b border-[#27272a] shadow-[0_1px_10px_rgba(0,0,0,0.5)]'
+    }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
         {/* Left Side: Mobile Menu Button & Breadcrumb Title */}
         <div className="flex items-center gap-3">
@@ -55,7 +61,11 @@ export default function Navbar({
           {onToggleMobileSidebar && (
             <button
               onClick={onToggleMobileSidebar}
-              className="lg:hidden p-2 rounded-xl bg-slate-100 text-slate-700 hover:text-purple-600 hover:bg-purple-50 transition-colors border border-slate-200"
+              className={`lg:hidden p-2 rounded-xl transition-colors border ${
+                isLight 
+                  ? 'bg-zinc-100 text-zinc-800 hover:bg-zinc-200 border-zinc-300' 
+                  : 'bg-zinc-900 text-zinc-200 hover:text-white hover:bg-zinc-800 border-zinc-800'
+              }`}
               title="Open navigation & courses sidebar"
             >
               <Menu className="w-5 h-5" />
@@ -65,22 +75,32 @@ export default function Navbar({
           {/* View Title */}
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-base sm:text-lg font-black text-slate-900 tracking-tight leading-none">
+              <h1 className={`text-base sm:text-lg font-black tracking-tight leading-none ${
+                isLight ? 'text-zinc-950' : 'text-white'
+              }`}>
                 {getViewTitle()}
               </h1>
-              <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 border border-purple-200 hidden sm:inline-block">
+              <span className={`text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded-full border hidden sm:inline-block ${
+                isLight 
+                  ? 'bg-zinc-100 text-zinc-900 border-zinc-300' 
+                  : 'bg-zinc-900 text-zinc-200 border-zinc-700'
+              }`}>
                 {currentSemester === 'S1' ? 'Semester 1' : 'Semester 2'}
               </span>
             </div>
-            <p className="text-[11px] text-slate-400 font-medium hidden md:block mt-0.5">
+            <p className={`text-[11px] font-medium hidden md:block mt-0.5 ${
+              isLight ? 'text-zinc-500' : 'text-zinc-400'
+            }`}>
               KTU Academic Revision & Question Bank Tracker
             </p>
           </div>
         </div>
 
-        {/* Center: Apple-style segmented pills when showFullNav is true (like in Apple Minimal theme) */}
+        {/* Center: Top Segmented pills when showFullNav is true (like in Apple Minimal theme) */}
         {showFullNav && (
-          <nav className="hidden lg:flex items-center gap-1 bg-slate-100/90 p-1 rounded-2xl border border-slate-200/70 shadow-inner">
+          <nav className={`hidden lg:flex items-center gap-1 p-1 rounded-2xl border ${
+            isLight ? 'bg-zinc-100 border-zinc-200' : 'bg-zinc-900/90 border-zinc-800'
+          }`}>
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = currentView === item.id;
@@ -91,11 +111,15 @@ export default function Navbar({
                   onClick={() => onNavigate(item.id)}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
                     isActive
-                      ? 'bg-white text-slate-900 shadow-sm shadow-slate-200'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
+                      ? isLight 
+                        ? 'bg-black text-white shadow-sm' 
+                        : 'bg-white text-black shadow-md font-black'
+                      : isLight 
+                        ? 'text-zinc-600 hover:text-black' 
+                        : 'text-zinc-400 hover:text-white hover:bg-zinc-800'
                   }`}
                 >
-                  <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-purple-600' : 'text-slate-400'}`} />
+                  <Icon className={`w-3.5 h-3.5 ${isActive ? isLight ? 'text-white' : 'text-black' : 'text-zinc-400'}`} />
                   <span>{item.label}</span>
                 </button>
               );
@@ -108,21 +132,31 @@ export default function Navbar({
           {/* Quick Theme Switcher Button */}
           <button
             onClick={onOpenThemeModal}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-white hover:bg-slate-50 text-slate-800 border border-slate-200/90 text-xs font-bold transition-all shadow-2xs group shrink-0"
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-2xl text-xs font-bold transition-all border shrink-0 ${
+              isLight 
+                ? 'bg-zinc-100 hover:bg-zinc-200 text-zinc-900 border-zinc-300' 
+                : 'bg-zinc-900 hover:bg-zinc-800 text-zinc-200 border-zinc-800 shadow-2xs'
+            }`}
             title="Switch UI & Layout Theme"
           >
             <span className="text-base">{activeThemeObj.icon}</span>
             <span className="hidden md:inline font-bold">{activeThemeObj.shortName}</span>
-            <span className="text-[10px] text-purple-700 bg-purple-50 px-1.5 py-0.2 rounded font-mono uppercase">UI</span>
+            <span className={`text-[10px] px-1.5 py-0.2 rounded font-mono uppercase ${
+              isLight ? 'bg-zinc-200 text-zinc-800' : 'bg-zinc-800 text-zinc-300'
+            }`}>UI</span>
           </button>
 
           {/* Focus Room Quick Trigger */}
           <button
             onClick={onOpenFocusModal}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-gradient-to-r from-purple-50 via-pink-50 to-rose-50 hover:from-purple-100 hover:to-pink-100 text-purple-700 border border-purple-200/80 text-xs font-bold transition-all shadow-2xs hover:shadow group shrink-0"
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-2xl text-xs font-bold transition-all border shrink-0 group ${
+              isLight 
+                ? 'bg-zinc-900 hover:bg-black text-white border-zinc-900' 
+                : 'bg-zinc-900 hover:bg-zinc-800 text-white border-zinc-700'
+            }`}
             title="Open Focus Room & Lo-Fi Beats"
           >
-            <Flame className="w-4 h-4 text-pink-500 group-hover:scale-110 transition-transform" />
+            <Flame className="w-4 h-4 text-zinc-300 group-hover:scale-110 transition-transform" />
             <span className="hidden sm:inline">Focus</span>
           </button>
 

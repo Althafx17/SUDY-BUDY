@@ -32,13 +32,13 @@ export default function App() {
     return INITIAL_DATA;
   });
 
-  // UI Theme & Layout state (5 distinct themes)
+  // UI Theme & Layout state (Black & White is default)
   const [currentTheme, setCurrentTheme] = useState(() => {
     try {
       const saved = localStorage.getItem(THEME_STORAGE_KEY);
-      if (saved && THEMES.some(t => t.id === saved)) return saved;
+      if (saved && saved !== 'rainbow-sidebar' && THEMES.some(t => t.id === saved)) return saved;
     } catch (e) {}
-    return 'rainbow-sidebar';
+    return 'monochrome-noir';
   });
 
   // Color Accent state
@@ -47,7 +47,7 @@ export default function App() {
       const saved = localStorage.getItem(COLOR_ACCENT_KEY);
       if (saved && COLOR_ACCENTS.some(c => c.id === saved)) return saved;
     } catch (e) {}
-    return 'rainbow';
+    return 'monochrome';
   });
 
   const [currentView, setCurrentView] = useState('dashboard');
@@ -181,40 +181,30 @@ export default function App() {
   const isCyberDark = currentTheme === 'cyber-dark';
   const isZenNotion = currentTheme === 'zen-notion';
 
-  // Base layout class depending on active theme
+  const isMonochromeLight = currentTheme === 'monochrome-light';
+
+  // Base layout class depending on active theme (Black & White default)
   const getContainerClass = () => {
     switch (currentTheme) {
+      case 'monochrome-light':
+        return 'min-h-screen bg-[#fafafa] text-[#09090b] font-sans flex flex-col lg:flex-row relative selection:bg-black selection:text-white';
       case 'apple-minimal':
-        return 'min-h-screen bg-[#f5f7fb] text-slate-800 font-sans relative selection:bg-purple-500/20 selection:text-purple-700';
+        return 'min-h-screen bg-[#09090b] text-[#f4f4f5] font-sans relative selection:bg-white selection:text-black';
       case 'ecoursie-studio':
-        return 'min-h-screen bg-[#ebf0f8] text-slate-800 font-sans flex flex-col lg:flex-row relative selection:bg-indigo-500/20 selection:text-indigo-700';
-      case 'cyber-dark':
-        return 'min-h-screen bg-[#090d16] text-slate-100 font-sans flex flex-col lg:flex-row relative selection:bg-cyan-500/20 selection:text-cyan-300';
+        return 'min-h-screen bg-[#09090b] text-[#f4f4f5] font-sans flex flex-col lg:flex-row relative selection:bg-white selection:text-black';
       case 'zen-notion':
-        return 'min-h-screen bg-[#faf9f5] text-stone-800 font-sans flex flex-col lg:flex-row relative selection:bg-stone-300 selection:text-stone-900';
-      case 'rainbow-sidebar':
+        return 'min-h-screen bg-[#0c0c0e] text-[#d4d4d8] font-sans flex flex-col lg:flex-row relative selection:bg-zinc-700 selection:text-white';
+      case 'monochrome-noir':
       default:
-        return 'min-h-screen bg-[#f8fafc] text-slate-800 font-sans flex flex-col lg:flex-row relative selection:bg-purple-500/20 selection:text-purple-700';
+        return 'min-h-screen bg-[#09090b] text-[#f4f4f5] font-sans flex flex-col lg:flex-row relative selection:bg-white selection:text-black';
     }
   };
 
   return (
     <div className={getContainerClass()}>
-      {/* Ambient Lighting Orbs for Apple and Cyber Themes */}
-      {isAppleTheme && (
-        <>
-          <div className="fixed top-0 left-1/4 w-[500px] h-[500px] bg-purple-300/20 rounded-full blur-[140px] pointer-events-none -z-10" />
-          <div className="fixed bottom-0 right-1/4 w-[600px] h-[600px] bg-pink-300/20 rounded-full blur-[160px] pointer-events-none -z-10" />
-          <div className="fixed top-1/2 left-3/4 w-[400px] h-[400px] bg-cyan-300/20 rounded-full blur-[140px] pointer-events-none -z-10" />
-        </>
-      )}
-
-      {isCyberDark && (
-        <>
-          <div className="fixed top-0 left-1/3 w-[500px] h-[500px] bg-cyan-500/10 rounded-full blur-[160px] pointer-events-none -z-10" />
-          <div className="fixed bottom-0 right-1/3 w-[600px] h-[600px] bg-fuchsia-500/10 rounded-full blur-[180px] pointer-events-none -z-10" />
-        </>
-      )}
+      {/* Subtle monochrome ambient light */}
+      <div className="fixed top-0 left-1/4 w-[500px] h-[500px] bg-white/[0.02] rounded-full blur-[140px] pointer-events-none -z-10" />
+      <div className="fixed bottom-0 right-1/4 w-[600px] h-[600px] bg-white/[0.02] rounded-full blur-[160px] pointer-events-none -z-10" />
 
       {/* Render Left Sidebar for all themes EXCEPT Apple Minimalist */}
       {!isAppleTheme && (

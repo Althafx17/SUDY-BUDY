@@ -859,8 +859,17 @@ export default function PastQuestionPapers({
                     }`}
                   >
                     <span>Module {modNum}</span>
+                    <span 
+                      className="font-mono text-[9px] px-1 py-0.2 rounded font-black"
+                      style={{
+                        backgroundColor: `${modRainbow.hex}22`,
+                        color: isSelected ? '#ffffff' : modRainbow.hex
+                      }}
+                    >
+                      {modRainbow.colorCode}
+                    </span>
                     <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
-                      isSelected ? 'bg-black/20 text-white' : 'bg-white/80 text-slate-700'
+                      isSelected ? 'bg-black/20 text-white' : 'bg-black/10 text-current'
                     }`}>
                       {count}
                     </span>
@@ -939,10 +948,22 @@ export default function PastQuestionPapers({
                         M{mGroup.moduleNumber}
                       </span>
                       <div>
-                        <h3 className={`text-sm font-extrabold ${modRainbow.headerText} tracking-tight`}>
-                          {mGroup.module.name}
-                        </h3>
-                        <span className="text-[11px] text-slate-500 font-medium">
+                        <div className="flex items-center gap-2">
+                          <h3 className={`text-sm font-extrabold ${modRainbow.headerText} tracking-tight`}>
+                            {mGroup.module.name}
+                          </h3>
+                          <span 
+                            className="px-2 py-0.5 rounded-md text-[10px] font-mono font-extrabold"
+                            style={{
+                              backgroundColor: `${modRainbow.hex}22`,
+                              color: modRainbow.hex,
+                              border: `1px solid ${modRainbow.hex}55`
+                            }}
+                          >
+                            {modRainbow.colorCode}
+                          </span>
+                        </div>
+                        <span className="text-[11px] text-zinc-400 font-medium">
                           KTU Module {mGroup.moduleNumber} Previous Year Questions
                         </span>
                       </div>
@@ -1419,8 +1440,17 @@ export default function PastQuestionPapers({
                                         }`}
                                       >
                                         <span>Module {modNum}</span>
+                                        <span 
+                                          className="font-mono text-[9px] px-1 py-0.2 rounded font-black"
+                                          style={{
+                                            backgroundColor: `${modRainbow.hex}22`,
+                                            color: isSelected ? '#ffffff' : modRainbow.hex
+                                          }}
+                                        >
+                                          {modRainbow.colorCode}
+                                        </span>
                                         <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
-                                          isSelected ? 'bg-black/20 text-white' : 'bg-white/80 text-slate-700'
+                                          isSelected ? 'bg-black/20 text-white' : 'bg-black/10 text-current'
                                         }`}>
                                           {count}
                                         </span>
@@ -1459,6 +1489,16 @@ export default function PastQuestionPapers({
                                                 <h5 className={`text-xs font-black ${modRainbow.headerText}`}>
                                                   {modModuleInfo.name}
                                                 </h5>
+                                                <span 
+                                                  className="px-1.5 py-0.2 rounded text-[10px] font-mono font-extrabold"
+                                                  style={{
+                                                    backgroundColor: `${modRainbow.hex}22`,
+                                                    color: modRainbow.hex,
+                                                    border: `1px solid ${modRainbow.hex}55`
+                                                  }}
+                                                >
+                                                  {modRainbow.colorCode}
+                                                </span>
                                                 <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md border ${modRainbow.badgeBg}`}>
                                                   {modQuestions.length} Questions • {modTotalMarks} Marks
                                                 </span>

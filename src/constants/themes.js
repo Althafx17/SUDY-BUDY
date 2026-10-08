@@ -1,80 +1,89 @@
-// 5 Distinct UI & Layout Themes for Study Buddy
+// Complete Black & White UI & Layout Themes with Vibrant Color-Coded Modules
 export const THEMES = [
   {
-    id: 'rainbow-sidebar',
-    name: 'Rainbow Academic',
-    shortName: 'Rainbow',
-    icon: '🌈',
+    id: 'monochrome-noir',
+    name: 'Monochrome Noir',
+    shortName: 'Black & White',
+    icon: '🏁',
     layoutType: 'sidebar',
-    description: 'Left rich sidebar with Courses Taken & module sub-lists, vibrant rainbow pastel cards & lively accents.',
-    bgClass: 'bg-[#f8fafc] text-slate-800',
-    cardClass: 'bg-white/90 border border-slate-200/80 shadow-sm',
-    headerClass: 'bg-white/80 border-b border-slate-200/80 backdrop-blur-xl',
-    sidebarClass: 'bg-gradient-to-b from-[#251b5c] via-[#2d226e] to-[#1f1650] text-white',
-    badge: 'Multi-Color'
+    description: 'High-contrast Black & White minimalist studio: deep obsidian surfaces, crisp white typography, and vibrant color-coded modules.',
+    bgClass: 'bg-[#09090b] text-[#f4f4f5]',
+    cardClass: 'bg-[#121214] border border-[#27272a] shadow-sm',
+    headerClass: 'bg-[#09090b]/90 border-b border-[#27272a] backdrop-blur-xl',
+    sidebarClass: 'bg-[#09090b] text-[#f4f4f5] border-r border-[#27272a]',
+    badge: 'Default B&W'
+  },
+  {
+    id: 'monochrome-light',
+    name: 'Monochrome Paper',
+    shortName: 'White & Black',
+    icon: '📄',
+    layoutType: 'sidebar',
+    description: 'Crisp editorial White & Black design: clean stark paper cards, pitch black typography, and vibrant color-coded modules.',
+    bgClass: 'bg-[#fafafa] text-[#09090b]',
+    cardClass: 'bg-white border border-[#e4e4e7] shadow-sm',
+    headerClass: 'bg-white/90 border-b border-[#e4e4e7] backdrop-blur-xl',
+    sidebarClass: 'bg-[#f4f4f5] text-[#09090b] border-r border-[#e4e4e7]',
+    badge: 'Paper B&W'
   },
   {
     id: 'apple-minimal',
-    name: 'Apple Minimalist',
-    shortName: 'Apple',
+    name: 'Apple Monochrome',
+    shortName: 'Minimalist',
     icon: '🍎',
     layoutType: 'top-nav',
-    description: 'Single-column centered layout with frosted-glass top navigation, airy whitespace, and soft ambient pastel orbs.',
-    bgClass: 'bg-[#f5f7fb] text-slate-900',
-    cardClass: 'bg-white/80 backdrop-blur-md border border-white/80 shadow-sm rounded-[24px]',
-    headerClass: 'bg-white/70 border-b border-slate-200/60 backdrop-blur-2xl',
+    description: 'Single-column centered layout with frosted-glass top navigation, obsidian dark surfaces, and airy breathing room.',
+    bgClass: 'bg-[#09090b] text-[#f4f4f5]',
+    cardClass: 'bg-[#121214]/90 backdrop-blur-md border border-[#27272a] shadow-sm rounded-[24px]',
+    headerClass: 'bg-[#09090b]/80 border-b border-[#27272a] backdrop-blur-2xl',
     sidebarClass: 'hidden',
-    badge: 'Airy & Clean'
+    badge: 'Top-Nav B&W'
   },
   {
     id: 'ecoursie-studio',
-    name: 'ēCoursie 3-Column',
-    shortName: 'ēCoursie',
+    name: 'Studio 3-Column Noir',
+    shortName: '3-Column Noir',
     icon: '💻',
     layoutType: 'three-column',
-    description: 'Full 3-column learning studio: purple left sidebar, central revision feed, and dedicated right calendar panel with buddies.',
-    bgClass: 'bg-[#ebf0f8] text-slate-800',
-    cardClass: 'bg-white rounded-[24px] border border-slate-100 shadow-sm',
+    description: 'Full 3-column learning studio: obsidian left navigation, central revision feed, and dedicated right calendar panel in black & white.',
+    bgClass: 'bg-[#09090b] text-[#f4f4f5]',
+    cardClass: 'bg-[#121214] rounded-[24px] border border-[#27272a] shadow-sm',
     headerClass: 'bg-transparent border-none',
-    sidebarClass: 'bg-[#5142be] text-white',
+    sidebarClass: 'bg-[#111113] text-[#f4f4f5] border-r border-[#27272a]',
     badge: '3-Column Studio'
   },
   {
-    id: 'cyber-dark',
-    name: 'Cyber Dark OLED',
-    shortName: 'Cyber Dark',
-    icon: '⚡',
-    layoutType: 'cyber-dark',
-    description: 'Deep pitch-black OLED terminal with luminous neon accents (cyan, lime, magenta), dark glass cards, and glowing borders.',
-    bgClass: 'bg-[#090d16] text-slate-100',
-    cardClass: 'bg-[#111827]/90 border border-slate-800 shadow-md shadow-black/40',
-    headerClass: 'bg-[#0e1424]/90 border-b border-slate-800/80 backdrop-blur-xl',
-    sidebarClass: 'bg-[#090e1c] text-slate-100 border-r border-slate-800/80',
-    badge: 'Night OLED'
-  },
-  {
     id: 'zen-notion',
-    name: 'Zen Notion Paper',
-    shortName: 'Zen Paper',
+    name: 'Zen Notion Noir',
+    shortName: 'Zen Noir',
     icon: '📖',
     layoutType: 'zen-paper',
-    description: 'Serene warm paper background, slate-800 typography, subtle minimalist dividers, and clean distraction-free study layout.',
-    bgClass: 'bg-[#faf9f5] text-stone-800',
-    cardClass: 'bg-[#ffffff] border border-stone-200/80 shadow-2xs rounded-2xl',
-    headerClass: 'bg-[#faf9f5]/90 border-b border-stone-200/80 backdrop-blur-md',
-    sidebarClass: 'bg-[#f4f3ef] text-stone-800 border-r border-stone-200/90',
-    badge: 'Serene Focus'
+    description: 'Distraction-free black and white study layout with subtle minimalist dividers and clean typography.',
+    bgClass: 'bg-[#09090b] text-[#d4d4d8]',
+    cardClass: 'bg-[#121214] border border-[#27272a] shadow-2xs rounded-2xl',
+    headerClass: 'bg-[#09090b]/90 border-b border-[#27272a] backdrop-blur-md',
+    sidebarClass: 'bg-[#0c0c0e] text-[#d4d4d8] border-r border-[#27272a]',
+    badge: 'Serene B&W'
   }
 ];
 
 // Color Accent Presets for Settings & Customization
 export const COLOR_ACCENTS = [
   {
+    id: 'monochrome',
+    name: 'Monochrome High-Contrast',
+    dot: 'bg-white border border-zinc-700',
+    primary: '#ffffff',
+    activeChip: 'bg-white text-black font-black shadow-md',
+    ring: 'ring-white/50',
+    border: 'border-zinc-700'
+  },
+  {
     id: 'rainbow',
-    name: 'Rainbow Spectrum',
+    name: 'Module Colors Spectrum',
     dot: 'bg-gradient-to-r from-violet-500 via-emerald-400 to-pink-500',
     primary: '#8b5cf6',
-    activeChip: 'bg-violet-600 text-white',
+    activeChip: 'bg-white text-black font-bold',
     ring: 'ring-violet-400',
     border: 'border-violet-300'
   },

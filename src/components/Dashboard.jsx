@@ -105,28 +105,28 @@ export default function Dashboard({
       {/* Top Header & Semester Toggle */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+          <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight flex items-center gap-2">
             <span>My Courses & Exam Ledger</span>
           </h1>
-          <p className="text-xs sm:text-sm text-slate-500 mt-1 font-medium">
+          <p className="text-xs sm:text-sm text-zinc-400 mt-1 font-medium">
             Track academic syllabus mastery, revision sprint checklists, and exam schedules
           </p>
         </div>
 
         <div className="flex items-center gap-3 self-start sm:self-auto">
-          {/* Semester Pill Toggle (Apple Segmented Control) */}
-          <div className="inline-flex p-1 bg-slate-200/80 rounded-2xl border border-slate-300/60 shadow-inner">
+          {/* Semester Pill Toggle (High-contrast B&W control) */}
+          <div className="inline-flex p-1 bg-zinc-900 rounded-2xl border border-zinc-800 shadow-inner">
             <button
               onClick={() => onSelectSemester('S1')}
               className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
                 currentSemester === 'S1'
-                  ? 'bg-white text-slate-900 shadow-sm'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-white text-black font-black shadow-sm'
+                  : 'text-zinc-400 hover:text-white'
               }`}
             >
               <span>Semester 1</span>
               <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
-                currentSemester === 'S1' ? 'bg-purple-100 text-purple-700' : 'bg-slate-300/60 text-slate-600'
+                currentSemester === 'S1' ? 'bg-zinc-200 text-black' : 'bg-zinc-800 text-zinc-300'
               }`}>
                 {data.S1?.subjects?.length || 0}
               </span>
@@ -136,13 +136,13 @@ export default function Dashboard({
               onClick={() => onSelectSemester('S2')}
               className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
                 currentSemester === 'S2'
-                  ? 'bg-white text-slate-900 shadow-sm'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-white text-black font-black shadow-sm'
+                  : 'text-zinc-400 hover:text-white'
               }`}
             >
               <span>Semester 2</span>
               <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
-                currentSemester === 'S2' ? 'bg-cyan-100 text-cyan-700' : 'bg-slate-300/60 text-slate-600'
+                currentSemester === 'S2' ? 'bg-zinc-200 text-black' : 'bg-zinc-800 text-zinc-300'
               }`}>
                 {data.S2?.subjects?.length || 0}
               </span>
@@ -151,7 +151,7 @@ export default function Dashboard({
 
           <button
             onClick={() => setIsAddSubjectOpen(true)}
-            className="px-4 py-2.5 bg-gradient-to-r from-violet-600 via-indigo-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white rounded-2xl text-xs font-bold flex items-center gap-2 shadow-md shadow-violet-200 hover:shadow-lg transition-all"
+            className="px-4 py-2.5 bg-white hover:bg-zinc-200 text-black rounded-2xl text-xs font-black flex items-center gap-2 shadow-md transition-all"
           >
             <Plus className="w-4 h-4" />
             <span>Add Course</span>
@@ -161,30 +161,30 @@ export default function Dashboard({
 
       {/* Nearest Upcoming Exam Hero Countdown Banner */}
       {nearestItem && (
-        <div className="glass-panel p-6 sm:p-7 rounded-[28px] border border-white flex flex-col lg:flex-row lg:items-center justify-between gap-6 shadow-sm hover:shadow-md transition-all">
+        <div className="glass-panel p-6 sm:p-7 rounded-[28px] border border-zinc-800 flex flex-col lg:flex-row lg:items-center justify-between gap-6 shadow-sm hover:shadow-md transition-all">
           <div className="space-y-3 flex-1 min-w-0">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-purple-700 bg-purple-100 px-3 py-1 rounded-full border border-purple-200 flex items-center gap-1.5">
-                <Clock className="w-3.5 h-3.5 text-purple-600" />
+              <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-zinc-300 bg-zinc-900 px-3 py-1 rounded-full border border-zinc-700 flex items-center gap-1.5">
+                <Clock className="w-3.5 h-3.5 text-zinc-400" />
                 Nearest Upcoming Paper
               </span>
-              <span className="text-xs text-slate-400 font-medium">
+              <span className="text-xs text-zinc-500 font-medium">
                 {currentSemester} Master Schedule
               </span>
             </div>
 
             <div className="flex flex-wrap items-baseline gap-3">
-              <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+              <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
                 {nearestItem.subject.name}
               </h2>
-              <span className="text-xs font-mono font-bold px-2 py-0.5 rounded-md bg-purple-100 text-purple-800 border border-purple-200">
+              <span className="text-xs font-mono font-bold px-2 py-0.5 rounded-md bg-zinc-900 text-zinc-200 border border-zinc-700">
                 {nearestItem.subject.code}
               </span>
             </div>
 
-            <div className="flex flex-wrap items-center gap-3 text-xs text-slate-600 font-medium">
-              <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-amber-50 text-amber-900 border border-amber-200/80">
-                <Calendar className="w-3.5 h-3.5 text-amber-600" />
+            <div className="flex flex-wrap items-center gap-3 text-xs text-zinc-400 font-medium">
+              <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-zinc-900 text-zinc-200 border border-zinc-800">
+                <Calendar className="w-3.5 h-3.5 text-zinc-400" />
                 <span>
                   {new Date(nearestItem.subject.examDate).toLocaleDateString(undefined, {
                     weekday: 'long',
@@ -198,54 +198,54 @@ export default function Dashboard({
               </div>
 
               {nearestItem.subject.examVenue && (
-                <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-slate-100 text-slate-700 border border-slate-200">
-                  <MapPin className="w-3.5 h-3.5 text-slate-500" />
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-zinc-900 text-zinc-300 border border-zinc-800">
+                  <MapPin className="w-3.5 h-3.5 text-zinc-400" />
                   <span>{nearestItem.subject.examVenue}</span>
                 </div>
               )}
             </div>
           </div>
 
-          {/* Large Live Rainbow Ticking Countdown Numbers */}
-          <div className="bg-slate-50/80 rounded-2xl p-4 sm:p-5 border border-slate-200/70 flex items-center justify-center gap-4 sm:gap-6 shrink-0 shadow-inner">
+          {/* Large Live Monochrome Ticking Countdown Numbers */}
+          <div className="bg-black/80 rounded-2xl p-4 sm:p-5 border border-zinc-800 flex items-center justify-center gap-4 sm:gap-6 shrink-0 shadow-inner">
             <div className="text-center">
-              <div className="text-2xl sm:text-3xl font-black text-slate-900 font-mono">
+              <div className="text-2xl sm:text-3xl font-black text-white font-mono">
                 {String(countdown.days).padStart(2, '0')}
               </div>
-              <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-0.5">
+              <div className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider mt-0.5">
                 Days
               </div>
             </div>
 
-            <span className="text-slate-300 font-black text-xl">:</span>
+            <span className="text-zinc-600 font-black text-xl">:</span>
 
             <div className="text-center">
-              <div className="text-2xl sm:text-3xl font-black text-purple-600 font-mono">
+              <div className="text-2xl sm:text-3xl font-black text-white font-mono">
                 {String(countdown.hours).padStart(2, '0')}
               </div>
-              <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-0.5">
+              <div className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider mt-0.5">
                 Hours
               </div>
             </div>
 
-            <span className="text-slate-300 font-black text-xl">:</span>
+            <span className="text-zinc-600 font-black text-xl">:</span>
 
             <div className="text-center">
-              <div className="text-2xl sm:text-3xl font-black text-pink-600 font-mono">
+              <div className="text-2xl sm:text-3xl font-black text-white font-mono">
                 {String(countdown.minutes).padStart(2, '0')}
               </div>
-              <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-0.5">
+              <div className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider mt-0.5">
                 Mins
               </div>
             </div>
 
-            <span className="text-slate-300 font-black text-xl">:</span>
+            <span className="text-zinc-600 font-black text-xl">:</span>
 
             <div className="text-center">
-              <div className="text-2xl sm:text-3xl font-black text-amber-500 font-mono">
+              <div className="text-2xl sm:text-3xl font-black text-zinc-300 font-mono">
                 {String(countdown.seconds).padStart(2, '0')}
               </div>
-              <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-0.5">
+              <div className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider mt-0.5">
                 Secs
               </div>
             </div>
@@ -253,89 +253,89 @@ export default function Dashboard({
         </div>
       )}
 
-      {/* 4 Stat Summary Cards (Rainbow Pastel Accent) */}
+      {/* 4 Stat Summary Cards (Monochrome High Contrast) */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
-        {/* Card 1: Total Courses (Lilac Violet) */}
-        <div className="glass-panel p-5 rounded-[24px] border border-white flex flex-col justify-between shadow-2xs hover:shadow-sm transition-all">
+        {/* Card 1: Total Courses */}
+        <div className="glass-panel p-5 rounded-[24px] border border-zinc-800 bg-[#121214] flex flex-col justify-between shadow-2xs hover:border-zinc-700 transition-all">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+            <span className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider">
               Total Courses
             </span>
-            <div className="w-8 h-8 rounded-full bg-violet-100 text-violet-600 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-full bg-zinc-800 text-white flex items-center justify-center">
               <BookOpen className="w-4 h-4" />
             </div>
           </div>
           <div className="mt-3">
-            <div className="text-2xl sm:text-3xl font-black text-slate-900">
+            <div className="text-2xl sm:text-3xl font-black text-white">
               {stats.subjectsCount}
             </div>
-            <p className="text-[11px] text-slate-400 mt-1 font-medium">
+            <p className="text-[11px] text-zinc-500 mt-1 font-medium">
               Enrolled in {currentSemester}
             </p>
           </div>
         </div>
 
-        {/* Card 2: Study Progress (Aqua Cyan / Sky Blue) */}
-        <div className="glass-panel p-5 rounded-[24px] border border-white flex flex-col justify-between shadow-2xs hover:shadow-sm transition-all">
+        {/* Card 2: Study Progress */}
+        <div className="glass-panel p-5 rounded-[24px] border border-zinc-800 bg-[#121214] flex flex-col justify-between shadow-2xs hover:border-zinc-700 transition-all">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+            <span className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider">
               Study Progress
             </span>
-            <div className="w-8 h-8 rounded-full bg-cyan-100 text-cyan-600 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-full bg-zinc-800 text-white flex items-center justify-center">
               <Layers className="w-4 h-4" />
             </div>
           </div>
           <div className="mt-3">
-            <div className="text-2xl sm:text-3xl font-black text-slate-900">
+            <div className="text-2xl sm:text-3xl font-black text-white">
               {stats.overallProgress}%
             </div>
-            <div className="w-full bg-slate-100 h-1.5 rounded-full mt-2 overflow-hidden">
+            <div className="w-full bg-zinc-800 h-1.5 rounded-full mt-2 overflow-hidden">
               <div 
-                className="bg-gradient-to-r from-cyan-400 to-blue-500 h-full transition-all duration-500" 
+                className="bg-white h-full transition-all duration-500" 
                 style={{ width: `${stats.overallProgress}%` }}
               />
             </div>
           </div>
         </div>
 
-        {/* Card 3: Topics Mastered (Mint Emerald) */}
-        <div className="glass-panel p-5 rounded-[24px] border border-white flex flex-col justify-between shadow-2xs hover:shadow-sm transition-all">
+        {/* Card 3: Topics Mastered */}
+        <div className="glass-panel p-5 rounded-[24px] border border-zinc-800 bg-[#121214] flex flex-col justify-between shadow-2xs hover:border-zinc-700 transition-all">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+            <span className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider">
               Topics Mastered
             </span>
-            <div className="w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-full bg-zinc-800 text-white flex items-center justify-center">
               <CheckCircle2 className="w-4 h-4" />
             </div>
           </div>
           <div className="mt-3">
-            <div className="text-2xl sm:text-3xl font-black text-slate-900 flex items-baseline gap-1">
+            <div className="text-2xl sm:text-3xl font-black text-white flex items-baseline gap-1">
               <span>{stats.completedTopics}</span>
-              <span className="text-xs font-bold text-slate-400">/ {stats.totalTopics}</span>
+              <span className="text-xs font-bold text-zinc-500">/ {stats.totalTopics}</span>
             </div>
-            <p className="text-[11px] text-slate-400 mt-1 font-medium">
+            <p className="text-[11px] text-zinc-500 mt-1 font-medium">
               Syllabus units studied
             </p>
           </div>
         </div>
 
-        {/* Card 4: Revision Rate (Warm Amber) */}
-        <div className="glass-panel p-5 rounded-[24px] border border-white flex flex-col justify-between shadow-2xs hover:shadow-sm transition-all">
+        {/* Card 4: Revision Rate */}
+        <div className="glass-panel p-5 rounded-[24px] border border-zinc-800 bg-[#121214] flex flex-col justify-between shadow-2xs hover:border-zinc-700 transition-all">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+            <span className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider">
               Revision Rate
             </span>
-            <div className="w-8 h-8 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-full bg-zinc-800 text-white flex items-center justify-center">
               <Award className="w-4 h-4" />
             </div>
           </div>
           <div className="mt-3">
-            <div className="text-2xl sm:text-3xl font-black text-amber-600">
+            <div className="text-2xl sm:text-3xl font-black text-zinc-200">
               {stats.revisionProgress}%
             </div>
-            <div className="w-full bg-slate-100 h-1.5 rounded-full mt-2 overflow-hidden">
+            <div className="w-full bg-zinc-800 h-1.5 rounded-full mt-2 overflow-hidden">
               <div 
-                className="bg-gradient-to-r from-amber-400 to-orange-500 h-full transition-all duration-500" 
+                className="bg-zinc-300 h-full transition-all duration-500" 
                 style={{ width: `${stats.revisionProgress}%` }}
               />
             </div>
@@ -347,37 +347,37 @@ export default function Dashboard({
       <div className="space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <h2 className="text-xl font-extrabold text-slate-900 tracking-tight">
+            <h2 className="text-xl font-extrabold text-white tracking-tight">
               Curriculum Courses
             </h2>
-            <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-slate-200/80 text-slate-700">
+            <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-zinc-800 text-zinc-300 border border-zinc-700">
               {filteredSubjects.length} courses
             </span>
           </div>
 
           <div className="relative w-full sm:w-72">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <Search className="w-4 h-4 text-zinc-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search course title or code..."
-              className="w-full bg-white border border-slate-200 rounded-2xl pl-9 pr-3.5 py-2 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500 shadow-2xs"
+              className="w-full bg-[#121214] border border-zinc-800 rounded-2xl pl-9 pr-3.5 py-2 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-600 shadow-2xs"
             />
           </div>
         </div>
 
-        {/* Rainbow Pastel Course Cards */}
+        {/* Black & White Course Cards with Color-Coded Modules */}
         {filteredSubjects.length === 0 ? (
-          <div className="glass-panel p-16 rounded-[28px] border border-dashed border-slate-300 text-center">
-            <BookOpen className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-            <h3 className="text-base font-bold text-slate-800">No Courses Found</h3>
-            <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto font-medium">
+          <div className="glass-panel p-16 rounded-[28px] border border-dashed border-zinc-800 text-center bg-[#121214]">
+            <BookOpen className="w-12 h-12 text-zinc-600 mx-auto mb-3" />
+            <h3 className="text-base font-bold text-white">No Courses Found</h3>
+            <p className="text-xs text-zinc-400 mt-1 max-w-sm mx-auto font-medium">
               No courses match your query. Try clearing the search or click below to add a new subject.
             </p>
             <button
               onClick={() => setIsAddSubjectOpen(true)}
-              className="mt-4 px-4 py-2 bg-violet-600 hover:bg-violet-700 text-white rounded-xl text-xs font-bold shadow-sm"
+              className="mt-4 px-4 py-2 bg-white hover:bg-zinc-200 text-black rounded-xl text-xs font-bold shadow-sm"
             >
               + Add Course
             </button>
@@ -385,8 +385,6 @@ export default function Dashboard({
         ) : (
           <div className="space-y-4">
             {filteredSubjects.map((sub) => {
-              const colorObj = SUBJECT_COLORS.find(c => c.id === sub.color) || SUBJECT_COLORS[0];
-              const cardClass = colorObj.cardClass || 'card-pastel-violet';
               const progress = Math.round(calculateSubjectProgress(sub) * 100);
               const revision = Math.round(calculateSubjectRevisionProgress(sub));
               const allTopics = (sub.modules || []).flatMap(m => m.topics || []);
@@ -398,19 +396,19 @@ export default function Dashboard({
                 <div
                   key={sub.id}
                   onClick={() => onOpenSubject(sub.id)}
-                  className={`${cardClass} p-6 sm:p-7 rounded-[28px] cursor-pointer transition-all duration-300 hover:scale-[1.01] hover:shadow-xl shadow-sm relative overflow-hidden group select-none`}
+                  className="bg-[#121214] hover:bg-[#161619] border border-[#27272a] hover:border-zinc-700 p-6 sm:p-7 rounded-[28px] cursor-pointer transition-all duration-300 hover:scale-[1.005] hover:shadow-xl shadow-sm relative overflow-hidden group select-none text-white"
                 >
                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-5">
                     <div className="space-y-2 flex-1 min-w-0">
                       {/* Top Badges */}
                       <div className="flex flex-wrap items-center gap-2">
-                        <span className={`text-[10px] font-mono font-black uppercase px-2.5 py-0.5 rounded-md ${colorObj.bg} ${colorObj.text} border ${colorObj.border}`}>
+                        <span className="text-[10px] font-mono font-black uppercase px-2.5 py-0.5 rounded-md bg-zinc-900 text-zinc-200 border border-zinc-700">
                           {sub.code}
                         </span>
 
                         {sub.examDate && (
-                          <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-md bg-amber-50 text-amber-900 border border-amber-200/80 flex items-center gap-1">
-                            <Calendar className="w-3 h-3 text-amber-600" />
+                          <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-md bg-zinc-900 text-zinc-200 border border-zinc-800 flex items-center gap-1">
+                            <Calendar className="w-3 h-3 text-zinc-400" />
                             <span>
                               Exam: {new Date(sub.examDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
                             </span>
@@ -418,33 +416,33 @@ export default function Dashboard({
                         )}
 
                         {sub.todos && sub.todos.length > 0 && (
-                          <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-md bg-purple-50 text-purple-700 border border-purple-200/80">
+                          <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-md bg-zinc-900 text-zinc-300 border border-zinc-800">
                             {completedTodosCount}/{sub.todos.length} to-dos done
                           </span>
                         )}
 
                         {pastPapersCount > 0 && (
-                          <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-md bg-indigo-50 text-indigo-700 border border-indigo-200 flex items-center gap-1">
-                            <FileText className="w-3 h-3 text-indigo-500" />
+                          <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-md bg-zinc-900 text-zinc-300 border border-zinc-800 flex items-center gap-1">
+                            <FileText className="w-3 h-3 text-zinc-400" />
                             <span>{pastPapersCount} PYQs (2019-2026)</span>
                           </span>
                         )}
                       </div>
 
                       {/* Course Title */}
-                      <h3 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight group-hover:text-purple-700 transition-colors">
+                      <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight group-hover:text-zinc-200 transition-colors">
                         {sub.name}
                       </h3>
 
                       {/* Meta Summary */}
-                      <div className="flex flex-wrap items-center gap-3 text-xs text-slate-500 font-medium">
+                      <div className="flex flex-wrap items-center gap-3 text-xs text-zinc-400 font-medium">
                         <span>{(sub.modules || []).length} modules</span>
                         <span>•</span>
                         <span>{allTopics.length} syllabus topics</span>
                         {pendingRevisionCount > 0 && (
                           <>
                             <span>•</span>
-                            <span className="text-amber-600 font-bold flex items-center gap-1">
+                            <span className="text-amber-400 font-bold flex items-center gap-1">
                               <AlertCircle className="w-3.5 h-3.5" />
                               {pendingRevisionCount} pending revision
                             </span>
@@ -455,26 +453,26 @@ export default function Dashboard({
                       {/* Dual Progress Bars */}
                       <div className="flex flex-col sm:flex-row sm:items-center gap-4 pt-2 max-w-lg">
                         <div className="flex-1">
-                          <div className="flex items-center justify-between text-xs font-bold text-slate-600 mb-1">
+                          <div className="flex items-center justify-between text-xs font-bold text-zinc-400 mb-1">
                             <span>Study Mastery</span>
-                            <span>{progress}%</span>
+                            <span className="text-white font-mono">{progress}%</span>
                           </div>
-                          <div className="w-full bg-slate-200/60 h-2 rounded-full overflow-hidden">
+                          <div className="w-full bg-zinc-800 h-2 rounded-full overflow-hidden">
                             <div 
-                              className={`h-full bg-gradient-to-r ${colorObj.gradient}`}
+                              className="h-full bg-white transition-all duration-500"
                               style={{ width: `${progress}%` }}
                             />
                           </div>
                         </div>
 
                         <div className="flex-1">
-                          <div className="flex items-center justify-between text-xs font-bold text-slate-600 mb-1">
+                          <div className="flex items-center justify-between text-xs font-bold text-zinc-400 mb-1">
                             <span>Revision Ready</span>
-                            <span className="text-emerald-700 font-bold">{revision}%</span>
+                            <span className="text-zinc-300 font-mono">{revision}%</span>
                           </div>
-                          <div className="w-full bg-slate-200/60 h-2 rounded-full overflow-hidden">
+                          <div className="w-full bg-zinc-800 h-2 rounded-full overflow-hidden">
                             <div 
-                              className="h-full bg-emerald-500"
+                              className="h-full bg-zinc-400 transition-all duration-500"
                               style={{ width: `${revision}%` }}
                             />
                           </div>
@@ -484,28 +482,28 @@ export default function Dashboard({
 
                     {/* Circular Action Button */}
                     <div className="shrink-0 self-end md:self-center">
-                      <div className={`w-12 h-12 rounded-full ${colorObj.btnBg} flex items-center justify-center transition-transform group-hover:scale-110 group-hover:rotate-12`}>
-                        <ArrowRight className="w-5 h-5 text-white" />
+                      <div className="w-12 h-12 rounded-full bg-white hover:bg-zinc-200 text-black flex items-center justify-center transition-transform group-hover:scale-110 shadow-md">
+                        <ArrowRight className="w-5 h-5 text-black" />
                       </div>
                     </div>
                   </div>
 
-                  {/* SUB-LIST OF 5 MODULES IN THIS COURSE */}
+                  {/* SUB-LIST OF COLOR-CODED MODULES IN THIS COURSE */}
                   {sub.modules && sub.modules.length > 0 && (
-                    <div className="mt-5 pt-4 border-t border-slate-900/10">
+                    <div className="mt-5 pt-4 border-t border-zinc-800">
                       <div className="flex items-center justify-between mb-2.5">
-                        <span className="text-[11px] font-black uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
-                          <Layers className="w-3.5 h-3.5 text-purple-600" />
+                        <span className="text-[11px] font-black uppercase tracking-wider text-zinc-300 flex items-center gap-1.5">
+                          <Layers className="w-3.5 h-3.5 text-zinc-400" />
                           <span>Course Modules ({sub.modules.length})</span>
                         </span>
-                        <span className="text-[10px] font-semibold text-slate-500">
-                          Click any module to jump directly
+                        <span className="text-[10px] font-semibold text-zinc-500">
+                          Color-coded by syllabus unit
                         </span>
                       </div>
                       
                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5">
                         {sub.modules.map((mod, mIdx) => {
-                          const rainbow = getModuleRainbowColor(mIdx + 1);
+                          const rainbow = getModuleRainbowColor(mod.number || mIdx + 1);
                           const modProgress = Math.round(calculateModuleProgress(mod) * 100);
                           return (
                             <div
@@ -514,25 +512,38 @@ export default function Dashboard({
                                 e.stopPropagation();
                                 onOpenSubject(sub.id, mod.id);
                               }}
-                              className="p-3 rounded-2xl bg-white/80 hover:bg-white border border-slate-200/80 hover:border-purple-300 shadow-2xs hover:shadow-md transition-all cursor-pointer group/mod flex flex-col justify-between"
+                              className="p-3 rounded-2xl bg-[#0c0c0e] hover:bg-zinc-900 border border-zinc-800/90 hover:border-zinc-700 shadow-2xs hover:shadow-md transition-all cursor-pointer group/mod flex flex-col justify-between"
                             >
                               <div>
                                 <div className="flex items-center justify-between gap-1 mb-1.5">
-                                  <span className={`text-[10px] font-black px-1.5 py-0.5 rounded-md border ${rainbow.badgeBg}`}>
-                                    M{mIdx + 1}
+                                  <span className={`text-[9px] font-black px-1.5 py-0.5 rounded-md border ${rainbow.badgeBg}`}>
+                                    M{mod.number || mIdx + 1}
                                   </span>
-                                  <span className="text-[11px] font-extrabold text-slate-700">
+                                  
+                                  {/* Explicit Color Code Tag */}
+                                  <span 
+                                    style={{
+                                      borderColor: `${rainbow.hex}50`,
+                                      color: rainbow.hex,
+                                      backgroundColor: `${rainbow.hex}18`
+                                    }}
+                                    className="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded border"
+                                  >
+                                    {rainbow.colorCode}
+                                  </span>
+
+                                  <span className="text-[10px] font-mono font-extrabold text-zinc-400">
                                     {modProgress}%
                                   </span>
                                 </div>
-                                <p className="text-xs font-bold text-slate-800 line-clamp-2 leading-snug group-hover/mod:text-purple-700 transition-colors">
+                                <p className="text-xs font-bold text-zinc-200 line-clamp-2 leading-snug group-hover/mod:text-white transition-colors">
                                   {mod.name.replace(/^Module\s*\d+\s*:\s*/i, '')}
                                 </p>
                               </div>
-                              <div className="w-full bg-slate-200/70 h-1.5 rounded-full mt-3 overflow-hidden">
+                              <div className="w-full bg-zinc-800 h-1.5 rounded-full mt-3 overflow-hidden">
                                 <div 
-                                  className={`h-full bg-gradient-to-r ${rainbow.gradient} transition-all duration-300`}
-                                  style={{ width: `${modProgress}%` }}
+                                  className="h-full transition-all duration-300"
+                                  style={{ width: `${modProgress}%`, backgroundColor: rainbow.hex }}
                                 />
                               </div>
                             </div>

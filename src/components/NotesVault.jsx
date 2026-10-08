@@ -11,7 +11,7 @@ import {
   Sparkles,
   Filter
 } from 'lucide-react';
-import { SUBJECT_COLORS } from '../constants/initialData';
+import { SUBJECT_COLORS, getModuleRainbowColor } from '../constants/initialData';
 
 export default function NotesVault({ 
   data, 
@@ -109,25 +109,25 @@ export default function NotesVault({
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
       {/* Header */}
-      <div className="glass-panel p-6 sm:p-7 rounded-[28px] border border-white flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="p-6 sm:p-7 rounded-[28px] bg-[#121214] border border-zinc-800 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm">
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-xs font-bold uppercase tracking-wider text-pink-700 bg-pink-100 px-3 py-1 rounded-full border border-pink-200 flex items-center gap-1.5">
-              <FileText className="w-3.5 h-3.5 text-pink-600" />
+            <span className="text-xs font-bold uppercase tracking-wider text-zinc-300 bg-zinc-800 px-3 py-1 rounded-full border border-zinc-700 flex items-center gap-1.5">
+              <FileText className="w-3.5 h-3.5 text-zinc-300" />
               Central Notes Vault
             </span>
           </div>
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mt-2">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight mt-2">
             Study Notes & Knowledge Base
           </h2>
-          <p className="text-xs text-slate-500 mt-1 max-w-xl font-medium">
+          <p className="text-xs text-zinc-400 mt-1 max-w-xl font-medium">
             Search, filter, review, and export all concept summaries, formulas, and cheat-sheets attached across your curriculum topics.
           </p>
         </div>
 
         <button
           onClick={handleExportMarkdown}
-          className="px-4 py-2.5 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white rounded-2xl text-xs font-bold flex items-center gap-2 shadow-md shadow-violet-200 transition-all self-start md:self-auto"
+          className="px-4 py-2.5 bg-white hover:bg-zinc-200 text-black rounded-2xl text-xs font-bold flex items-center gap-2 shadow-sm transition-all self-start md:self-auto"
         >
           <Download className="w-4 h-4" />
           <span>Export Markdown Guide</span>
@@ -137,13 +137,13 @@ export default function NotesVault({
       {/* Search and Filters */}
       <div className="flex flex-col sm:flex-row items-center gap-3">
         <div className="relative flex-1 w-full">
-          <Search className="w-4 h-4 absolute left-3 top-2.5 text-slate-400" />
+          <Search className="w-4 h-4 absolute left-3 top-2.5 text-zinc-500" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search within note contents, topic names, or subjects..."
-            className="w-full bg-white border border-slate-200 rounded-2xl pl-9 pr-3 py-2 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-violet-500 shadow-sm"
+            className="w-full bg-[#121214] border border-zinc-800 rounded-2xl pl-9 pr-3 py-2 text-xs text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-zinc-500 shadow-sm"
           />
         </div>
 
@@ -152,11 +152,11 @@ export default function NotesVault({
           <select
             value={selectedTag}
             onChange={(e) => setSelectedTag(e.target.value)}
-            className="w-full bg-white border border-slate-200 rounded-2xl px-3.5 py-2 text-xs text-slate-800 font-medium focus:outline-none focus:border-violet-500 shadow-sm cursor-pointer"
+            className="w-full bg-[#121214] border border-zinc-800 rounded-2xl px-3.5 py-2 text-xs text-zinc-200 font-medium focus:outline-none focus:border-zinc-500 shadow-sm cursor-pointer"
           >
-            <option value="ALL">All Note Tags ({allTags.size})</option>
+            <option value="ALL" className="bg-[#121214] text-zinc-200">All Note Tags ({allTags.size})</option>
             {Array.from(allTags).map(tag => (
-              <option key={tag} value={tag}>
+              <option key={tag} value={tag} className="bg-[#121214] text-zinc-200">
                 #{tag}
               </option>
             ))}
@@ -166,10 +166,10 @@ export default function NotesVault({
 
       {/* Notes Cards List */}
       {filteredNotes.length === 0 ? (
-        <div className="glass-panel p-16 rounded-[28px] border border-dashed border-slate-300 text-center">
-          <FileText className="w-12 h-12 text-slate-400 mx-auto mb-3" />
-          <h3 className="text-lg font-bold text-slate-800">No Notes Found</h3>
-          <p className="text-xs text-slate-500 mt-1 max-w-md mx-auto font-medium">
+        <div className="p-16 rounded-[28px] border border-dashed border-zinc-800 bg-[#121214]/60 text-center">
+          <FileText className="w-12 h-12 text-zinc-500 mx-auto mb-3" />
+          <h3 className="text-lg font-bold text-white">No Notes Found</h3>
+          <p className="text-xs text-zinc-400 mt-1 max-w-md mx-auto font-medium">
             {notesList.length === 0 
               ? "You haven't attached notes to any topics yet. Open any subject and click 'To-Dos & Media' to start drafting summaries." 
               : "No notes match the current search query or tag filter."}
@@ -178,37 +178,48 @@ export default function NotesVault({
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           {filteredNotes.map((item) => {
-            const subColor = SUBJECT_COLORS.find(c => c.id === item.subject.color) || SUBJECT_COLORS[0];
             const isCopied = copiedId === item.topic.id;
+            const modRainbow = getModuleRainbowColor(item.module.number);
 
             return (
               <div
                 key={item.topic.id}
-                className="bg-white p-6 rounded-[26px] border border-slate-200/80 hover:shadow-md transition-all flex flex-col justify-between space-y-4 relative group"
+                className="bg-[#121214] p-6 rounded-[26px] border border-zinc-800 hover:border-zinc-700 hover:shadow-md transition-all flex flex-col justify-between space-y-4 relative group"
               >
                 <div>
                   {/* Top info row */}
                   <div className="flex items-center justify-between gap-2 mb-2">
-                    <div className="flex items-center gap-2">
-                      <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-md ${subColor.bg} ${subColor.text} border ${subColor.border}`}>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-zinc-800 text-zinc-200 border border-zinc-700">
                         {item.semester} • {item.subject.code || item.subject.name}
                       </span>
-                      <span className="text-[11px] text-slate-500 font-medium">
-                        {item.module.name}
+                      <span className="text-[11px] text-zinc-300 font-medium flex items-center gap-1.5">
+                        <span className="w-2 h-2 rounded-full" style={{ backgroundColor: modRainbow.hex }} />
+                        <span>M{item.module.number || ''}</span>
+                        <span 
+                          className="px-1.5 py-0.2 rounded text-[10px] font-mono font-bold"
+                          style={{
+                            backgroundColor: `${modRainbow.hex}22`,
+                            color: modRainbow.hex,
+                            border: `1px solid ${modRainbow.hex}55`
+                          }}
+                        >
+                          {modRainbow.colorCode}
+                        </span>
                       </span>
                     </div>
 
                     <button
                       onClick={() => handleCopyNote(item.notes, item.topic.id)}
-                      className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors"
+                      className="p-1.5 text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors"
                       title="Copy note text"
                     >
-                      {isCopied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+                      {isCopied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                     </button>
                   </div>
 
                   {/* Topic Title */}
-                  <h3 className="text-base font-bold text-slate-900">
+                  <h3 className="text-base font-bold text-white">
                     {item.topic.name}
                   </h3>
 
@@ -216,7 +227,7 @@ export default function NotesVault({
                   {item.tags.length > 0 && (
                     <div className="flex flex-wrap gap-1.5 mt-2">
                       {item.tags.map((t, idx) => (
-                        <span key={idx} className="text-[10px] font-semibold bg-purple-50 text-purple-700 px-2 py-0.5 rounded-md border border-purple-200/60">
+                        <span key={idx} className="text-[10px] font-semibold bg-zinc-800 text-zinc-300 px-2 py-0.5 rounded-md border border-zinc-700">
                           #{t}
                         </span>
                       ))}
@@ -224,19 +235,19 @@ export default function NotesVault({
                   )}
 
                   {/* Note Body */}
-                  <div className="mt-3.5 p-4 bg-slate-50 rounded-2xl border border-slate-200/60 text-xs text-slate-800 font-mono whitespace-pre-wrap leading-relaxed shadow-inner">
+                  <div className="mt-3.5 p-4 bg-[#18181b] rounded-2xl border border-zinc-700/80 text-xs text-zinc-200 font-mono whitespace-pre-wrap leading-relaxed shadow-inner">
                     {item.notes}
                   </div>
                 </div>
 
                 {/* Footer link to subject */}
-                <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
-                  <span className="text-[11px] text-slate-500 font-medium">
-                    Status: <strong className="text-slate-800 capitalize">{item.topic.status}</strong>
+                <div className="pt-2 border-t border-zinc-800 flex items-center justify-between">
+                  <span className="text-[11px] text-zinc-400 font-medium">
+                    Status: <strong className="text-zinc-200 capitalize">{item.topic.status}</strong>
                   </span>
                   <button
                     onClick={() => onOpenSubject(item.semester, item.subject.id)}
-                    className="text-xs text-violet-700 hover:text-violet-900 flex items-center gap-1 font-bold"
+                    className="text-xs text-zinc-300 hover:text-white flex items-center gap-1 font-bold"
                   >
                     <span>View in Syllabus</span>
                     <ExternalLink className="w-3.5 h-3.5" />

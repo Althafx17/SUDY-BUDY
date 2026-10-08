@@ -66,34 +66,27 @@ export default function Sidebar({
   const s1Subjects = data?.S1?.subjects || [];
   const s2Subjects = data?.S2?.subjects || [];
 
-  // Theme-specific sidebar styling
+  // Theme-specific sidebar styling (Black & White is default)
   const getSidebarBgClass = () => {
     switch (currentTheme) {
+      case 'monochrome-light':
+        return 'bg-[#f4f4f5] text-[#09090b] border-r border-[#e4e4e7]';
       case 'ecoursie-studio':
-        return 'bg-[#5142be] text-white';
-      case 'cyber-dark':
-        return 'bg-[#090e1d] text-slate-100 border-r border-slate-800/80';
+        return 'bg-[#111113] text-white border-r border-[#27272a]';
       case 'zen-notion':
-        return 'bg-[#f4f3ef] text-stone-800 border-r border-stone-200/90';
-      case 'rainbow-sidebar':
+        return 'bg-[#0c0c0e] text-[#d4d4d8] border-r border-[#27272a]';
+      case 'monochrome-noir':
       default:
-        return 'bg-gradient-to-b from-[#251b5c] via-[#2d226e] to-[#1f1650] text-white';
+        return 'bg-[#09090b] text-[#f4f4f5] border-r border-[#27272a]';
     }
   };
 
+  const isLight = currentTheme === 'monochrome-light';
   const isZen = currentTheme === 'zen-notion';
-  const isCyber = currentTheme === 'cyber-dark';
 
-  // Rainbow color badges for modules 1-5
+  // Module color badges with explicit color codes
   const getModuleBadge = (modNumber) => {
-    const rainbowColors = [
-      { num: 'M1', text: 'text-violet-300', bg: 'bg-violet-500/20', border: 'border-violet-500/40', dot: 'bg-violet-400', active: 'bg-violet-600 text-white' },
-      { num: 'M2', text: 'text-cyan-300', bg: 'bg-cyan-500/20', border: 'border-cyan-500/40', dot: 'bg-cyan-400', active: 'bg-cyan-600 text-white' },
-      { num: 'M3', text: 'text-emerald-300', bg: 'bg-emerald-500/20', border: 'border-emerald-500/40', dot: 'bg-emerald-400', active: 'bg-emerald-600 text-white' },
-      { num: 'M4', text: 'text-amber-300', bg: 'bg-amber-500/20', border: 'border-amber-500/40', dot: 'bg-amber-400', active: 'bg-amber-600 text-white' },
-      { num: 'M5', text: 'text-rose-300', bg: 'bg-rose-500/20', border: 'border-rose-500/40', dot: 'bg-rose-400', active: 'bg-rose-600 text-white' },
-    ];
-    return rainbowColors[(modNumber - 1) % rainbowColors.length] || rainbowColors[0];
+    return MODULE_RAINBOW_COLORS[(modNumber - 1) % MODULE_RAINBOW_COLORS.length] || MODULE_RAINBOW_COLORS[0];
   };
 
   const renderSubjectItem = (sub, semesterKey) => {
@@ -104,11 +97,9 @@ export default function Sidebar({
 
     return (
       <div key={sub.id} className={`mb-2 rounded-2xl overflow-hidden transition-all ${
-        isZen 
-          ? 'bg-stone-200/50 border border-stone-200' 
-          : isCyber 
-            ? 'bg-slate-900/60 border border-slate-800' 
-            : 'bg-white/5 border border-white/10 hover:border-white/20'
+        isLight
+          ? 'bg-white border border-zinc-200 shadow-2xs'
+          : 'bg-[#121214] border border-[#27272a] hover:border-zinc-700'
       }`}>
         {/* Course Header */}
         <div 
@@ -118,28 +109,26 @@ export default function Sidebar({
           }}
           className={`flex items-center justify-between p-2.5 cursor-pointer transition-colors ${
             isSubjectActive 
-              ? isZen ? 'bg-stone-300/70 font-bold' : 'bg-white/15' 
-              : isZen ? 'hover:bg-stone-200/70' : 'hover:bg-white/10'
+              ? isLight ? 'bg-zinc-100 font-bold' : 'bg-zinc-800/80 text-white' 
+              : isLight ? 'hover:bg-zinc-50' : 'hover:bg-zinc-800/40'
           }`}
         >
           <div className="flex items-center gap-2 min-w-0 flex-1">
-            <span className={`text-[10px] font-mono font-black uppercase px-2 py-0.5 rounded-md border shrink-0 ${
-              isZen ? 'bg-stone-200 text-stone-700 border-stone-300' :
-              sub.code === 'MAT101' ? 'bg-violet-500/20 text-violet-300 border-violet-400/40' :
-              sub.code === 'CYT100' ? 'bg-cyan-500/20 text-cyan-300 border-cyan-400/40' :
-              sub.code === 'MAT102' ? 'bg-amber-500/20 text-amber-300 border-amber-400/40' :
-              'bg-emerald-500/20 text-emerald-300 border-emerald-400/40'
+            <span className={`text-[9px] font-mono font-black uppercase px-1.5 py-0.5 rounded border shrink-0 ${
+              isLight
+                ? 'bg-zinc-100 text-zinc-800 border-zinc-300'
+                : 'bg-zinc-900 text-zinc-300 border-zinc-700'
             }`}>
               {sub.code || 'KTU'}
             </span>
             <div className="truncate min-w-0 flex-1">
-              <p className={`text-xs font-bold truncate leading-tight ${isZen ? 'text-stone-900' : 'text-white'}`}>
+              <p className={`text-xs font-bold truncate leading-tight ${isLight ? 'text-zinc-900' : 'text-white'}`}>
                 {sub.name}
               </p>
               <div className="flex items-center gap-1.5 mt-0.5">
-                <span className={`text-[10px] ${isZen ? 'text-stone-500' : 'text-indigo-200/70'}`}>{modules.length} modules</span>
-                <span className={`text-[10px] ${isZen ? 'text-stone-300' : 'text-indigo-200/40'}`}>•</span>
-                <span className={`text-[10px] font-semibold ${isZen ? 'text-emerald-700' : 'text-emerald-400'}`}>{progress}%</span>
+                <span className={`text-[10px] ${isLight ? 'text-zinc-500' : 'text-zinc-400'}`}>{modules.length} modules</span>
+                <span className={`text-[10px] ${isLight ? 'text-zinc-300' : 'text-zinc-600'}`}>•</span>
+                <span className={`text-[10px] font-semibold ${isLight ? 'text-zinc-800' : 'text-zinc-300'}`}>{progress}%</span>
               </div>
             </div>
           </div>
@@ -148,7 +137,7 @@ export default function Sidebar({
           <button
             onClick={(e) => toggleCourseExpand(sub.id, e)}
             className={`p-1.5 rounded-lg transition-colors ml-1 shrink-0 ${
-              isZen ? 'text-stone-500 hover:text-stone-900 hover:bg-stone-200' : 'text-indigo-200 hover:text-white hover:bg-white/10'
+              isLight ? 'text-zinc-500 hover:text-zinc-900 hover:bg-zinc-200' : 'text-zinc-400 hover:text-white hover:bg-zinc-800'
             }`}
             title={isExpanded ? 'Collapse modules' : 'Expand modules'}
           >
@@ -160,22 +149,20 @@ export default function Sidebar({
           </button>
         </div>
 
-        {/* SUB LIST OF MODULES */}
+        {/* SUB LIST OF MODULES WITH COLOR CODES */}
         {isExpanded && (
           <div className={`px-2 pb-2 pt-1 border-t space-y-1 ${
-            isZen 
-              ? 'border-stone-200 bg-stone-100/60' 
-              : isCyber 
-                ? 'border-slate-800 bg-slate-950/60' 
-                : 'border-white/5 bg-black/10'
+            isLight 
+              ? 'border-zinc-200 bg-zinc-50/80' 
+              : 'border-[#27272a] bg-[#0c0c0e]'
           }`}>
             {modules.length === 0 ? (
-              <p className={`text-[11px] italic py-1 px-2 ${isZen ? 'text-stone-400' : 'text-indigo-200/60'}`}>
+              <p className={`text-[11px] italic py-1 px-2 ${isLight ? 'text-zinc-400' : 'text-zinc-500'}`}>
                 No modules enrolled
               </p>
             ) : (
               modules.map((mod, idx) => {
-                const modNumber = idx + 1;
+                const modNumber = mod.number || idx + 1;
                 const badge = getModuleBadge(modNumber);
                 const isModActive = isSubjectActive && activeModuleId === mod.id;
                 const modProgress = Math.round(calculateModuleProgress(mod) * 100);
@@ -190,47 +177,59 @@ export default function Sidebar({
                     }}
                     className={`w-full text-left flex items-center justify-between p-1.5 rounded-xl transition-all group ${
                       isModActive 
-                        ? isZen 
-                          ? 'bg-stone-900 text-white font-bold shadow-xs'
-                          : 'bg-white text-indigo-950 font-bold shadow-md shadow-black/20' 
-                        : isZen
-                          ? 'text-stone-700 hover:bg-stone-200'
-                          : 'text-indigo-100 hover:bg-white/10'
+                        ? isLight
+                          ? 'bg-zinc-900 text-white font-bold shadow-xs'
+                          : 'bg-white text-black font-black shadow-md' 
+                        : isLight
+                          ? 'text-zinc-700 hover:bg-zinc-200'
+                          : 'text-zinc-300 hover:bg-zinc-900 hover:text-white'
                     }`}
                   >
-                    <div className="flex items-center gap-2 min-w-0 flex-1">
-                      {/* Module Rainbow Badge */}
+                    <div className="flex items-center gap-1.5 min-w-0 flex-1">
+                      {/* Module Number Indicator */}
                       <span className={`text-[9px] font-black px-1.5 py-0.5 rounded-md border shrink-0 transition-transform group-hover:scale-105 ${
                         isModActive 
-                          ? badge.active 
-                          : `${badge.bg} ${badge.text} ${badge.border}`
+                          ? isLight ? 'bg-zinc-800 text-white border-zinc-700' : 'bg-black text-white border-black'
+                          : badge.badgeBg
                       }`}>
-                        {badge.num}
+                        M{modNumber}
                       </span>
                       
                       {/* Module Title */}
                       <span className={`text-[11px] truncate leading-tight ${
                         isModActive 
-                          ? isZen ? 'text-white font-black' : 'text-indigo-950 font-black' 
-                          : isZen ? 'text-stone-700 group-hover:text-stone-900' : 'text-indigo-100 group-hover:text-white'
+                          ? isLight ? 'text-white font-black' : 'text-black font-black' 
+                          : isLight ? 'text-zinc-700 group-hover:text-zinc-900' : 'text-zinc-300 group-hover:text-white'
                       }`}>
                         {mod.name.replace(/^Module\s*\d+\s*:\s*/i, '')}
                       </span>
+
+                      {/* Explicit Color Code Pill */}
+                      <span 
+                        style={{
+                          borderColor: `${badge.hex}50`,
+                          color: isModActive && !isLight ? '#000000' : badge.hex,
+                          backgroundColor: `${badge.hex}18`
+                        }}
+                        className="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded border shrink-0"
+                      >
+                        {badge.colorCode}
+                      </span>
                     </div>
 
-                    {/* Progress Indicator */}
+                    {/* Progress Indicator & Glowing Dot */}
                     <div className="flex items-center gap-1.5 shrink-0 ml-1.5">
-                      <span className={`text-[9px] font-bold ${
+                      <span className={`text-[9px] font-mono font-bold ${
                         isModActive 
-                          ? isZen ? 'text-stone-200' : 'text-indigo-900' 
-                          : isZen ? 'text-stone-500' : 'text-indigo-300/80 group-hover:text-white'
+                          ? isLight ? 'text-zinc-300' : 'text-zinc-800' 
+                          : 'text-zinc-400 group-hover:text-zinc-300'
                       }`}>
                         {modProgress}%
                       </span>
-                      <span className={`w-1.5 h-1.5 rounded-full ${
-                        modProgress === 100 ? 'bg-emerald-400' : 
-                        modProgress > 0 ? badge.dot : 'bg-white/20'
-                      }`} />
+                      <span 
+                        style={{ backgroundColor: badge.hex }}
+                        className="w-2 h-2 rounded-full shrink-0 shadow-xs" 
+                      />
                     </div>
                   </button>
                 );
@@ -256,11 +255,13 @@ export default function Sidebar({
       <aside 
         className={`fixed top-0 bottom-0 left-0 w-72 sm:w-80 ${getSidebarBgClass()} flex flex-col justify-between p-4 sm:p-5 select-none shadow-2xl z-50 transition-transform duration-300 lg:translate-x-0 ${
           isMobileOpen ? 'translate-x-0' : '-translate-x-full'
-        } lg:static lg:h-screen lg:shrink-0 overflow-hidden border-r border-white/10`}
+        } lg:static lg:h-screen lg:shrink-0 overflow-hidden ${
+          isLight ? 'border-r border-zinc-200' : 'border-r border-[#27272a]'
+        }`}
       >
         {/* Top Header & Brand */}
         <div className="flex flex-col h-full min-h-0">
-          <div className="flex items-center justify-between pb-4 border-b border-white/10">
+          <div className={`flex items-center justify-between pb-4 border-b ${isLight ? 'border-zinc-200' : 'border-[#27272a]'}`}>
             <div 
               onClick={() => {
                 onNavigate('dashboard');
@@ -268,31 +269,25 @@ export default function Sidebar({
               }}
               className="flex items-center gap-3 cursor-pointer group"
             >
-              <div className={`w-10 h-10 rounded-2xl flex items-center justify-center text-white shadow-lg group-hover:scale-105 transition-transform ${
-                currentTheme === 'ecoursie-studio' 
-                  ? 'bg-white/20 border border-white/30 text-2xl font-black' 
-                  : isZen 
-                    ? 'bg-stone-800 text-stone-100'
-                    : isCyber 
-                      ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/40 shadow-cyan-500/20'
-                      : 'bg-gradient-to-tr from-violet-500 via-pink-500 to-amber-400'
+              <div className={`w-10 h-10 rounded-2xl flex items-center justify-center font-black text-sm tracking-tighter shadow-md group-hover:scale-105 transition-transform ${
+                isLight ? 'bg-black text-white' : 'bg-white text-black'
               }`}>
-                {currentTheme === 'ecoursie-studio' ? 'ē' : '🌈'}
+                SB
               </div>
               <div>
                 <div className="flex items-center gap-1.5">
-                  <span className={`text-base font-black tracking-tight font-sans ${isZen ? 'text-stone-900' : 'text-white'}`}>
-                    {currentTheme === 'ecoursie-studio' ? 'ēCoursie' : 'Study Buddy'}
+                  <span className={`text-base font-black tracking-tight font-sans ${isLight ? 'text-zinc-900' : 'text-white'}`}>
+                    Study Buddy
                   </span>
-                  <span className={`text-[9px] font-black uppercase tracking-wider px-1.5 py-0.2 rounded-full border ${
-                    isZen 
-                      ? 'bg-stone-200 text-stone-700 border-stone-300' 
-                      : 'bg-white/15 text-pink-200 border-white/20'
+                  <span className={`text-[9px] font-mono font-black uppercase tracking-wider px-1.5 py-0.2 rounded-full border ${
+                    isLight 
+                      ? 'bg-zinc-100 text-zinc-900 border-zinc-300' 
+                      : 'bg-zinc-900 text-zinc-200 border-zinc-700'
                   }`}>
                     PRO
                   </span>
                 </div>
-                <p className={`text-[10px] font-semibold tracking-wide ${isZen ? 'text-stone-500' : 'text-indigo-200/70'}`}>
+                <p className={`text-[10px] font-semibold tracking-wide ${isLight ? 'text-zinc-500' : 'text-zinc-400'}`}>
                   KTU Academic Ledger
                 </p>
               </div>
@@ -301,7 +296,7 @@ export default function Sidebar({
             {/* Mobile close button */}
             <button
               onClick={onCloseMobile}
-              className={`p-1.5 rounded-xl lg:hidden ${isZen ? 'text-stone-500 hover:text-stone-900' : 'text-white/70 hover:text-white hover:bg-white/10'}`}
+              className={`p-1.5 rounded-xl lg:hidden ${isLight ? 'text-zinc-500 hover:text-zinc-900' : 'text-zinc-400 hover:text-white hover:bg-zinc-800'}`}
             >
               <X className="w-5 h-5" />
             </button>
@@ -311,7 +306,7 @@ export default function Sidebar({
           <div className="flex-1 overflow-y-auto py-4 space-y-5 pr-1 custom-scrollbar">
             {/* Primary Navigation */}
             <div>
-              <div className={`text-[10px] font-black uppercase tracking-wider px-2 mb-2 ${isZen ? 'text-stone-400' : 'text-indigo-200/60'}`}>
+              <div className={`text-[10px] font-black uppercase tracking-wider px-2 mb-2 ${isLight ? 'text-zinc-400' : 'text-zinc-500'}`}>
                 Navigation
               </div>
               <nav className="space-y-1">
@@ -328,18 +323,18 @@ export default function Sidebar({
                       }}
                       className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all text-left group ${
                         isActive
-                          ? isZen 
-                            ? 'bg-stone-900 text-white shadow-xs font-black'
-                            : 'bg-white text-indigo-950 shadow-lg shadow-black/15 font-black'
-                          : isZen
-                            ? 'text-stone-700 hover:bg-stone-200/80 hover:text-stone-900'
-                            : 'text-indigo-100 hover:bg-white/10 hover:text-white'
+                          ? isLight 
+                            ? 'bg-black text-white shadow-sm font-black'
+                            : 'bg-white text-black shadow-lg shadow-black/40 font-black'
+                          : isLight
+                            ? 'text-zinc-700 hover:bg-zinc-200/80 hover:text-black'
+                            : 'text-zinc-400 hover:bg-zinc-900 hover:text-white'
                       }`}
                     >
                       <Icon className={`w-4 h-4 shrink-0 ${
                         isActive 
-                          ? isZen ? 'text-white' : 'text-violet-600' 
-                          : isZen ? 'text-stone-400 group-hover:text-stone-800' : 'text-indigo-300 group-hover:text-white'
+                          ? isLight ? 'text-white' : 'text-black' 
+                          : isLight ? 'text-zinc-400 group-hover:text-black' : 'text-zinc-500 group-hover:text-white'
                       }`} />
                       <span className="tracking-wide text-xs">{item.label}</span>
                     </button>
@@ -350,10 +345,10 @@ export default function Sidebar({
 
             {/* Semester Switcher Pill Bar */}
             <div className={`p-1.5 rounded-2xl border ${
-              isZen ? 'bg-stone-200/60 border-stone-300' : 'bg-black/20 border-white/10'
+              isLight ? 'bg-zinc-100 border-zinc-200' : 'bg-[#121214] border-[#27272a]'
             }`}>
               <div className={`flex items-center justify-between text-[10px] font-black uppercase tracking-wider px-2 mb-1.5 ${
-                isZen ? 'text-stone-600' : 'text-indigo-200/70'
+                isLight ? 'text-zinc-500' : 'text-zinc-400'
               }`}>
                 <span>Active Semester</span>
               </div>
@@ -362,16 +357,20 @@ export default function Sidebar({
                   onClick={() => onSelectSemester('S1')}
                   className={`py-1.5 px-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
                     currentSemester === 'S1'
-                      ? isZen 
-                        ? 'bg-stone-900 text-white shadow-xs'
-                        : 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-md'
-                      : isZen
-                        ? 'text-stone-600 hover:bg-stone-300'
-                        : 'text-indigo-200/80 hover:bg-white/10 hover:text-white'
+                      ? isLight 
+                        ? 'bg-black text-white font-black shadow-xs'
+                        : 'bg-white text-black font-black shadow-sm'
+                      : isLight
+                        ? 'text-zinc-600 hover:bg-zinc-200'
+                        : 'text-zinc-400 hover:bg-zinc-800 hover:text-white'
                   }`}
                 >
                   <span>Semester 1</span>
-                  <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${isZen ? 'bg-stone-700 text-white' : 'bg-white/20 text-white'}`}>
+                  <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
+                    currentSemester === 'S1'
+                      ? isLight ? 'bg-zinc-800 text-white' : 'bg-zinc-200 text-black'
+                      : isLight ? 'bg-zinc-200 text-zinc-700' : 'bg-zinc-800 text-zinc-300'
+                  }`}>
                     {s1Subjects.length}
                   </span>
                 </button>
@@ -380,16 +379,20 @@ export default function Sidebar({
                   onClick={() => onSelectSemester('S2')}
                   className={`py-1.5 px-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
                     currentSemester === 'S2'
-                      ? isZen 
-                        ? 'bg-stone-900 text-white shadow-xs'
-                        : 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-md'
-                      : isZen
-                        ? 'text-stone-600 hover:bg-stone-300'
-                        : 'text-indigo-200/80 hover:bg-white/10 hover:text-white'
+                      ? isLight 
+                        ? 'bg-black text-white font-black shadow-xs'
+                        : 'bg-white text-black font-black shadow-sm'
+                      : isLight
+                        ? 'text-zinc-600 hover:bg-zinc-200'
+                        : 'text-zinc-400 hover:bg-zinc-800 hover:text-white'
                   }`}
                 >
                   <span>Semester 2</span>
-                  <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${isZen ? 'bg-stone-700 text-white' : 'bg-white/20 text-white'}`}>
+                  <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
+                    currentSemester === 'S2'
+                      ? isLight ? 'bg-zinc-800 text-white' : 'bg-zinc-200 text-black'
+                      : isLight ? 'bg-zinc-200 text-zinc-700' : 'bg-zinc-800 text-zinc-300'
+                  }`}>
                     {s2Subjects.length}
                   </span>
                 </button>
@@ -400,13 +403,13 @@ export default function Sidebar({
             <div>
               <div className="flex items-center justify-between px-2 mb-2">
                 <div className="flex items-center gap-1.5">
-                  <GraduationCap className={`w-3.5 h-3.5 ${isZen ? 'text-stone-600' : 'text-pink-300'}`} />
-                  <span className={`text-[11px] font-black uppercase tracking-wider ${isZen ? 'text-stone-800' : 'text-white'}`}>
+                  <GraduationCap className={`w-3.5 h-3.5 ${isLight ? 'text-zinc-600' : 'text-zinc-400'}`} />
+                  <span className={`text-[11px] font-black uppercase tracking-wider ${isLight ? 'text-zinc-900' : 'text-white'}`}>
                     Courses Taken ({currentSemester === 'S1' ? s1Subjects.length : s2Subjects.length})
                   </span>
                 </div>
-                <span className={`text-[10px] font-bold ${isZen ? 'text-stone-400' : 'text-indigo-300/70'}`}>
-                  5 Modules each
+                <span className={`text-[10px] font-bold ${isLight ? 'text-zinc-500' : 'text-zinc-400'}`}>
+                  Color-Coded
                 </span>
               </div>
 
@@ -418,14 +421,14 @@ export default function Sidebar({
               </div>
 
               {/* Option to view other semester courses */}
-              <div className={`mt-4 pt-3 border-t ${isZen ? 'border-stone-200' : 'border-white/10'}`}>
+              <div className={`mt-4 pt-3 border-t ${isLight ? 'border-zinc-200' : 'border-[#27272a]'}`}>
                 <div className="flex items-center justify-between px-2 mb-2">
-                  <span className={`text-[10px] font-black uppercase tracking-wider ${isZen ? 'text-stone-400' : 'text-indigo-200/60'}`}>
+                  <span className={`text-[10px] font-black uppercase tracking-wider ${isLight ? 'text-zinc-400' : 'text-zinc-500'}`}>
                     {currentSemester === 'S1' ? 'Semester 2 Courses' : 'Semester 1 Courses'}
                   </span>
                   <button
                     onClick={() => onSelectSemester(currentSemester === 'S1' ? 'S2' : 'S1')}
-                    className={`text-[10px] font-bold underline ${isZen ? 'text-stone-700 hover:text-stone-900' : 'text-pink-300 hover:text-white'}`}
+                    className={`text-[10px] font-bold underline ${isLight ? 'text-zinc-800 hover:text-black' : 'text-zinc-300 hover:text-white'}`}
                   >
                     Switch
                   </button>
@@ -440,7 +443,7 @@ export default function Sidebar({
           </div>
 
           {/* Bottom Footer Actions */}
-          <div className={`pt-3 border-t space-y-2 shrink-0 ${isZen ? 'border-stone-200' : 'border-white/10'}`}>
+          <div className={`pt-3 border-t space-y-2 shrink-0 ${isLight ? 'border-zinc-200' : 'border-[#27272a]'}`}>
             {/* Theme Switcher Quick Button */}
             {onOpenThemeModal && (
               <button
@@ -449,17 +452,17 @@ export default function Sidebar({
                   if (onCloseMobile) onCloseMobile();
                 }}
                 className={`w-full flex items-center justify-between px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
-                  isZen 
-                    ? 'bg-stone-200 hover:bg-stone-300 text-stone-800' 
-                    : 'bg-white/10 hover:bg-white/20 text-white'
+                  isLight 
+                    ? 'bg-zinc-100 hover:bg-zinc-200 text-zinc-900 border border-zinc-200' 
+                    : 'bg-[#121214] hover:bg-zinc-900 text-white border border-[#27272a]'
                 }`}
               >
                 <div className="flex items-center gap-2">
-                  <Palette className="w-4 h-4 text-amber-400" />
+                  <Palette className="w-4 h-4 text-zinc-400" />
                   <span>UI Theme Studio</span>
                 </div>
-                <span className="text-[10px] uppercase font-mono px-1.5 py-0.2 rounded bg-black/20">
-                  5 Layouts
+                <span className="text-[10px] uppercase font-mono px-1.5 py-0.2 rounded bg-white/10 text-zinc-400">
+                  B&W
                 </span>
               </button>
             )}
@@ -471,16 +474,16 @@ export default function Sidebar({
                 if (onCloseMobile) onCloseMobile();
               }}
               className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-bold transition-all shadow-md group ${
-                isZen
-                  ? 'bg-stone-900 text-white hover:bg-stone-800'
-                  : 'bg-gradient-to-r from-pink-500/20 via-purple-500/20 to-indigo-500/20 hover:from-pink-500/30 hover:to-indigo-500/30 border border-pink-400/30 text-white'
+                isLight
+                  ? 'bg-zinc-900 text-white hover:bg-black'
+                  : 'bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-white'
               }`}
             >
               <div className="flex items-center gap-2">
-                <Flame className="w-4 h-4 text-pink-400 group-hover:scale-110 transition-transform" />
+                <Flame className="w-4 h-4 text-zinc-300 group-hover:scale-110 transition-transform" />
                 <span>Focus Room & Lo-Fi</span>
               </div>
-              <span className="text-[10px] bg-pink-500/30 text-pink-200 px-2 py-0.5 rounded-full font-bold">
+              <span className="text-[10px] bg-white/10 text-zinc-200 px-2 py-0.5 rounded-full font-bold">
                 Open
               </span>
             </button>
@@ -493,11 +496,11 @@ export default function Sidebar({
               }}
               className={`w-full flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-bold transition-all text-left ${
                 currentView === 'settings'
-                  ? isZen ? 'bg-stone-900 text-white font-black' : 'bg-white text-indigo-950 font-black'
-                  : isZen ? 'text-stone-600 hover:bg-stone-200' : 'text-indigo-200/80 hover:bg-white/10 hover:text-white'
+                  ? isLight ? 'bg-black text-white font-black' : 'bg-white text-black font-black'
+                  : isLight ? 'text-zinc-600 hover:bg-zinc-200' : 'text-zinc-400 hover:bg-zinc-900 hover:text-white'
               }`}
             >
-              <SettingsIcon className={`w-4 h-4 ${isZen ? 'text-stone-500' : 'text-indigo-300'}`} />
+              <SettingsIcon className={`w-4 h-4 ${isLight ? 'text-zinc-500' : 'text-zinc-400'}`} />
               <span>Settings & Theme Studio</span>
             </button>
           </div>

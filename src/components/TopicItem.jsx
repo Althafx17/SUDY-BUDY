@@ -213,32 +213,32 @@ export default function TopicItem({
     setShowPQHintMap(prev => ({ ...prev, [pqId]: !prev[pqId] }));
   };
 
-  // Status color badge helper for Apple light theme
+  // Status color badge helper for monochrome theme
   const getStatusBadge = () => {
     switch (topic.status) {
       case 'revised':
         return {
           label: 'Revised',
-          color: 'bg-emerald-100 text-emerald-800 border-emerald-200',
-          icon: <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+          color: 'bg-emerald-950/70 text-emerald-300 border-emerald-800/80',
+          icon: <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
         };
       case 'needs-revision':
         return {
           label: 'Needs Revision',
-          color: 'bg-amber-100 text-amber-800 border-amber-200',
-          icon: <AlertCircle className="w-3.5 h-3.5 text-amber-600" />
+          color: 'bg-amber-950/70 text-amber-300 border-amber-800/80',
+          icon: <AlertCircle className="w-3.5 h-3.5 text-amber-400" />
         };
       case 'studied':
         return {
           label: 'Studied',
-          color: 'bg-blue-100 text-blue-800 border-blue-200',
-          icon: <Clock className="w-3.5 h-3.5 text-blue-600" />
+          color: 'bg-zinc-800 text-zinc-200 border-zinc-700',
+          icon: <Clock className="w-3.5 h-3.5 text-zinc-300" />
         };
       default:
         return {
           label: 'Not Started',
-          color: 'bg-slate-100 text-slate-600 border-slate-200',
-          icon: <Circle className="w-3.5 h-3.5 text-slate-400" />
+          color: 'bg-zinc-900 text-zinc-400 border-zinc-800',
+          icon: <Circle className="w-3.5 h-3.5 text-zinc-500" />
         };
     }
   };
@@ -248,10 +248,10 @@ export default function TopicItem({
   return (
     <div className={`group rounded-[22px] border transition-all duration-300 ${
       topic.status === 'revised' 
-        ? 'bg-emerald-50/50 border-emerald-200 shadow-sm' 
+        ? 'bg-[#121413] border-emerald-900/60 shadow-sm' 
         : topic.status === 'needs-revision'
-        ? 'bg-amber-50/50 border-amber-200 shadow-sm'
-        : 'bg-white border-slate-200/80 hover:border-slate-300 shadow-sm'
+        ? 'bg-[#151310] border-amber-900/60 shadow-sm'
+        : 'bg-[#121214] border-zinc-800/80 hover:border-zinc-700 shadow-sm'
     }`}>
       {/* Main Bar */}
       <div className="p-4 sm:p-4.5 flex flex-col md:flex-row md:items-center justify-between gap-3">
@@ -264,26 +264,26 @@ export default function TopicItem({
               else if (topic.status === 'needs-revision') handleStatusChange('revised');
               else handleStatusChange('not-started');
             }}
-            className="mt-0.5 shrink-0 text-slate-400 hover:text-slate-700 transition-colors"
+            className="mt-0.5 shrink-0 text-zinc-500 hover:text-zinc-300 transition-colors"
             title="Cycle topic status"
           >
             {topic.status === 'revised' ? (
-              <CheckCircle2 className="w-5 h-5 text-emerald-600 fill-emerald-100" />
+              <CheckCircle2 className="w-5 h-5 text-emerald-400 fill-emerald-950/60" />
             ) : topic.status === 'needs-revision' ? (
-              <AlertCircle className="w-5 h-5 text-amber-600 fill-amber-100" />
+              <AlertCircle className="w-5 h-5 text-amber-400 fill-amber-950/60" />
             ) : topic.status === 'studied' ? (
-              <div className="w-5 h-5 rounded-full border-2 border-blue-500 flex items-center justify-center">
-                <div className="w-2.5 h-2.5 rounded-full bg-blue-500" />
+              <div className="w-5 h-5 rounded-full border-2 border-white flex items-center justify-center">
+                <div className="w-2.5 h-2.5 rounded-full bg-white" />
               </div>
             ) : (
-              <Circle className="w-5 h-5 text-slate-300 hover:text-slate-500" />
+              <Circle className="w-5 h-5 text-zinc-600 hover:text-zinc-400" />
             )}
           </button>
 
           <div className="flex-1 min-w-0">
             <div className="flex flex-wrap items-center gap-2">
               <span className={`text-base font-bold transition-all ${
-                topic.status === 'revised' ? 'text-slate-500 line-through/20' : 'text-slate-900'
+                topic.status === 'revised' ? 'text-zinc-500 line-through/30' : 'text-zinc-100'
               }`}>
                 {topic.name}
               </span>
@@ -295,10 +295,10 @@ export default function TopicItem({
                   onChange={(e) => handleStatusChange(e.target.value)}
                   className={`text-xs font-bold px-3 py-1 rounded-full border appearance-none pr-6 cursor-pointer outline-none transition-colors ${statusBadge.color}`}
                 >
-                  <option value="not-started">Not Started</option>
-                  <option value="studied">Studied</option>
-                  <option value="needs-revision">Needs Revision</option>
-                  <option value="revised">Revised</option>
+                  <option value="not-started" className="bg-zinc-900 text-zinc-300">Not Started</option>
+                  <option value="studied" className="bg-zinc-900 text-zinc-300">Studied</option>
+                  <option value="needs-revision" className="bg-zinc-900 text-amber-300">Needs Revision</option>
+                  <option value="revised" className="bg-zinc-900 text-emerald-300">Revised</option>
                 </select>
                 <ChevronDown className="w-3 h-3 absolute right-2 pointer-events-none opacity-60" />
               </div>
@@ -309,8 +309,8 @@ export default function TopicItem({
                   onClick={handleToggleRevisionFlag}
                   className={`inline-flex items-center gap-1 text-xs font-bold px-3 py-1 rounded-full border transition-all ${
                     topic.status === 'needs-revision'
-                      ? 'bg-amber-100 text-amber-800 border-amber-300 shadow-sm'
-                      : 'bg-slate-100 text-slate-600 border-slate-200 hover:text-amber-800 hover:border-amber-300 hover:bg-amber-50'
+                      ? 'bg-amber-950/70 text-amber-300 border-amber-800 shadow-sm'
+                      : 'bg-zinc-900 text-zinc-400 border-zinc-800 hover:text-amber-300 hover:border-amber-800 hover:bg-amber-950/40'
                   }`}
                   title="Toggle revision flag"
                 >
@@ -323,39 +323,39 @@ export default function TopicItem({
             {/* Sub-topics count, PYQ badge, YouTube badge, notes & tags */}
             <div className="flex flex-wrap items-center gap-2 mt-2">
               {topic.subTopics && topic.subTopics.length > 0 && (
-                <span className="text-xs font-medium text-slate-600 bg-slate-100 px-2 py-0.5 rounded-lg border border-slate-200 flex items-center gap-1">
-                  <CheckSquare className="w-3.5 h-3.5 text-violet-600" />
+                <span className="text-xs font-medium text-zinc-300 bg-zinc-900/90 px-2 py-0.5 rounded-lg border border-zinc-800 flex items-center gap-1">
+                  <CheckSquare className="w-3.5 h-3.5 text-zinc-400" />
                   <span>{topic.subTopics.filter(st => st.done).length}/{topic.subTopics.length} to-dos ({completionPercent}%)</span>
                 </span>
               )}
 
               {/* Topic-Wise Previous Exam Questions Badge */}
               {totalPQCount > 0 && (
-                <span className="text-xs font-bold text-indigo-700 bg-indigo-50 px-2.5 py-0.5 rounded-lg border border-indigo-200/80 flex items-center gap-1.5 shadow-2xs">
-                  <Award className="w-3.5 h-3.5 text-indigo-600" />
+                <span className="text-xs font-bold text-zinc-200 bg-zinc-900/90 px-2.5 py-0.5 rounded-lg border border-zinc-700/80 flex items-center gap-1.5 shadow-2xs">
+                  <Award className="w-3.5 h-3.5 text-zinc-300" />
                   <span>{solvedPQCount}/{totalPQCount} PYQ{totalPQCount > 1 ? 's' : ''} ({totalPQMarks} M)</span>
                 </span>
               )}
 
               {topic.youtubeUrl && (
-                <span className="text-xs text-red-700 bg-red-50 px-2 py-0.5 rounded-lg border border-red-200 flex items-center gap-1 font-bold">
-                  <YouTubeIcon className="w-3.5 h-3.5 text-red-600" /> YT Video
+                <span className="text-xs text-red-400 bg-red-950/40 px-2 py-0.5 rounded-lg border border-red-900/50 flex items-center gap-1 font-bold">
+                  <YouTubeIcon className="w-3.5 h-3.5 text-red-500" /> YT Video
                 </span>
               )}
 
               {topic.notes && topic.notes.trim().length > 0 && (
-                <span className="text-xs text-purple-700 bg-purple-50 px-2 py-0.5 rounded-lg border border-purple-200 flex items-center gap-1 font-medium">
-                  <FileText className="w-3.5 h-3.5 text-purple-600" /> Note attached
+                <span className="text-xs text-zinc-300 bg-zinc-900/90 px-2 py-0.5 rounded-lg border border-zinc-800 flex items-center gap-1 font-medium">
+                  <FileText className="w-3.5 h-3.5 text-zinc-400" /> Note attached
                 </span>
               )}
 
               {/* Tags */}
               {(topic.tags || []).map((tag, idx) => (
-                <span key={idx} className="text-[11px] font-semibold bg-slate-100 text-slate-700 px-2 py-0.5 rounded-md border border-slate-200 flex items-center gap-1">
+                <span key={idx} className="text-[11px] font-semibold bg-zinc-900 text-zinc-300 px-2 py-0.5 rounded-md border border-zinc-800 flex items-center gap-1">
                   #{tag}
                   <button 
                     onClick={() => handleRemoveTag(tag)}
-                    className="hover:text-red-600 text-slate-400 ml-0.5 font-bold"
+                    className="hover:text-red-400 text-zinc-500 ml-0.5 font-bold"
                   >
                     ×
                   </button>
@@ -371,18 +371,18 @@ export default function TopicItem({
             onClick={() => setIsExpanded(!isExpanded)}
             className={`flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-xl border transition-all ${
               isExpanded 
-                ? 'bg-violet-100 text-violet-800 border-violet-300' 
-                : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
+                ? 'bg-white text-black border-white shadow-xs' 
+                : 'bg-zinc-900 text-zinc-300 border-zinc-800 hover:bg-zinc-800 hover:text-white'
             }`}
           >
-            <FileText className="w-3.5 h-3.5 text-violet-600" />
+            <FileText className="w-3.5 h-3.5 text-current" />
             <span>To-Dos & Media</span>
             {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
           </button>
 
           <button
             onClick={() => onDeleteTopic(topic.id)}
-            className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-colors"
+            className="p-1.5 text-zinc-500 hover:text-rose-400 hover:bg-rose-950/40 rounded-xl transition-colors"
             title="Delete topic"
           >
             <Trash2 className="w-4 h-4" />
@@ -392,9 +392,9 @@ export default function TopicItem({
 
       {/* Progress Bar under topic */}
       {topic.subTopics && topic.subTopics.length > 0 && (
-        <div className="w-full bg-slate-100 h-1.5">
+        <div className="w-full bg-zinc-900 h-1.5">
           <div 
-            className="bg-gradient-to-r from-violet-500 via-indigo-500 to-purple-500 h-1.5 transition-all duration-300"
+            className="bg-gradient-to-r from-zinc-400 to-white h-1.5 transition-all duration-300"
             style={{ width: `${completionPercent}%` }}
           />
         </div>
@@ -402,12 +402,12 @@ export default function TopicItem({
 
       {/* Expanded Drawer: To-Dos, YouTube Video, Notes & Tags */}
       {isExpanded && (
-        <div className="p-5 border-t border-slate-100 bg-slate-50/70 rounded-b-[22px] space-y-4 transition-all">
+        <div className="p-5 border-t border-zinc-800 bg-[#0d0d0f] rounded-b-[22px] space-y-4 transition-all">
           {/* Attached YouTube Lecture Video Section */}
           <div>
             <div className="flex items-center justify-between mb-2">
-              <label className="text-xs font-bold uppercase tracking-wider text-slate-600 flex items-center gap-1.5">
-                <YouTubeIcon className="w-3.5 h-3.5 text-red-600" />
+              <label className="text-xs font-bold uppercase tracking-wider text-zinc-400 flex items-center gap-1.5">
+                <YouTubeIcon className="w-3.5 h-3.5 text-red-500" />
                 <span>Lecture Video / Tutorial (YouTube)</span>
               </label>
 
@@ -415,7 +415,7 @@ export default function TopicItem({
                 <button
                   type="button"
                   onClick={() => setIsAddingYt(true)}
-                  className="text-xs font-bold text-red-600 hover:text-red-700 flex items-center gap-1"
+                  className="text-xs font-bold text-zinc-300 hover:text-white flex items-center gap-1"
                 >
                   <Plus className="w-3.5 h-3.5" /> Attach YouTube Video
                 </button>
@@ -431,32 +431,32 @@ export default function TopicItem({
                 initialExpanded={false}
               />
             ) : isAddingYt ? (
-              <form onSubmit={handleAttachYouTube} className="flex items-center gap-2 p-2.5 rounded-2xl bg-white border border-red-200">
+              <form onSubmit={handleAttachYouTube} className="flex items-center gap-2 p-2.5 rounded-2xl bg-[#141416] border border-zinc-700">
                 <input
                   type="url"
                   value={ytVideoInput}
                   onChange={(e) => setYtVideoInput(e.target.value)}
                   placeholder="Paste YouTube video link (e.g. https://www.youtube.com/watch?v=...)"
                   autoFocus
-                  className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-red-500"
+                  className="flex-1 bg-[#09090b] border border-zinc-700 rounded-xl px-3 py-1.5 text-xs text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-zinc-400"
                 />
                 <button
                   type="submit"
                   disabled={!ytVideoInput.trim()}
-                  className="px-3.5 py-1.5 bg-red-600 hover:bg-red-700 disabled:opacity-40 text-white rounded-xl text-xs font-bold"
+                  className="px-3.5 py-1.5 bg-white hover:bg-zinc-200 disabled:opacity-40 text-black rounded-xl text-xs font-bold"
                 >
                   Attach
                 </button>
                 <button
                   type="button"
                   onClick={() => setIsAddingYt(false)}
-                  className="px-2 py-1.5 text-xs text-slate-500 hover:text-slate-800"
+                  className="px-2 py-1.5 text-xs text-zinc-400 hover:text-zinc-200"
                 >
                   Cancel
                 </button>
               </form>
             ) : (
-              <p className="text-[11px] text-slate-400 italic">
+              <p className="text-[11px] text-zinc-500 italic">
                 No YouTube lecture attached yet. Click "Attach YouTube Video" to link concept lectures or tutorials.
               </p>
             )}
@@ -465,10 +465,10 @@ export default function TopicItem({
           {/* Topic To-Dos / Checklist Section */}
           <div>
             <div className="flex items-center justify-between mb-2">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-600 flex items-center gap-1.5">
-                <ListTodo className="w-3.5 h-3.5 text-violet-600" />
+              <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-400 flex items-center gap-1.5">
+                <ListTodo className="w-3.5 h-3.5 text-zinc-300" />
                 <span>Topic Action Items & To-Dos</span>
-                <span className="text-[11px] font-semibold text-slate-500">
+                <span className="text-[11px] font-semibold text-zinc-500">
                   ({(topic.subTopics || []).filter(s => s.done).length}/{(topic.subTopics || []).length} done)
                 </span>
               </h4>
@@ -477,29 +477,29 @@ export default function TopicItem({
             {/* Checklist items */}
             <div className="space-y-1.5">
               {(topic.subTopics || []).length === 0 ? (
-                <p className="text-xs text-slate-400 italic py-1">
+                <p className="text-xs text-zinc-500 italic py-1">
                   No to-dos yet. Add action items below (e.g. "Watch lecture video", "Solve exercise 4.2", "Review cheat sheet").
                 </p>
               ) : (
                 topic.subTopics.map((st) => (
                   <div 
                     key={st.id} 
-                    className="flex items-center justify-between gap-2 p-2.5 rounded-xl bg-white hover:bg-slate-100/80 transition-colors border border-slate-200/70 group/sub"
+                    className="flex items-center justify-between gap-2 p-2.5 rounded-xl bg-[#141416] hover:bg-[#1a1a1e] transition-colors border border-zinc-800 group/sub"
                   >
                     <label className="flex items-center gap-2.5 flex-1 min-w-0 cursor-pointer">
                       <input
                         type="checkbox"
                         checked={st.done}
                         onChange={() => handleToggleSubTopic(st.id)}
-                        className="w-4 h-4 rounded border-slate-300 text-violet-600 focus:ring-0 cursor-pointer"
+                        className="w-4 h-4 rounded border-zinc-700 bg-zinc-900 text-white focus:ring-0 cursor-pointer accent-white"
                       />
-                      <span className={`text-xs font-medium transition-colors ${st.done ? 'line-through text-slate-400' : 'text-slate-800'}`}>
+                      <span className={`text-xs font-medium transition-colors ${st.done ? 'line-through text-zinc-500' : 'text-zinc-200'}`}>
                         {st.name}
                       </span>
                     </label>
                     <button
                       onClick={() => handleDeleteSubTopic(st.id)}
-                      className="opacity-0 group-hover/sub:opacity-100 p-1 text-slate-400 hover:text-rose-600 transition-all"
+                      className="opacity-0 group-hover/sub:opacity-100 p-1 text-zinc-500 hover:text-rose-400 transition-all"
                       title="Delete action item"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
@@ -516,12 +516,12 @@ export default function TopicItem({
                 value={newSubTopicName}
                 onChange={(e) => setNewSubTopicName(e.target.value)}
                 placeholder="Add new topic to-do (e.g. solve numerical problem, derive formula)..."
-                className="flex-1 bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-violet-500"
+                className="flex-1 bg-[#141416] border border-zinc-700 rounded-xl px-3 py-1.5 text-xs text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-zinc-400"
               />
               <button
                 type="submit"
                 disabled={!newSubTopicName.trim()}
-                className="px-3.5 py-1.5 bg-violet-600 hover:bg-violet-700 disabled:opacity-40 text-white rounded-xl text-xs font-bold flex items-center gap-1 transition-colors shrink-0"
+                className="px-3.5 py-1.5 bg-white hover:bg-zinc-200 disabled:opacity-40 text-black rounded-xl text-xs font-bold flex items-center gap-1 transition-colors shrink-0"
               >
                 <Plus className="w-3.5 h-3.5" />
                 <span>Add To-Do</span>
@@ -530,20 +530,20 @@ export default function TopicItem({
           </div>
 
           {/* Topic-Wise Previous Exam Questions (PYQ) Section */}
-          <div className="p-4 rounded-2xl bg-white border border-indigo-100 shadow-sm space-y-3">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2.5 border-b border-indigo-50">
+          <div className="p-4 rounded-2xl bg-[#141416] border border-zinc-800 shadow-sm space-y-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2.5 border-b border-zinc-800">
               <div className="flex items-center gap-2">
-                <span className="w-7 h-7 rounded-xl bg-indigo-100 flex items-center justify-center text-indigo-700 shrink-0">
+                <span className="w-7 h-7 rounded-xl bg-zinc-800 flex items-center justify-center text-zinc-200 shrink-0">
                   <Award className="w-4 h-4" />
                 </span>
                 <div>
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-900 flex flex-wrap items-center gap-1.5">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-100 flex flex-wrap items-center gap-1.5">
                     <span>Topic Previous Exam Questions</span>
-                    <span className="text-[11px] font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-md border border-indigo-200">
+                    <span className="text-[11px] font-bold text-zinc-200 bg-zinc-800 px-2 py-0.5 rounded-md border border-zinc-700">
                       {solvedPQCount}/{totalPQCount} Solved • {totalPQMarks} Marks
                     </span>
                   </h4>
-                  <p className="text-[11px] text-slate-500 font-medium">
+                  <p className="text-[11px] text-zinc-400 font-medium">
                     Past university and midterm questions asked specifically on this concept.
                   </p>
                 </div>
@@ -553,7 +553,7 @@ export default function TopicItem({
                 <button
                   type="button"
                   onClick={() => setIsAddingPQ(true)}
-                  className="px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors self-start sm:self-auto border border-indigo-200"
+                  className="px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-100 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors self-start sm:self-auto border border-zinc-700"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   <span>Add Exam Question</span>
@@ -563,23 +563,23 @@ export default function TopicItem({
 
             {/* Add Past Question Form */}
             {isAddingPQ && (
-              <form onSubmit={handleAddPQ} className="p-3.5 rounded-xl bg-indigo-50/70 border border-indigo-200 space-y-3 animate-in fade-in duration-200">
+              <form onSubmit={handleAddPQ} className="p-3.5 rounded-xl bg-[#18181b] border border-zinc-700 space-y-3 animate-in fade-in duration-200">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-indigo-900 flex items-center gap-1">
-                    <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
+                  <span className="text-xs font-bold text-zinc-200 flex items-center gap-1">
+                    <Sparkles className="w-3.5 h-3.5 text-zinc-300" />
                     Record Previous Exam Question
                   </span>
                   <button
                     type="button"
                     onClick={() => setIsAddingPQ(false)}
-                    className="text-xs text-slate-400 hover:text-slate-600 font-medium"
+                    className="text-xs text-zinc-400 hover:text-zinc-200 font-medium"
                   >
                     Cancel
                   </button>
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-bold text-slate-700 mb-1">
+                  <label className="block text-[11px] font-bold text-zinc-300 mb-1">
                     Question Statement *
                   </label>
                   <textarea
@@ -588,26 +588,26 @@ export default function TopicItem({
                     placeholder="e.g. State Coffman conditions for deadlock and solve Banker's safety algorithm with allocation matrix..."
                     rows={2}
                     required
-                    className="w-full bg-white border border-slate-200 rounded-xl p-2.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500 font-sans"
+                    className="w-full bg-[#09090b] border border-zinc-700 rounded-xl p-2.5 text-xs text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-zinc-400 font-sans"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                   <div>
-                    <label className="block text-[10px] font-bold text-slate-600 mb-0.5">Year</label>
+                    <label className="block text-[10px] font-bold text-zinc-400 mb-0.5">Year</label>
                     <input
                       type="number"
                       value={newPQYear}
                       onChange={(e) => setNewPQYear(e.target.value)}
-                      className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1 text-xs text-slate-900 focus:outline-none focus:border-indigo-500"
+                      className="w-full bg-[#09090b] border border-zinc-700 rounded-lg px-2.5 py-1 text-xs text-zinc-100 focus:outline-none focus:border-zinc-400"
                     />
                   </div>
                   <div>
-                    <label className="block text-[10px] font-bold text-slate-600 mb-0.5">Exam</label>
+                    <label className="block text-[10px] font-bold text-zinc-400 mb-0.5">Exam</label>
                     <select
                       value={newPQExam}
                       onChange={(e) => setNewPQExam(e.target.value)}
-                      className="w-full bg-white border border-slate-200 rounded-lg px-2 py-1 text-xs text-slate-900 focus:outline-none focus:border-indigo-500"
+                      className="w-full bg-[#09090b] border border-zinc-700 rounded-lg px-2.5 py-1 text-xs text-zinc-100 focus:outline-none focus:border-zinc-400"
                     >
                       <option value="End-Sem Final">End-Sem Final</option>
                       <option value="Midterm Exam">Midterm Exam</option>
@@ -616,28 +616,28 @@ export default function TopicItem({
                     </select>
                   </div>
                   <div>
-                    <label className="block text-[10px] font-bold text-slate-600 mb-0.5">Marks</label>
+                    <label className="block text-[10px] font-bold text-zinc-400 mb-0.5">Marks</label>
                     <input
                       type="number"
                       value={newPQMarks}
                       onChange={(e) => setNewPQMarks(e.target.value)}
-                      className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1 text-xs text-slate-900 focus:outline-none focus:border-indigo-500"
+                      className="w-full bg-[#09090b] border border-zinc-700 rounded-lg px-2.5 py-1 text-xs text-zinc-100 focus:outline-none focus:border-zinc-400"
                     />
                   </div>
                   <div>
-                    <label className="block text-[10px] font-bold text-slate-600 mb-0.5">Frequency Tag</label>
+                    <label className="block text-[10px] font-bold text-zinc-400 mb-0.5">Frequency Tag</label>
                     <input
                       type="text"
                       value={newPQFreq}
                       onChange={(e) => setNewPQFreq(e.target.value)}
                       placeholder="e.g. Asked 3 times"
-                      className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1 text-xs text-slate-900 focus:outline-none focus:border-indigo-500"
+                      className="w-full bg-[#09090b] border border-zinc-700 rounded-lg px-2.5 py-1 text-xs text-zinc-100 focus:outline-none focus:border-zinc-400"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-[10px] font-bold text-slate-600 mb-0.5">
+                  <label className="block text-[10px] font-bold text-zinc-400 mb-0.5">
                     Solution Hint / Formula / Notes (Optional)
                   </label>
                   <input
@@ -645,7 +645,7 @@ export default function TopicItem({
                     value={newPQHint}
                     onChange={(e) => setNewPQHint(e.target.value)}
                     placeholder="e.g. Remember to check Need <= Work and release allocation back..."
-                    className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 focus:outline-none focus:border-indigo-500"
+                    className="w-full bg-[#09090b] border border-zinc-700 rounded-lg px-2.5 py-1.5 text-xs text-zinc-100 focus:outline-none focus:border-zinc-400"
                   />
                 </div>
 
@@ -653,14 +653,14 @@ export default function TopicItem({
                   <button
                     type="button"
                     onClick={() => setIsAddingPQ(false)}
-                    className="px-3 py-1 rounded-lg text-xs font-semibold text-slate-500 hover:text-slate-700 bg-white"
+                    className="px-3 py-1 rounded-lg text-xs font-semibold text-zinc-400 hover:text-zinc-200 bg-zinc-800"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={!newPQText.trim()}
-                    className="px-4 py-1 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-40 text-white rounded-lg text-xs font-bold shadow-xs"
+                    className="px-4 py-1 bg-white hover:bg-zinc-200 disabled:opacity-40 text-black rounded-lg text-xs font-bold shadow-xs"
                   >
                     Save Question
                   </button>
@@ -671,11 +671,11 @@ export default function TopicItem({
             {/* List of Previous Questions */}
             <div className="space-y-2">
               {previousQuestions.length === 0 ? (
-                <div className="text-center py-4 px-3 border border-dashed border-indigo-100 rounded-xl bg-indigo-50/20">
-                  <p className="text-xs text-slate-500 italic">
+                <div className="text-center py-4 px-3 border border-dashed border-zinc-800 rounded-xl bg-zinc-900/30">
+                  <p className="text-xs text-zinc-400 italic">
                     No previous exam questions recorded for this topic yet.
                   </p>
-                  <p className="text-[11px] text-slate-400 mt-0.5">
+                  <p className="text-[11px] text-zinc-500 mt-0.5">
                     Add past exam questions to track your mastery of recurring patterns.
                   </p>
                 </div>
@@ -685,8 +685,8 @@ export default function TopicItem({
                     key={q.id}
                     className={`p-3 rounded-xl border transition-all ${
                       q.solved
-                        ? 'bg-emerald-50/50 border-emerald-200 shadow-2xs'
-                        : 'bg-white border-slate-200/80 hover:border-indigo-200 hover:shadow-xs'
+                        ? 'bg-[#121614] border-emerald-900/60 shadow-2xs'
+                        : 'bg-[#18181b] border-zinc-800 hover:border-zinc-700 hover:shadow-xs'
                     }`}
                   >
                     <div className="flex items-start justify-between gap-3">
@@ -695,26 +695,26 @@ export default function TopicItem({
                           type="checkbox"
                           checked={q.solved}
                           onChange={() => handleTogglePQSolved(q.id)}
-                          className="mt-0.5 w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-0 cursor-pointer shrink-0"
+                          className="mt-0.5 w-4 h-4 rounded border-zinc-700 bg-zinc-900 text-white focus:ring-0 cursor-pointer shrink-0 accent-white"
                         />
                         <div className="flex-1 min-w-0">
                           <p className={`text-xs font-medium leading-relaxed ${
-                            q.solved ? 'line-through text-slate-400' : 'text-slate-900 font-semibold'
+                            q.solved ? 'line-through text-zinc-500' : 'text-zinc-100 font-semibold'
                           }`}>
                             {q.text}
                           </p>
 
                           {/* Metadata Tags */}
                           <div className="flex flex-wrap items-center gap-1.5 mt-2">
-                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700 border border-indigo-200/60 flex items-center gap-1">
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-zinc-900 text-zinc-300 border border-zinc-800 flex items-center gap-1">
                               <span>{q.year} {q.exam}</span>
                             </span>
-                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-50 text-amber-800 border border-amber-200/60">
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-zinc-900 text-zinc-300 border border-zinc-800">
                               {q.marks || 10} Marks
                             </span>
                             {q.frequency && (
-                              <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-rose-50 text-rose-700 border border-rose-200/60 flex items-center gap-1">
-                                <Flame className="w-3 h-3 text-rose-500" />
+                              <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-950/40 text-amber-300 border border-amber-900/60 flex items-center gap-1">
+                                <Flame className="w-3 h-3 text-amber-400" />
                                 <span>{q.frequency}</span>
                               </span>
                             )}
@@ -725,7 +725,7 @@ export default function TopicItem({
                                   e.preventDefault();
                                   togglePQHint(q.id);
                                 }}
-                                className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-slate-100 hover:bg-indigo-50 text-slate-600 hover:text-indigo-700 border border-slate-200 flex items-center gap-1 transition-colors"
+                                className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-zinc-800 hover:bg-zinc-700 text-zinc-300 border border-zinc-700 flex items-center gap-1 transition-colors"
                               >
                                 {showPQHintMap[q.id] ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
                                 <span>{showPQHintMap[q.id] ? 'Hide Hint' : 'View Solution Hint'}</span>
@@ -735,8 +735,8 @@ export default function TopicItem({
 
                           {/* Solution Hint reveal */}
                           {q.hint && showPQHintMap[q.id] && (
-                            <div className="mt-2.5 p-2.5 rounded-lg bg-indigo-50 border border-indigo-200/80 text-[11px] text-indigo-900 font-mono leading-relaxed">
-                              <span className="font-bold block text-indigo-700 mb-0.5">💡 Solution Hint / Pointers:</span>
+                            <div className="mt-2.5 p-2.5 rounded-lg bg-zinc-900 border border-zinc-700 text-[11px] text-zinc-200 font-mono leading-relaxed">
+                              <span className="font-bold block text-zinc-300 mb-0.5">💡 Solution Hint / Pointers:</span>
                               {q.hint}
                             </div>
                           )}
@@ -745,7 +745,7 @@ export default function TopicItem({
 
                       <button
                         onClick={() => handleDeletePQ(q.id)}
-                        className="p-1 text-slate-300 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors shrink-0"
+                        className="p-1 text-zinc-500 hover:text-rose-400 hover:bg-rose-950/40 rounded-lg transition-colors shrink-0"
                         title="Delete past question"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
@@ -760,11 +760,11 @@ export default function TopicItem({
           {/* Notes Section with formatting advice and character count */}
           <div>
             <div className="flex items-center justify-between mb-1.5">
-              <label className="text-xs font-bold uppercase tracking-wider text-slate-600 flex items-center gap-1.5">
-                <FileText className="w-3.5 h-3.5 text-violet-600" />
+              <label className="text-xs font-bold uppercase tracking-wider text-zinc-400 flex items-center gap-1.5">
+                <FileText className="w-3.5 h-3.5 text-zinc-300" />
                 <span>Topic Study Notes</span>
               </label>
-              <span className="text-[11px] text-slate-400 font-medium">
+              <span className="text-[11px] text-zinc-500 font-medium">
                 {(topic.notes || '').length} characters
               </span>
             </div>
@@ -773,22 +773,22 @@ export default function TopicItem({
               onChange={handleNotesChange}
               placeholder="Record summary concepts, important formulas, gotchas, code snippets, or exam hints here..."
               rows={4}
-              className="w-full bg-white border border-slate-200 rounded-xl p-3 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-violet-500 font-mono resize-y leading-relaxed shadow-inner"
+              className="w-full bg-[#141416] border border-zinc-800 rounded-xl p-3 text-xs text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-zinc-500 font-mono resize-y leading-relaxed shadow-inner"
             />
           </div>
 
           {/* Tags Manager */}
           <div>
             <div className="flex items-center justify-between mb-1.5">
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-600 flex items-center gap-1">
-                <Tag className="w-3 h-3 text-indigo-600" />
+              <span className="text-xs font-bold uppercase tracking-wider text-zinc-400 flex items-center gap-1">
+                <Tag className="w-3 h-3 text-zinc-300" />
                 <span>Tags & Classifiers</span>
               </span>
               {!isAddingTag && (
                 <button
                   type="button"
                   onClick={() => setIsAddingTag(true)}
-                  className="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1"
+                  className="text-xs font-bold text-zinc-300 hover:text-white flex items-center gap-1"
                 >
                   <Plus className="w-3 h-3" /> Add tag
                 </button>
@@ -803,18 +803,18 @@ export default function TopicItem({
                   onChange={(e) => setNewTagInput(e.target.value)}
                   placeholder="e.g. Must-Review, Formula, 5-Star"
                   autoFocus
-                  className="bg-white border border-slate-200 rounded-xl px-3 py-1 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500"
+                  className="bg-[#09090b] border border-zinc-700 rounded-xl px-3 py-1 text-xs text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-zinc-400"
                 />
                 <button
                   type="submit"
-                  className="px-3 py-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold"
+                  className="px-3 py-1 bg-white hover:bg-zinc-200 text-black rounded-xl text-xs font-bold"
                 >
                   Save
                 </button>
                 <button
                   type="button"
                   onClick={() => setIsAddingTag(false)}
-                  className="px-2 py-1 text-xs text-slate-500 hover:text-slate-800"
+                  className="px-2 py-1 text-xs text-zinc-400 hover:text-zinc-200"
                 >
                   Cancel
                 </button>

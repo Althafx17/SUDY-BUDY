@@ -30,15 +30,15 @@ export default function RightPanel({ subjects = [], onOpenFocusModal, onOpenSubj
   ];
 
   return (
-    <aside className="w-80 bg-white p-7 border-l border-slate-100 flex flex-col justify-between shrink-0 select-none shadow-sm">
+    <aside className="w-80 bg-[#121214] p-7 border-l border-zinc-800 flex flex-col justify-between shrink-0 select-none shadow-sm text-zinc-100">
       <div className="space-y-7">
-        {/* User Profile matching reference */}
+        {/* User Profile */}
         <div className="flex items-center justify-end gap-3.5 pb-2">
           <div className="text-right">
-            <h4 className="text-sm font-black text-slate-800 tracking-tight leading-tight">
+            <h4 className="text-sm font-black text-white tracking-tight leading-tight">
               Christine Eva
             </h4>
-            <span className="text-[11px] font-bold text-slate-400 font-mono">
+            <span className="text-[11px] font-bold text-zinc-400 font-mono">
               1094881999
             </span>
           </div>
@@ -47,28 +47,28 @@ export default function RightPanel({ subjects = [], onOpenFocusModal, onOpenSubj
             <img
               src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80"
               alt="Christine Eva"
-              className="w-11 h-11 rounded-2xl object-cover ring-2 ring-violet-500/20 shadow-md shadow-violet-200"
+              className="w-11 h-11 rounded-2xl object-cover ring-2 ring-zinc-700 shadow-md"
             />
-            <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-500 border-2 border-white" />
+            <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-500 border-2 border-[#121214]" />
           </div>
         </div>
 
-        {/* Mini Calendar Widget matching reference */}
+        {/* Mini Calendar Widget */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-base font-black text-slate-900 tracking-tight">
+            <h3 className="text-base font-black text-white tracking-tight">
               {currentMonth}
             </h3>
             <div className="flex items-center gap-1">
               <button 
                 onClick={() => setCurrentMonth(currentMonth === 'Nov 2026' ? 'Oct 2026' : 'Nov 2026')}
-                className="p-1 rounded-lg hover:bg-slate-100 text-slate-500 transition-colors"
+                className="p-1 rounded-lg hover:bg-zinc-800 text-zinc-400 hover:text-white transition-colors"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
               <button 
                 onClick={() => setCurrentMonth(currentMonth === 'Nov 2026' ? 'Dec 2026' : 'Nov 2026')}
-                className="p-1 rounded-lg hover:bg-slate-100 text-slate-500 transition-colors"
+                className="p-1 rounded-lg hover:bg-zinc-800 text-zinc-400 hover:text-white transition-colors"
               >
                 <ChevronRight className="w-4 h-4" />
               </button>
@@ -76,7 +76,7 @@ export default function RightPanel({ subjects = [], onOpenFocusModal, onOpenSubj
           </div>
 
           {/* Weekday headers */}
-          <div className="grid grid-cols-7 text-center text-[11px] font-bold text-slate-400">
+          <div className="grid grid-cols-7 text-center text-[11px] font-bold text-zinc-500">
             <span>Mon</span>
             <span>Tue</span>
             <span>Wed</span>
@@ -87,7 +87,7 @@ export default function RightPanel({ subjects = [], onOpenFocusModal, onOpenSubj
           </div>
 
           {/* Days Grid */}
-          <div className="grid grid-cols-7 gap-y-2 text-center text-xs font-bold text-slate-700">
+          <div className="grid grid-cols-7 gap-y-2 text-center text-xs font-bold text-zinc-300">
             {/* Empty slots for month start alignment */}
             {Array.from({ length: startDayOffset }).map((_, idx) => (
               <span key={`empty-${idx}`} />
@@ -108,8 +108,8 @@ export default function RightPanel({ subjects = [], onOpenFocusModal, onOpenSubj
                     title={examSubject ? `${examSubject.name} Exam` : undefined}
                     className={`w-7 h-7 rounded-full text-xs font-extrabold flex items-center justify-center transition-all ${
                       isHighlightMock || examSubject
-                        ? 'bg-[#5042ba] text-white shadow-md shadow-indigo-200 hover:scale-110'
-                        : 'text-slate-600 hover:bg-slate-100'
+                        ? 'bg-white text-black shadow-md hover:scale-110'
+                        : 'text-zinc-400 hover:bg-zinc-800 hover:text-white'
                     }`}
                   >
                     {day}
@@ -121,14 +121,14 @@ export default function RightPanel({ subjects = [], onOpenFocusModal, onOpenSubj
         </div>
 
         {/* Online Users / Study Buddies Section */}
-        <div className="space-y-4 pt-4 border-t border-slate-100">
+        <div className="space-y-4 pt-4 border-t border-zinc-800">
           <div className="flex items-center justify-between">
-            <h3 className="text-base font-black text-slate-900 tracking-tight">
+            <h3 className="text-base font-black text-white tracking-tight">
               Online Users
             </h3>
             <button 
               onClick={onOpenFocusModal}
-              className="text-xs font-bold text-indigo-600 hover:text-indigo-800"
+              className="text-xs font-bold text-zinc-400 hover:text-white"
             >
               See all
             </button>
@@ -138,7 +138,7 @@ export default function RightPanel({ subjects = [], onOpenFocusModal, onOpenSubj
             {onlineUsers.map((user) => (
               <div 
                 key={user.id} 
-                className="flex items-center justify-between p-1.5 rounded-2xl hover:bg-slate-50 transition-colors group cursor-pointer"
+                className="flex items-center justify-between p-1.5 rounded-2xl hover:bg-zinc-800/60 transition-colors group cursor-pointer"
                 onClick={onOpenFocusModal}
               >
                 <div className="flex items-center gap-3">
@@ -146,21 +146,21 @@ export default function RightPanel({ subjects = [], onOpenFocusModal, onOpenSubj
                     <img
                       src={user.avatar}
                       alt={user.name}
-                      className="w-9 h-9 rounded-2xl object-cover ring-1 ring-slate-200"
+                      className="w-9 h-9 rounded-2xl object-cover ring-1 ring-zinc-700"
                     />
                   </div>
                   <div>
-                    <h5 className="text-xs font-extrabold text-slate-800 leading-tight group-hover:text-indigo-600 transition-colors">
+                    <h5 className="text-xs font-extrabold text-zinc-200 leading-tight group-hover:text-white transition-colors">
                       {user.name}
                     </h5>
-                    <span className="text-[10px] font-bold text-slate-400 font-mono">
+                    <span className="text-[10px] font-bold text-zinc-500 font-mono">
                       {user.regId}
                     </span>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-[#5042ba] shadow-xs" />
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-xs" />
                 </div>
               </div>
             ))}
@@ -169,12 +169,12 @@ export default function RightPanel({ subjects = [], onOpenFocusModal, onOpenSubj
       </div>
 
       {/* Focus Room Quick Card at bottom */}
-      <div className="pt-4 border-t border-slate-100">
+      <div className="pt-4 border-t border-zinc-800">
         <button
           onClick={onOpenFocusModal}
-          className="w-full p-3.5 rounded-2xl bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-violet-200 transition-all hover:scale-[1.02]"
+          className="w-full p-3.5 rounded-2xl bg-white hover:bg-zinc-200 text-black font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition-all hover:scale-[1.02]"
         >
-          <Sparkles className="w-4 h-4 text-violet-200" />
+          <Sparkles className="w-4 h-4 text-black" />
           <span>Launch Study Focus Room</span>
         </button>
       </div>

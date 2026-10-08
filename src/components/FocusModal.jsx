@@ -102,28 +102,28 @@ export default function FocusModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
-      {/* Apple Backdrop */}
+      {/* Backdrop */}
       <div 
-        className="fixed inset-0 bg-slate-900/40 backdrop-blur-md transition-opacity animate-in fade-in duration-300"
+        className="fixed inset-0 bg-black/80 backdrop-blur-md transition-opacity animate-in fade-in duration-300"
         onClick={onClose}
       />
 
       {/* Main Focus Modal Card */}
-      <div className="relative w-full max-w-2xl bg-white/95 border border-white/80 rounded-[32px] shadow-2xl p-6 sm:p-8 text-slate-800 z-10 backdrop-blur-3xl transition-all">
+      <div className="relative w-full max-w-2xl bg-[#121214] border border-zinc-800 rounded-[32px] shadow-2xl p-6 sm:p-8 text-zinc-100 z-10 backdrop-blur-3xl transition-all">
         {/* Top Bar: Title & Close */}
-        <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+        <div className="flex items-center justify-between pb-4 border-b border-zinc-800">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-violet-600 to-pink-500 flex items-center justify-center shadow-md shadow-violet-200">
-              <Flame className="w-5 h-5 text-white" />
+            <div className="w-10 h-10 rounded-2xl bg-zinc-800 border border-zinc-700 flex items-center justify-center shadow-md">
+              <Flame className="w-5 h-5 text-zinc-200" />
             </div>
             <div>
-              <h2 className="text-xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
+              <h2 className="text-xl font-extrabold text-white tracking-tight flex items-center gap-2">
                 <span>Deep Focus Room</span>
-                <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-violet-100 text-violet-700 border border-violet-200 font-bold">
+                <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-300 border border-zinc-700 font-bold">
                   Pomodoro
                 </span>
               </h2>
-              <p className="text-xs text-slate-500 font-medium">
+              <p className="text-xs text-zinc-400 font-medium">
                 Distraction-free study space with ambient soundscapes & active task lock
               </p>
             </div>
@@ -131,21 +131,21 @@ export default function FocusModal({
 
           <button
             onClick={onClose}
-            className="p-2 text-slate-400 hover:text-slate-700 rounded-xl bg-slate-100 hover:bg-slate-200 transition-colors"
+            className="p-2 text-zinc-400 hover:text-white rounded-xl bg-zinc-800 hover:bg-zinc-700 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Mode Selector Tabs (Apple Segmented Control) */}
+        {/* Mode Selector Tabs (Segmented Control) */}
         <div className="flex items-center justify-center gap-2 mt-6">
-          <div className="inline-flex p-1 bg-slate-100 rounded-2xl border border-slate-200/80 shadow-inner">
+          <div className="inline-flex p-1 bg-[#18181b] rounded-2xl border border-zinc-800 shadow-inner">
             <button
               onClick={() => switchTimer('focus', 25)}
               className={`px-4 py-1.5 rounded-xl text-xs font-bold transition-all ${
                 mode === 'focus' && durationMinutes === 25
-                  ? 'bg-white text-slate-900 shadow-sm' 
-                  : 'text-slate-500 hover:text-slate-900'
+                  ? 'bg-white text-black shadow-sm' 
+                  : 'text-zinc-400 hover:text-white'
               }`}
             >
               Focus (25m)
@@ -154,8 +154,8 @@ export default function FocusModal({
               onClick={() => switchTimer('focus', 50)}
               className={`px-4 py-1.5 rounded-xl text-xs font-bold transition-all ${
                 mode === 'focus' && durationMinutes === 50
-                  ? 'bg-white text-slate-900 shadow-sm' 
-                  : 'text-slate-500 hover:text-slate-900'
+                  ? 'bg-white text-black shadow-sm' 
+                  : 'text-zinc-400 hover:text-white'
               }`}
             >
               Deep Dive (50m)
@@ -164,8 +164,8 @@ export default function FocusModal({
               onClick={() => switchTimer('shortBreak', 5)}
               className={`px-4 py-1.5 rounded-xl text-xs font-bold transition-all ${
                 mode === 'shortBreak' 
-                  ? 'bg-white text-emerald-700 shadow-sm' 
-                  : 'text-slate-500 hover:text-slate-900'
+                  ? 'bg-white text-black shadow-sm' 
+                  : 'text-zinc-400 hover:text-white'
               }`}
             >
               Short Break (5m)
@@ -174,8 +174,8 @@ export default function FocusModal({
               onClick={() => switchTimer('longBreak', 15)}
               className={`px-4 py-1.5 rounded-xl text-xs font-bold transition-all ${
                 mode === 'longBreak' 
-                  ? 'bg-white text-blue-700 shadow-sm' 
-                  : 'text-slate-500 hover:text-slate-900'
+                  ? 'bg-white text-black shadow-sm' 
+                  : 'text-zinc-400 hover:text-white'
               }`}
             >
               Long Break (15m)
@@ -194,7 +194,7 @@ export default function FocusModal({
                 r="70"
                 stroke="currentColor"
                 strokeWidth="8"
-                className="text-slate-100"
+                className="text-zinc-800"
                 fill="transparent"
               />
               <circle
@@ -203,9 +203,7 @@ export default function FocusModal({
                 r="70"
                 stroke="currentColor"
                 strokeWidth="8"
-                className={`transition-all duration-1000 ${
-                  mode === 'focus' ? 'text-violet-600' : 'text-emerald-500'
-                }`}
+                className="text-white transition-all duration-1000"
                 fill="transparent"
                 strokeDasharray="440"
                 strokeDashoffset={strokeDashoffset}
@@ -215,10 +213,10 @@ export default function FocusModal({
 
             {/* Time inside circle */}
             <div className="absolute flex flex-col items-center justify-center text-center">
-              <div className="text-4xl sm:text-5xl font-black font-mono tracking-tight text-slate-900">
+              <div className="text-4xl sm:text-5xl font-black font-mono tracking-tight text-white">
                 {timeFormatted}
               </div>
-              <div className="text-xs font-bold uppercase tracking-wider text-slate-400 mt-1">
+              <div className="text-xs font-bold uppercase tracking-wider text-zinc-400 mt-1">
                 {mode === 'focus' ? 'Study Interval' : 'Rest & Recharge'}
               </div>
             </div>
@@ -228,10 +226,10 @@ export default function FocusModal({
           <div className="flex items-center gap-3 mt-2">
             <button
               onClick={() => setIsRunning(!isRunning)}
-              className={`px-7 py-3 rounded-2xl text-sm font-bold flex items-center gap-2 shadow-md transition-all ${
+              className={`px-7 py-3 rounded-2xl text-sm font-bold flex items-center gap-2 shadow-sm transition-all ${
                 isRunning 
-                  ? 'bg-amber-500 hover:bg-amber-600 text-white shadow-amber-200' 
-                  : 'bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white shadow-violet-200'
+                  ? 'bg-zinc-800 hover:bg-zinc-700 text-white' 
+                  : 'bg-white hover:bg-zinc-200 text-black'
               }`}
             >
               {isRunning ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 ml-0.5" />}
@@ -243,7 +241,7 @@ export default function FocusModal({
                 setIsRunning(false);
                 setSecondsLeft(durationMinutes * 60);
               }}
-              className="p-3 rounded-2xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-600 hover:text-slate-900 transition-colors shadow-sm"
+              className="p-3 rounded-2xl bg-[#18181b] hover:bg-zinc-800 border border-zinc-700 text-zinc-300 hover:text-white transition-colors shadow-sm"
               title="Reset Timer"
             >
               <RotateCcw className="w-4 h-4" />
@@ -251,7 +249,7 @@ export default function FocusModal({
 
             <button
               onClick={() => setSecondsLeft(prev => prev + 300)}
-              className="px-3.5 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-xs font-bold text-slate-700 hover:text-slate-900 transition-colors flex items-center gap-1 shadow-sm"
+              className="px-3.5 py-2.5 rounded-2xl bg-[#18181b] hover:bg-zinc-800 border border-zinc-700 text-xs font-bold text-zinc-300 hover:text-white transition-colors flex items-center gap-1 shadow-sm"
               title="Add 5 minutes"
             >
               <Plus className="w-3.5 h-3.5" />
@@ -260,32 +258,32 @@ export default function FocusModal({
           </div>
 
           {/* Streak Indicators */}
-          <div className="flex items-center gap-2 mt-4 text-xs text-slate-500 font-medium">
+          <div className="flex items-center gap-2 mt-4 text-xs text-zinc-400 font-medium">
             <span>Sessions Today:</span>
             <div className="flex items-center gap-1.5">
               {[...Array(4)].map((_, i) => (
                 <div
                   key={i}
                   className={`w-3 h-3 rounded-full transition-colors ${
-                    i < sessionsCompleted ? 'bg-violet-600 shadow-sm' : 'bg-slate-200'
+                    i < sessionsCompleted ? 'bg-white shadow-sm' : 'bg-zinc-800'
                   }`}
                 />
               ))}
               {sessionsCompleted > 4 && (
-                <span className="text-xs font-bold text-violet-700">+{sessionsCompleted - 4}</span>
+                <span className="text-xs font-bold text-white">+{sessionsCompleted - 4}</span>
               )}
             </div>
           </div>
         </div>
 
         {/* Active Study Target Lock */}
-        <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-3">
+        <div className="p-5 rounded-2xl bg-[#18181b] border border-zinc-800 space-y-3">
           <div className="flex items-center justify-between text-xs">
-            <span className="font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
-              <BookOpen className="w-3.5 h-3.5 text-violet-600" />
+            <span className="font-bold text-zinc-300 uppercase tracking-wider flex items-center gap-1.5">
+              <BookOpen className="w-3.5 h-3.5 text-zinc-300" />
               <span>Target Course & Topic</span>
             </span>
-            <span className="text-slate-400 font-semibold">{currentSemester}</span>
+            <span className="text-zinc-500 font-semibold">{currentSemester}</span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -295,7 +293,7 @@ export default function FocusModal({
                 setSelectedSubjectId(e.target.value);
                 setSelectedTopicId('');
               }}
-              className="w-full bg-white border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-900 font-medium focus:outline-none focus:border-violet-500 shadow-sm"
+              className="w-full bg-[#09090b] border border-zinc-700 rounded-xl px-3.5 py-2 text-xs text-zinc-100 font-medium focus:outline-none focus:border-zinc-500 shadow-sm"
             >
               <option value="">Select Target Subject...</option>
               {subjects.map(s => (
@@ -309,7 +307,7 @@ export default function FocusModal({
               value={selectedTopicId}
               onChange={(e) => setSelectedTopicId(e.target.value)}
               disabled={!selectedSubjectId}
-              className="w-full bg-white border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-900 font-medium focus:outline-none focus:border-violet-500 disabled:opacity-40 shadow-sm"
+              className="w-full bg-[#09090b] border border-zinc-700 rounded-xl px-3.5 py-2 text-xs text-zinc-100 font-medium focus:outline-none focus:border-zinc-500 disabled:opacity-40 shadow-sm"
             >
               <option value="">Select Target Topic...</option>
               {activeSubjectTopics.map(t => (
@@ -322,15 +320,15 @@ export default function FocusModal({
         </div>
 
         {/* Ambient YouTube / Lofi Study Music */}
-        <div className="mt-4 p-5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-3">
+        <div className="mt-4 p-5 rounded-2xl bg-[#18181b] border border-zinc-800 space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
-              <Headphones className="w-3.5 h-3.5 text-pink-600" />
+            <span className="text-xs font-bold text-zinc-300 uppercase tracking-wider flex items-center gap-1.5">
+              <Headphones className="w-3.5 h-3.5 text-zinc-300" />
               <span>Study Ambient Soundscapes (YouTube)</span>
             </span>
             <button
               onClick={() => setShowYtInput(!showYtInput)}
-              className="text-[11px] text-pink-600 hover:text-pink-800 font-bold flex items-center gap-1"
+              className="text-[11px] text-zinc-300 hover:text-white font-bold flex items-center gap-1"
             >
               <YouTubeIcon className="w-3.5 h-3.5 text-red-500" />
               <span>{showYtInput ? 'Preset Music' : 'Custom YT URL'}</span>
@@ -350,8 +348,8 @@ export default function FocusModal({
                   onClick={() => setAmbientAudio(item.id)}
                   className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
                     ambientAudio === item.id 
-                      ? 'bg-pink-600 text-white shadow-sm' 
-                      : 'bg-white text-slate-600 hover:text-slate-900 border border-slate-200'
+                      ? 'bg-white text-black shadow-sm' 
+                      : 'bg-[#121214] text-zinc-400 hover:text-white border border-zinc-800'
                   }`}
                 >
                   {item.label}
@@ -368,12 +366,12 @@ export default function FocusModal({
                   setAmbientAudio('custom');
                 }}
                 placeholder="Paste any YouTube video or lofi stream URL..."
-                className="flex-1 bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-pink-500"
+                className="flex-1 bg-[#09090b] border border-zinc-700 rounded-xl px-3 py-1.5 text-xs text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-zinc-400"
               />
               <button
                 onClick={() => setAmbientAudio('custom')}
                 disabled={!customYtUrl.trim()}
-                className="px-3.5 py-1.5 bg-pink-600 hover:bg-pink-700 disabled:opacity-40 text-white rounded-xl text-xs font-bold shadow-sm"
+                className="px-3.5 py-1.5 bg-white hover:bg-zinc-200 disabled:opacity-40 text-black rounded-xl text-xs font-bold shadow-sm"
               >
                 Play
               </button>
@@ -382,7 +380,7 @@ export default function FocusModal({
 
           {/* Embedded Ambient Player */}
           {ambientAudio !== 'none' && ambientEmbedUrl && (
-            <div className="mt-2 rounded-xl overflow-hidden aspect-video max-h-40 w-full border border-slate-200 shadow-sm">
+            <div className="mt-2 rounded-xl overflow-hidden aspect-video max-h-40 w-full border border-zinc-800 shadow-sm">
               <iframe
                 src={ambientEmbedUrl}
                 title="Ambient Study Stream"
