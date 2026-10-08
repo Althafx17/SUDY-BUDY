@@ -183,28 +183,13 @@ export default function App() {
 
   const isMonochromeLight = currentTheme === 'monochrome-light';
 
-  // Base layout class depending on active theme (Black & White default)
+  // Base layout class matching clean GitHub dark
   const getContainerClass = () => {
-    switch (currentTheme) {
-      case 'monochrome-light':
-        return 'min-h-screen bg-[#fafafa] text-[#09090b] font-sans flex flex-col lg:flex-row relative selection:bg-black selection:text-white';
-      case 'apple-minimal':
-        return 'min-h-screen bg-[#09090b] text-[#f4f4f5] font-sans relative selection:bg-white selection:text-black';
-      case 'ecoursie-studio':
-        return 'min-h-screen bg-[#09090b] text-[#f4f4f5] font-sans flex flex-col lg:flex-row relative selection:bg-white selection:text-black';
-      case 'zen-notion':
-        return 'min-h-screen bg-[#0c0c0e] text-[#d4d4d8] font-sans flex flex-col lg:flex-row relative selection:bg-zinc-700 selection:text-white';
-      case 'monochrome-noir':
-      default:
-        return 'min-h-screen bg-[#09090b] text-[#f4f4f5] font-sans flex flex-col lg:flex-row relative selection:bg-white selection:text-black';
-    }
+    return 'min-h-screen bg-[#0d1117] text-[#f0f6fc] font-sans flex flex-col lg:flex-row relative selection:bg-[#1f6feb] selection:text-white';
   };
 
   return (
     <div className={getContainerClass()}>
-      {/* Subtle monochrome ambient light */}
-      <div className="fixed top-0 left-1/4 w-[500px] h-[500px] bg-white/[0.02] rounded-full blur-[140px] pointer-events-none -z-10" />
-      <div className="fixed bottom-0 right-1/4 w-[600px] h-[600px] bg-white/[0.02] rounded-full blur-[160px] pointer-events-none -z-10" />
 
       {/* Render Left Sidebar for all themes EXCEPT Apple Minimalist */}
       {!isAppleTheme && (
