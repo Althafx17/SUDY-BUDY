@@ -288,19 +288,19 @@ export default function SubjectView({
   return (
     <div className="space-y-6 animate-in fade-in duration-200">
       {/* Top Back & Action Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <button
           onClick={onBack}
-          className="inline-flex items-center gap-2 text-xs font-bold text-slate-600 hover:text-slate-900 bg-white/90 hover:bg-white px-3.5 py-2 rounded-xl border border-slate-200 shadow-2xs transition-all w-fit"
+          className="btn-gh inline-flex items-center gap-2 text-xs px-3 py-1.5 w-fit"
         >
-          <ArrowLeft className="w-4 h-4" />
-          <span>Back to Dashboard</span>
+          <ArrowLeft className="w-3.5 h-3.5" />
+          <span>Back to Repositories</span>
         </button>
 
         <div className="flex items-center gap-2">
           <button
             onClick={() => setIsEditSubjectModalOpen(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-slate-700 hover:text-slate-900 text-xs font-bold transition-all shadow-2xs"
+            className="btn-gh flex items-center gap-1.5 px-3 py-1.5 text-xs"
           >
             <Edit3 className="w-3.5 h-3.5" />
             <span>Edit Course Details</span>
@@ -312,9 +312,9 @@ export default function SubjectView({
                 setSubjectYtInput('');
                 setIsEditingSubjectYt(true);
               }}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-50 text-red-700 hover:bg-red-100 border border-red-200 text-xs font-bold transition-all shadow-2xs"
+              className="btn-gh text-red-400 hover:text-red-300 flex items-center gap-1.5 px-3 py-1.5 text-xs"
             >
-              <YouTubeIcon className="w-3.5 h-3.5 text-red-600" />
+              <YouTubeIcon className="w-3.5 h-3.5 text-red-500" />
               <span>Attach Lectures</span>
             </button>
           )}
@@ -322,65 +322,65 @@ export default function SubjectView({
       </div>
 
       {/* Spacious Course Header Banner */}
-      <div className="p-6 sm:p-7 rounded-[28px] border border-zinc-800 bg-[#121214] text-white shadow-xs relative overflow-hidden">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-5">
-          <div className="space-y-2 flex-1 min-w-0">
+      <div className="p-5 rounded-lg border border-[#30363d] bg-[#161b22] text-[#f0f6fc] relative overflow-hidden">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="space-y-1.5 flex-1 min-w-0">
             {/* Badges */}
             <div className="flex flex-wrap items-center gap-2">
-              <span className="text-[10px] font-mono font-black uppercase px-2.5 py-0.5 rounded-md bg-zinc-900 text-zinc-200 border border-zinc-700">
+              <span className="text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded border border-[#30363d] bg-[#0d1117] text-[#8b949e]">
                 {subject.code || 'KTU'}
               </span>
 
               {subject.examDate && (
-                <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-md bg-zinc-900 text-zinc-300 border border-zinc-800 flex items-center gap-1">
-                  <Calendar className="w-3 h-3 text-zinc-400" />
+                <span className="text-[11px] font-mono px-2 py-0.5 rounded border border-[#30363d] bg-[#0d1117] text-[#c9d1d9] flex items-center gap-1">
+                  <Calendar className="w-3 h-3 text-[#8b949e]" />
                   <span>Exam: {new Date(subject.examDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</span>
                 </span>
               )}
 
               {subject.venue && (
-                <span className="text-[11px] font-medium px-2.5 py-0.5 rounded-md bg-zinc-900 text-zinc-400 border border-zinc-800 flex items-center gap-1">
-                  <MapPin className="w-3 h-3 text-zinc-500" />
+                <span className="text-[11px] px-2 py-0.5 rounded border border-[#30363d] bg-[#0d1117] text-[#8b949e] flex items-center gap-1">
+                  <MapPin className="w-3 h-3 text-[#8b949e]" />
                   <span>{subject.venue}</span>
                 </span>
               )}
             </div>
 
             {/* Course Title */}
-            <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+            <h1 className="text-xl sm:text-2xl font-bold text-[#f0f6fc] tracking-tight">
               {subject.name}
             </h1>
 
-            <p className="text-xs text-zinc-400 font-medium">
+            <p className="text-xs text-[#8b949e]">
               {(subject.modules || []).length} syllabus modules • {(subject.modules || []).flatMap(m => m.topics || []).length} topics • {(subject.pastPapers || []).length} past question papers
             </p>
           </div>
 
           {/* Quick Dual Progress Gauges */}
-          <div className="flex items-center gap-4 shrink-0 bg-zinc-900 p-4 rounded-2xl border border-zinc-800">
+          <div className="flex items-center gap-4 shrink-0 bg-[#0d1117] p-3 rounded-md border border-[#30363d]">
             <div>
-              <div className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-0.5">
+              <div className="text-[10px] font-mono uppercase text-[#8b949e] mb-0.5">
                 Mastery
               </div>
-              <div className="text-xl font-black text-white font-mono">
+              <div className="text-lg font-black text-[#f0f6fc] font-mono">
                 {subjectProgress}%
               </div>
-              <div className="w-20 bg-zinc-800 h-1.5 rounded-full overflow-hidden mt-1">
-                <div className="bg-white h-full" style={{ width: `${subjectProgress}%` }} />
+              <div className="w-20 bg-[#21262d] h-1.5 rounded-full overflow-hidden mt-1">
+                <div className="bg-[#238636] h-full" style={{ width: `${subjectProgress}%` }} />
               </div>
             </div>
 
-            <div className="w-px h-10 bg-zinc-800" />
+            <div className="w-px h-8 bg-[#30363d]" />
 
             <div>
-              <div className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-0.5">
+              <div className="text-[10px] font-mono uppercase text-[#8b949e] mb-0.5">
                 Revision
               </div>
-              <div className="text-xl font-black text-zinc-300 font-mono">
+              <div className="text-lg font-black text-[#c9d1d9] font-mono">
                 {subjectRevision}%
               </div>
-              <div className="w-20 bg-zinc-800 h-1.5 rounded-full overflow-hidden mt-1">
-                <div className="bg-zinc-400 h-full" style={{ width: `${subjectRevision}%` }} />
+              <div className="w-20 bg-[#21262d] h-1.5 rounded-full overflow-hidden mt-1">
+                <div className="bg-[#58a6ff] h-full" style={{ width: `${subjectRevision}%` }} />
               </div>
             </div>
           </div>
@@ -388,7 +388,7 @@ export default function SubjectView({
 
         {/* Embedded Subject YouTube Player if attached */}
         {subject.youtubeUrl && (
-          <div className="mt-4 pt-4 border-t border-zinc-800">
+          <div className="mt-3 pt-3 border-t border-[#30363d]">
             <YouTubeEmbed
               url={subject.youtubeUrl}
               title={`${subject.name} — Full Course Lectures`}
@@ -399,62 +399,51 @@ export default function SubjectView({
         )}
       </div>
 
-      {/* Primary Clean Navigation Tabs - Breathing Room & No Packing */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1">
+      {/* Primary Clean Navigation Tabs */}
+      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 border-b border-[#30363d]">
         <button
           onClick={() => setActiveTab('syllabus')}
-          className={`flex items-center gap-2 px-5 py-2.5 rounded-2xl text-xs font-bold transition-all whitespace-nowrap ${
+          className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-semibold transition-all whitespace-nowrap ${
             activeTab === 'syllabus'
-              ? 'bg-white text-black font-black shadow-md'
-              : 'bg-[#121214] text-zinc-400 hover:text-white border border-zinc-800 hover:border-zinc-700'
+              ? 'bg-[#21262d] text-[#f0f6fc] border border-[#30363d]'
+              : 'text-[#8b949e] hover:text-[#f0f6fc] hover:bg-[#161b22]'
           }`}
         >
-          <Layers className="w-4 h-4" />
+          <Layers className="w-3.5 h-3.5" />
           <span>Syllabus Modules & Topics</span>
-          <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
-            activeTab === 'syllabus' ? 'bg-black text-white' : 'bg-zinc-800 text-zinc-400'
-          }`}>
-            {(subject.modules || []).length} Modules
+          <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-full border border-[#30363d] bg-[#0d1117] text-[#8b949e]">
+            {(subject.modules || []).length}
           </span>
         </button>
 
         <button
           onClick={() => setActiveTab('tasks')}
-          className={`flex items-center gap-2 px-5 py-2.5 rounded-2xl text-xs font-bold transition-all whitespace-nowrap ${
+          className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-semibold transition-all whitespace-nowrap ${
             activeTab === 'tasks'
-              ? 'bg-white text-black font-black shadow-md'
-              : 'bg-[#121214] text-zinc-400 hover:text-white border border-zinc-800 hover:border-zinc-700'
+              ? 'bg-[#21262d] text-[#f0f6fc] border border-[#30363d]'
+              : 'text-[#8b949e] hover:text-[#f0f6fc] hover:bg-[#161b22]'
           }`}
         >
-          <ListTodo className="w-4 h-4" />
+          <ListTodo className="w-3.5 h-3.5" />
           <span>Course Tasks & To-Dos</span>
-          <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
-            activeTab === 'tasks' ? 'bg-black text-white' : 'bg-zinc-800 text-zinc-400'
-          }`}>
+          <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-full border border-[#30363d] bg-[#0d1117] text-[#8b949e]">
             {completedSubjectTodosCount}/{subjectTodos.length}
           </span>
         </button>
 
         <button
           onClick={() => setActiveTab('pyq')}
-          className={`flex items-center gap-2 px-5 py-2.5 rounded-2xl text-xs font-bold transition-all whitespace-nowrap ${
+          className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-semibold transition-all whitespace-nowrap ${
             activeTab === 'pyq'
-              ? 'bg-white text-black font-black shadow-md'
-              : 'bg-[#121214] text-zinc-400 hover:text-white border border-zinc-800 hover:border-zinc-700'
+              ? 'bg-[#21262d] text-[#f0f6fc] border border-[#30363d]'
+              : 'text-[#8b949e] hover:text-[#f0f6fc] hover:bg-[#161b22]'
           }`}
         >
-          <FileText className="w-4 h-4" />
-          <span>KTU Past Question Papers (2019-2026)</span>
-          <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
-            activeTab === 'pyq' ? 'bg-black text-white' : 'bg-zinc-800 text-zinc-400'
-          }`}>
-            {(subject.pastPapers || []).length} Papers
+          <FileText className="w-3.5 h-3.5" />
+          <span>KTU Past Question Papers</span>
+          <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-full border border-[#30363d] bg-[#0d1117] text-[#8b949e]">
+            {(subject.pastPapers || []).length}
           </span>
-          {subject.masterPdf && (
-            <span className="text-[10px] px-2 py-0.5 rounded-full font-bold bg-white text-black flex items-center gap-1 shadow-2xs">
-              <span>PDF Linked</span>
-            </span>
-          )}
         </button>
       </div>
 
@@ -462,23 +451,22 @@ export default function SubjectView({
       {activeTab === 'syllabus' && (
         <div className="space-y-5">
           {/* SPACIOUS HORIZONTAL MODULE SELECTOR WITH COLOR CODES */}
-          <div className="bg-[#121214] p-4 sm:p-5 rounded-[24px] border border-zinc-800 shadow-2xs">
-            <div className="flex items-center justify-between mb-3 px-1">
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-black uppercase tracking-wider text-zinc-300">
-                  Select Module (Color-Coded Syllabus Units)
-                </span>
-              </div>
+          <div className="bg-[#161b22] p-4 rounded-lg border border-[#30363d]">
+            <div className="flex items-center justify-between mb-2.5 px-0.5">
+              <span className="text-xs font-semibold text-[#f0f6fc]">
+                Select Module (Color-Coded Syllabus Units)
+              </span>
               <button
                 onClick={() => setIsAddModuleOpen(true)}
-                className="text-xs text-white hover:text-zinc-300 font-bold flex items-center gap-1"
+                className="btn-gh text-xs px-2.5 py-1 flex items-center gap-1"
               >
-                <Plus className="w-3.5 h-3.5" /> Add Module
+                <Plus className="w-3.5 h-3.5" />
+                <span>Add Module</span>
               </button>
             </div>
 
             {/* Horizontal Module Stepper Cards with Explicit Color Codes */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5">
               {(subject.modules || []).map((mod, index) => {
                 const modProgress = Math.round(calculateModuleProgress(mod) * 100);
                 const isSelected = mod.id === (currentModule?.id || selectedModuleId);
@@ -488,15 +476,15 @@ export default function SubjectView({
                   <button
                     key={mod.id || index}
                     onClick={() => setSelectedModuleId(mod.id)}
-                    className={`p-3.5 rounded-2xl border-2 text-left transition-all relative flex flex-col justify-between group ${
+                    className={`p-3 rounded-md border text-left transition-all flex flex-col justify-between group ${
                       isSelected
-                        ? `border-white bg-zinc-900 shadow-lg shadow-black/40 scale-[1.01]`
-                        : `border-zinc-800/90 bg-[#0c0c0e] hover:bg-zinc-900 hover:border-zinc-700`
+                        ? `border-[#58a6ff] bg-[#1c2128]`
+                        : `border-[#30363d] bg-[#0d1117] hover:bg-[#161b22] hover:border-[#8b949e]`
                     }`}
                   >
                     <div>
                       <div className="flex items-center justify-between gap-1 mb-1.5">
-                        <span className={`text-[10px] font-black px-2 py-0.5 rounded-md border ${modRainbow.badgeBg}`}>
+                        <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded border ${modRainbow.badgeBg}`}>
                           M{mod.number || index + 1}
                         </span>
 
@@ -512,21 +500,21 @@ export default function SubjectView({
                           {modRainbow.colorCode}
                         </span>
 
-                        <span className={`text-[11px] font-mono font-extrabold ${isSelected ? 'text-white' : 'text-zinc-400'}`}>
+                        <span className={`text-[11px] font-mono font-bold ${isSelected ? 'text-[#f0f6fc]' : 'text-[#8b949e]'}`}>
                           {modProgress}%
                         </span>
                       </div>
 
-                      <h4 className={`text-xs font-bold line-clamp-2 leading-snug ${isSelected ? 'text-white' : 'text-zinc-300 group-hover:text-white'}`}>
+                      <h4 className={`text-xs font-semibold line-clamp-2 leading-snug ${isSelected ? 'text-[#f0f6fc]' : 'text-[#c9d1d9] group-hover:text-[#f0f6fc]'}`}>
                         {mod.name.replace(/^Module\s*\d+\s*:\s*/i, '')}
                       </h4>
                     </div>
 
                     <div className="mt-2.5">
-                      <div className="text-[10px] text-zinc-500 font-medium mb-1">
+                      <div className="text-[10px] text-[#8b949e] font-mono mb-1">
                         {mod.topics?.length || 0} topics
                       </div>
-                      <div className="w-full bg-zinc-800 h-1.5 rounded-full overflow-hidden">
+                      <div className="w-full bg-[#21262d] h-1.5 rounded-full overflow-hidden">
                         <div 
                           className="h-full transition-all duration-300"
                           style={{ width: `${modProgress}%`, backgroundColor: modRainbow.hex }}
@@ -539,20 +527,20 @@ export default function SubjectView({
             </div>
           </div>
 
-          {/* ACTIVE MODULE CANVAS (Full-Width Spacious Canvas) */}
+          {/* ACTIVE MODULE CANVAS */}
           {currentModule ? (
-            <div className="bg-[#121214] p-6 sm:p-8 rounded-[28px] border border-zinc-800 shadow-2xs space-y-5">
+            <div className="bg-[#161b22] p-5 sm:p-6 rounded-lg border border-[#30363d] space-y-4">
               {/* Module Header & Add Topic with Prominent Color Code Badge */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-zinc-800">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#30363d]">
                 <div>
                   <div className="flex flex-wrap items-center gap-2">
                     <span 
                       style={{ color: activeModColor.hex }}
-                      className="text-xs uppercase tracking-wider font-extrabold flex items-center gap-1.5"
+                      className="text-xs uppercase tracking-wider font-bold flex items-center gap-1.5"
                     >
                       <span 
                         style={{ backgroundColor: activeModColor.hex }}
-                        className="w-2.5 h-2.5 rounded-full shadow-xs" 
+                        className="w-2.5 h-2.5 rounded-full" 
                       />
                       <span>Module {currentModule.number || activeModIndex + 1} Syllabus</span>
                     </span>
@@ -564,14 +552,14 @@ export default function SubjectView({
                         color: activeModColor.hex,
                         backgroundColor: `${activeModColor.hex}18`
                       }}
-                      className="text-xs font-mono font-black px-2.5 py-0.5 rounded-lg border flex items-center gap-1"
+                      className="text-xs font-mono font-bold px-2 py-0.5 rounded border flex items-center gap-1"
                     >
                       <span>COLOR:</span>
                       <span>{activeModColor.colorCode}</span>
                     </span>
                   </div>
 
-                  <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight mt-1.5">
+                  <h2 className="text-lg sm:text-xl font-bold text-[#f0f6fc] tracking-tight mt-1">
                     {currentModule.name}
                   </h2>
                 </div>

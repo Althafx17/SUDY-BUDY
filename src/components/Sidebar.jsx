@@ -14,9 +14,13 @@ import {
   Sparkles,
   X,
   Clock,
-  Palette
+  Palette,
+  ExternalLink,
+  Briefcase,
+  Link as LinkIcon,
+  Award
 } from 'lucide-react';
-import { MODULE_RAINBOW_COLORS } from '../constants/initialData';
+import { MODULE_RAINBOW_COLORS, getModuleRainbowColor } from '../constants/initialData';
 import { calculateSubjectProgress, calculateModuleProgress } from '../utils/progress';
 
 export default function Sidebar({ 
@@ -32,17 +36,17 @@ export default function Sidebar({
   onOpenThemeModal,
   isMobileOpen,
   onCloseMobile,
-  currentTheme = 'rainbow-sidebar'
+  currentTheme = 'monochrome-noir'
 }) {
-  // Navigation tabs
+  // Navigation tabs (matching GitHub repository & profile tabs)
   const mainNavItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { id: 'timetable', label: 'Exam Timetable', icon: Calendar },
-    { id: 'revision', label: 'Revision Sprint', icon: CheckSquare },
+    { id: 'dashboard', label: 'Repositories & Stats', icon: LayoutDashboard },
+    { id: 'timetable', label: 'Exam Schedule', icon: Calendar },
+    { id: 'revision', label: 'Sprint Checklist', icon: CheckSquare },
     { id: 'notes', label: 'Notes Vault', icon: FileText },
   ];
 
-  // Expanded courses accordion state - default to having active subject or current semester subjects expanded
+  // Expanded courses accordion state
   const [expandedCourses, setExpandedCourses] = useState(() => {
     const initial = {};
     if (data?.S1?.subjects) {
@@ -62,32 +66,8 @@ export default function Sidebar({
     }));
   };
 
-  // Get subjects for selected semester or all
   const s1Subjects = data?.S1?.subjects || [];
   const s2Subjects = data?.S2?.subjects || [];
-
-  // Theme-specific sidebar styling (Black & White is default)
-  const getSidebarBgClass = () => {
-    switch (currentTheme) {
-      case 'monochrome-light':
-        return 'bg-[#f4f4f5] text-[#09090b] border-r border-[#e4e4e7]';
-      case 'ecoursie-studio':
-        return 'bg-[#111113] text-white border-r border-[#27272a]';
-      case 'zen-notion':
-        return 'bg-[#0c0c0e] text-[#d4d4d8] border-r border-[#27272a]';
-      case 'monochrome-noir':
-      default:
-        return 'bg-[#09090b] text-[#f4f4f5] border-r border-[#27272a]';
-    }
-  };
-
-  const isLight = currentTheme === 'monochrome-light';
-  const isZen = currentTheme === 'zen-notion';
-
-  // Module color badges with explicit color codes
-  const getModuleBadge = (modNumber) => {
-    return MODULE_RAINBOW_COLORS[(modNumber - 1) % MODULE_RAINBOW_COLORS.length] || MODULE_RAINBOW_COLORS[0];
-  };
 
   const renderSubjectItem = (sub, semesterKey) => {
     const isSubjectActive = currentView === 'subject' && activeSubjectId === sub.id;
@@ -96,145 +76,104 @@ export default function Sidebar({
     const modules = sub.modules || [];
 
     return (
-      <div key={sub.id} className={`mb-2 rounded-2xl overflow-hidden transition-all ${
-        isLight
-          ? 'bg-white border border-zinc-200 shadow-2xs'
-          : 'bg-[#121214] border border-[#27272a] hover:border-zinc-700'
-      }`}>
+      <div key={sub.id} className="mb-1 rounded-md border border-[#30363d] bg-[#161b22] overflow-hidden text-xs transition-colors">
         {/* Course Header */}
         <div 
           onClick={() => {
             onOpenSubject(sub.id, semesterKey);
             if (onCloseMobile) onCloseMobile();
           }}
-          className={`flex items-center justify-between p-2.5 cursor-pointer transition-colors ${
+          className={`flex items-center justify-between p-2 cursor-pointer transition-colors ${
             isSubjectActive 
-              ? isLight ? 'bg-zinc-100 font-bold' : 'bg-zinc-800/80 text-white' 
-              : isLight ? 'hover:bg-zinc-50' : 'hover:bg-zinc-800/40'
+              ? 'bg-[#21262d] text-white font-semibold' 
+              : 'hover:bg-[#1c2128] text-[#c9d1d9]'
           }`}
         >
           <div className="flex items-center gap-2 min-w-0 flex-1">
-            <span className={`text-[9px] font-mono font-black uppercase px-1.5 py-0.5 rounded border shrink-0 ${
-              isLight
-                ? 'bg-zinc-100 text-zinc-800 border-zinc-300'
-                : 'bg-zinc-900 text-zinc-300 border-zinc-700'
-            }`}>
-              {sub.code || 'KTU'}
-            </span>
+            <BookOpen className="w-3.5 h-3.5 text-[#8b949e] shrink-0" />
             <div className="truncate min-w-0 flex-1">
-              <p className={`text-xs font-bold truncate leading-tight ${isLight ? 'text-zinc-900' : 'text-white'}`}>
-                {sub.name}
-              </p>
-              <div className="flex items-center gap-1.5 mt-0.5">
-                <span className={`text-[10px] ${isLight ? 'text-zinc-500' : 'text-zinc-400'}`}>{modules.length} modules</span>
-                <span className={`text-[10px] ${isLight ? 'text-zinc-300' : 'text-zinc-600'}`}>•</span>
-                <span className={`text-[10px] font-semibold ${isLight ? 'text-zinc-800' : 'text-zinc-300'}`}>{progress}%</span>
+              <div className="flex items-center gap-1.5 truncate">
+                <span className="font-mono text-[10px] px-1 py-0.2 rounded border border-[#30363d] bg-[#0d1117] text-[#8b949e] shrink-0">
+                  {sub.code || 'KTU'}
+                </span>
+                <span className="font-medium text-[#f0f6fc] truncate">
+                  {sub.name}
+                </span>
               </div>
             </div>
           </div>
 
-          {/* Toggle Expand Sub-list Button */}
-          <button
-            onClick={(e) => toggleCourseExpand(sub.id, e)}
-            className={`p-1.5 rounded-lg transition-colors ml-1 shrink-0 ${
-              isLight ? 'text-zinc-500 hover:text-zinc-900 hover:bg-zinc-200' : 'text-zinc-400 hover:text-white hover:bg-zinc-800'
-            }`}
-            title={isExpanded ? 'Collapse modules' : 'Expand modules'}
-          >
-            {isExpanded ? (
-              <ChevronDown className="w-3.5 h-3.5" />
-            ) : (
-              <ChevronRight className="w-3.5 h-3.5" />
-            )}
-          </button>
+          <div className="flex items-center gap-1.5 shrink-0 ml-1">
+            <span className="text-[10px] font-mono text-[#8b949e]">
+              {progress}%
+            </span>
+            <button
+              onClick={(e) => toggleCourseExpand(sub.id, e)}
+              className="p-1 rounded hover:bg-[#30363d] text-[#8b949e] hover:text-white transition-colors"
+            >
+              {isExpanded ? (
+                <ChevronDown className="w-3 h-3" />
+              ) : (
+                <ChevronRight className="w-3 h-3" />
+              )}
+            </button>
+          </div>
         </div>
 
-        {/* SUB LIST OF MODULES WITH COLOR CODES */}
-        {isExpanded && (
-          <div className={`px-2 pb-2 pt-1 border-t space-y-1 ${
-            isLight 
-              ? 'border-zinc-200 bg-zinc-50/80' 
-              : 'border-[#27272a] bg-[#0c0c0e]'
-          }`}>
-            {modules.length === 0 ? (
-              <p className={`text-[11px] italic py-1 px-2 ${isLight ? 'text-zinc-400' : 'text-zinc-500'}`}>
-                No modules enrolled
-              </p>
-            ) : (
-              modules.map((mod, idx) => {
-                const modNumber = mod.number || idx + 1;
-                const badge = getModuleBadge(modNumber);
-                const isModActive = isSubjectActive && activeModuleId === mod.id;
-                const modProgress = Math.round(calculateModuleProgress(mod) * 100);
+        {/* Sub-list of Color-coded modules */}
+        {isExpanded && modules.length > 0 && (
+          <div className="px-2 pb-2 pt-1 border-t border-[#30363d] bg-[#0d1117]/60 space-y-1">
+            {modules.map((mod, idx) => {
+              const rainbow = getModuleRainbowColor(mod.number || idx + 1);
+              const isModActive = isSubjectActive && activeModuleId === mod.id;
+              const modProgress = Math.round(calculateModuleProgress(mod) * 100);
 
-                return (
-                  <button
-                    key={mod.id || idx}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onOpenSubject(sub.id, semesterKey, mod.id);
-                      if (onCloseMobile) onCloseMobile();
-                    }}
-                    className={`w-full text-left flex items-center justify-between p-1.5 rounded-xl transition-all group ${
-                      isModActive 
-                        ? isLight
-                          ? 'bg-zinc-900 text-white font-bold shadow-xs'
-                          : 'bg-white text-black font-black shadow-md' 
-                        : isLight
-                          ? 'text-zinc-700 hover:bg-zinc-200'
-                          : 'text-zinc-300 hover:bg-zinc-900 hover:text-white'
-                    }`}
-                  >
-                    <div className="flex items-center gap-1.5 min-w-0 flex-1">
-                      {/* Module Number Indicator */}
-                      <span className={`text-[9px] font-black px-1.5 py-0.5 rounded-md border shrink-0 transition-transform group-hover:scale-105 ${
-                        isModActive 
-                          ? isLight ? 'bg-zinc-800 text-white border-zinc-700' : 'bg-black text-white border-black'
-                          : badge.badgeBg
-                      }`}>
-                        M{modNumber}
-                      </span>
-                      
-                      {/* Module Title */}
-                      <span className={`text-[11px] truncate leading-tight ${
-                        isModActive 
-                          ? isLight ? 'text-white font-black' : 'text-black font-black' 
-                          : isLight ? 'text-zinc-700 group-hover:text-zinc-900' : 'text-zinc-300 group-hover:text-white'
-                      }`}>
-                        {mod.name.replace(/^Module\s*\d+\s*:\s*/i, '')}
-                      </span>
+              return (
+                <div
+                  key={mod.id || idx}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onOpenSubject(sub.id, semesterKey, mod.id);
+                    if (onCloseMobile) onCloseMobile();
+                  }}
+                  className={`flex items-center justify-between p-1.5 rounded cursor-pointer transition-all ${
+                    isModActive
+                      ? 'bg-[#21262d] text-white'
+                      : 'hover:bg-[#161b22] text-[#8b949e] hover:text-[#c9d1d9]'
+                  }`}
+                >
+                  <div className="flex items-center gap-1.5 min-w-0 flex-1">
+                    {/* Color dot */}
+                    <span 
+                      className="w-2 h-2 rounded-full shrink-0" 
+                      style={{ backgroundColor: rainbow.hex }}
+                    />
+                    <span className="font-mono text-[10px] text-[#8b949e] shrink-0">
+                      M{mod.number || idx + 1}
+                    </span>
+                    <span className="truncate text-[11px] font-sans">
+                      {mod.name.replace(/^Module\s*\d+\s*:\s*/i, '')}
+                    </span>
+                  </div>
 
-                      {/* Explicit Color Code Pill */}
-                      <span 
-                        style={{
-                          borderColor: `${badge.hex}50`,
-                          color: isModActive && !isLight ? '#000000' : badge.hex,
-                          backgroundColor: `${badge.hex}18`
-                        }}
-                        className="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded border shrink-0"
-                      >
-                        {badge.colorCode}
-                      </span>
-                    </div>
-
-                    {/* Progress Indicator & Glowing Dot */}
-                    <div className="flex items-center gap-1.5 shrink-0 ml-1.5">
-                      <span className={`text-[9px] font-mono font-bold ${
-                        isModActive 
-                          ? isLight ? 'text-zinc-300' : 'text-zinc-800' 
-                          : 'text-zinc-400 group-hover:text-zinc-300'
-                      }`}>
-                        {modProgress}%
-                      </span>
-                      <span 
-                        style={{ backgroundColor: badge.hex }}
-                        className="w-2 h-2 rounded-full shrink-0 shadow-xs" 
-                      />
-                    </div>
-                  </button>
-                );
-              })
-            )}
+                  <div className="flex items-center gap-1 shrink-0">
+                    <span 
+                      className="text-[9px] font-mono px-1 py-0.2 rounded border"
+                      style={{
+                        borderColor: `${rainbow.hex}40`,
+                        color: rainbow.hex,
+                        backgroundColor: `${rainbow.hex}12`
+                      }}
+                    >
+                      {rainbow.colorCode}
+                    </span>
+                    <span className="text-[10px] font-mono text-[#8b949e]">
+                      {modProgress}%
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         )}
       </div>
@@ -247,69 +186,81 @@ export default function Sidebar({
       {isMobileOpen && (
         <div 
           onClick={onCloseMobile}
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden animate-in fade-in"
+          className="fixed inset-0 bg-black/70 backdrop-blur-xs z-40 lg:hidden animate-in fade-in"
         />
       )}
 
       {/* Main Sidebar Aside */}
       <aside 
-        className={`fixed top-0 bottom-0 left-0 w-72 sm:w-80 ${getSidebarBgClass()} flex flex-col justify-between p-4 sm:p-5 select-none shadow-2xl z-50 transition-transform duration-300 lg:translate-x-0 ${
+        className={`fixed top-0 bottom-0 left-0 w-72 sm:w-80 bg-[#0d1117] text-[#c9d1d9] border-r border-[#30363d] flex flex-col justify-between p-3.5 select-none z-50 transition-transform duration-200 lg:translate-x-0 ${
           isMobileOpen ? 'translate-x-0' : '-translate-x-full'
-        } lg:static lg:h-screen lg:shrink-0 overflow-hidden ${
-          isLight ? 'border-r border-zinc-200' : 'border-r border-[#27272a]'
-        }`}
+        } lg:static lg:h-screen lg:shrink-0 overflow-hidden font-sans`}
       >
-        {/* Top Header & Brand */}
         <div className="flex flex-col h-full min-h-0">
-          <div className={`flex items-center justify-between pb-4 border-b ${isLight ? 'border-zinc-200' : 'border-[#27272a]'}`}>
-            <div 
-              onClick={() => {
-                onNavigate('dashboard');
-                if (onCloseMobile) onCloseMobile();
-              }}
-              className="flex items-center gap-3 cursor-pointer group"
-            >
-              <div className={`w-10 h-10 rounded-2xl flex items-center justify-center font-black text-sm tracking-tighter shadow-md group-hover:scale-105 transition-transform ${
-                isLight ? 'bg-black text-white' : 'bg-white text-black'
-              }`}>
-                SB
-              </div>
-              <div>
-                <div className="flex items-center gap-1.5">
-                  <span className={`text-base font-black tracking-tight font-sans ${isLight ? 'text-zinc-900' : 'text-white'}`}>
-                    Study Buddy
-                  </span>
-                  <span className={`text-[9px] font-mono font-black uppercase tracking-wider px-1.5 py-0.2 rounded-full border ${
-                    isLight 
-                      ? 'bg-zinc-100 text-zinc-900 border-zinc-300' 
-                      : 'bg-zinc-900 text-zinc-200 border-zinc-700'
-                  }`}>
-                    PRO
-                  </span>
+          {/* Top Profile Card (Directly from User Screenshot 2) */}
+          <div className="pb-3 border-b border-[#30363d]">
+            <div className="flex items-start justify-between">
+              <div 
+                onClick={() => {
+                  onNavigate('dashboard');
+                  if (onCloseMobile) onCloseMobile();
+                }}
+                className="flex items-center gap-3 cursor-pointer group"
+              >
+                <div className="w-10 h-10 rounded-full bg-[#161b22] border border-[#30363d] flex items-center justify-center font-bold text-sm text-[#f0f6fc] shrink-0 font-mono shadow-sm">
+                  Ak
                 </div>
-                <p className={`text-[10px] font-semibold tracking-wide ${isLight ? 'text-zinc-500' : 'text-zinc-400'}`}>
-                  KTU Academic Ledger
-                </p>
+                <div>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-sm font-bold text-[#f0f6fc] tracking-tight group-hover:text-[#58a6ff] transition-colors">
+                      Althaf k
+                    </span>
+                    <span className="text-[10px] font-mono text-[#8b949e]">
+                      @Althafx17
+                    </span>
+                  </div>
+                  <p className="text-[10px] text-[#8b949e] font-sans truncate max-w-[170px]">
+                    SOFTWARE ENGINEER / MERN
+                  </p>
+                </div>
               </div>
+
+              {/* Close Mobile Button */}
+              <button
+                onClick={onCloseMobile}
+                className="p-1.5 rounded-md hover:bg-[#21262d] text-[#8b949e] hover:text-white lg:hidden"
+              >
+                <X className="w-4 h-4" />
+              </button>
             </div>
 
-            {/* Mobile close button */}
-            <button
-              onClick={onCloseMobile}
-              className={`p-1.5 rounded-xl lg:hidden ${isLight ? 'text-zinc-500 hover:text-zinc-900' : 'text-zinc-400 hover:text-white hover:bg-zinc-800'}`}
-            >
-              <X className="w-5 h-5" />
-            </button>
+            {/* Teclif Infotech & Profile Info (Image 2) */}
+            <div className="mt-2.5 pt-2 border-t border-[#30363d]/60 space-y-1 text-[11px] text-[#8b949e]">
+              <div className="flex items-center gap-1.5">
+                <Briefcase className="w-3 h-3 text-[#8b949e]" />
+                <span className="text-[#c9d1d9] font-medium">TECLIF INFOTECH</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <LinkIcon className="w-3 h-3 text-[#8b949e]" />
+                <a href="https://teclif.com" target="_blank" rel="noreferrer" className="text-[#58a6ff] hover:underline">
+                  teclif.com
+                </a>
+                <span className="text-[#30363d]">·</span>
+                <a href="https://linkedin.com/in/althaf-k17" target="_blank" rel="noreferrer" className="text-[#58a6ff] hover:underline">
+                  in/althaf-k17
+                </a>
+              </div>
+            </div>
           </div>
 
           {/* Scrollable Center Section */}
-          <div className="flex-1 overflow-y-auto py-4 space-y-5 pr-1 custom-scrollbar">
+          <div className="flex-1 overflow-y-auto py-3 space-y-4 pr-1 custom-scrollbar">
             {/* Primary Navigation */}
             <div>
-              <div className={`text-[10px] font-black uppercase tracking-wider px-2 mb-2 ${isLight ? 'text-zinc-400' : 'text-zinc-500'}`}>
+              <div className="text-[10px] font-mono uppercase tracking-wider text-[#8b949e] px-2 mb-1.5">
                 Navigation
               </div>
-              <nav className="space-y-1">
+              <nav className="space-y-0.5">
                 {mainNavItems.map((item) => {
                   const Icon = item.icon;
                   const isActive = currentView === item.id;
@@ -321,21 +272,13 @@ export default function Sidebar({
                         onNavigate(item.id);
                         if (onCloseMobile) onCloseMobile();
                       }}
-                      className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all text-left group ${
+                      className={`w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-md text-xs transition-all text-left ${
                         isActive
-                          ? isLight 
-                            ? 'bg-black text-white shadow-sm font-black'
-                            : 'bg-white text-black shadow-lg shadow-black/40 font-black'
-                          : isLight
-                            ? 'text-zinc-700 hover:bg-zinc-200/80 hover:text-black'
-                            : 'text-zinc-400 hover:bg-zinc-900 hover:text-white'
+                          ? 'bg-[#21262d] text-[#f0f6fc] font-semibold border border-[#30363d]'
+                          : 'text-[#c9d1d9] hover:bg-[#161b22] hover:text-[#f0f6fc]'
                       }`}
                     >
-                      <Icon className={`w-4 h-4 shrink-0 ${
-                        isActive 
-                          ? isLight ? 'text-white' : 'text-black' 
-                          : isLight ? 'text-zinc-400 group-hover:text-black' : 'text-zinc-500 group-hover:text-white'
-                      }`} />
+                      <Icon className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-[#58a6ff]' : 'text-[#8b949e]'}`} />
                       <span className="tracking-wide text-xs">{item.label}</span>
                     </button>
                   );
@@ -343,148 +286,89 @@ export default function Sidebar({
               </nav>
             </div>
 
-            {/* Semester Switcher Pill Bar */}
-            <div className={`p-1.5 rounded-2xl border ${
-              isLight ? 'bg-zinc-100 border-zinc-200' : 'bg-[#121214] border-[#27272a]'
-            }`}>
-              <div className={`flex items-center justify-between text-[10px] font-black uppercase tracking-wider px-2 mb-1.5 ${
-                isLight ? 'text-zinc-500' : 'text-zinc-400'
-              }`}>
+            {/* Semester Switcher */}
+            <div className="p-2 rounded-md border border-[#30363d] bg-[#161b22]">
+              <div className="flex items-center justify-between text-[10px] font-mono uppercase tracking-wider text-[#8b949e] mb-1.5">
                 <span>Active Semester</span>
               </div>
-              <div className="grid grid-cols-2 gap-1">
+              <div className="grid grid-cols-2 gap-1 font-mono text-xs">
                 <button
                   onClick={() => onSelectSemester('S1')}
-                  className={`py-1.5 px-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+                  className={`py-1 px-2 rounded text-xs transition-all flex items-center justify-center gap-1.5 ${
                     currentSemester === 'S1'
-                      ? isLight 
-                        ? 'bg-black text-white font-black shadow-xs'
-                        : 'bg-white text-black font-black shadow-sm'
-                      : isLight
-                        ? 'text-zinc-600 hover:bg-zinc-200'
-                        : 'text-zinc-400 hover:bg-zinc-800 hover:text-white'
+                      ? 'bg-[#21262d] text-[#f0f6fc] font-semibold border border-[#30363d]'
+                      : 'text-[#8b949e] hover:bg-[#0d1117] hover:text-[#c9d1d9]'
                   }`}
                 >
                   <span>Semester 1</span>
-                  <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
-                    currentSemester === 'S1'
-                      ? isLight ? 'bg-zinc-800 text-white' : 'bg-zinc-200 text-black'
-                      : isLight ? 'bg-zinc-200 text-zinc-700' : 'bg-zinc-800 text-zinc-300'
-                  }`}>
-                    {s1Subjects.length}
+                  <span className="text-[10px] text-[#8b949e]">
+                    ({s1Subjects.length})
                   </span>
                 </button>
 
                 <button
                   onClick={() => onSelectSemester('S2')}
-                  className={`py-1.5 px-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+                  className={`py-1 px-2 rounded text-xs transition-all flex items-center justify-center gap-1.5 ${
                     currentSemester === 'S2'
-                      ? isLight 
-                        ? 'bg-black text-white font-black shadow-xs'
-                        : 'bg-white text-black font-black shadow-sm'
-                      : isLight
-                        ? 'text-zinc-600 hover:bg-zinc-200'
-                        : 'text-zinc-400 hover:bg-zinc-800 hover:text-white'
+                      ? 'bg-[#21262d] text-[#f0f6fc] font-semibold border border-[#30363d]'
+                      : 'text-[#8b949e] hover:bg-[#0d1117] hover:text-[#c9d1d9]'
                   }`}
                 >
                   <span>Semester 2</span>
-                  <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
-                    currentSemester === 'S2'
-                      ? isLight ? 'bg-zinc-800 text-white' : 'bg-zinc-200 text-black'
-                      : isLight ? 'bg-zinc-200 text-zinc-700' : 'bg-zinc-800 text-zinc-300'
-                  }`}>
-                    {s2Subjects.length}
+                  <span className="text-[10px] text-[#8b949e]">
+                    ({s2Subjects.length})
                   </span>
                 </button>
               </div>
             </div>
 
-            {/* COURSES TAKEN & SUB-LIST OF MODULES */}
+            {/* Repositories / Courses List */}
             <div>
-              <div className="flex items-center justify-between px-2 mb-2">
-                <div className="flex items-center gap-1.5">
-                  <GraduationCap className={`w-3.5 h-3.5 ${isLight ? 'text-zinc-600' : 'text-zinc-400'}`} />
-                  <span className={`text-[11px] font-black uppercase tracking-wider ${isLight ? 'text-zinc-900' : 'text-white'}`}>
-                    Courses Taken ({currentSemester === 'S1' ? s1Subjects.length : s2Subjects.length})
-                  </span>
-                </div>
-                <span className={`text-[10px] font-bold ${isLight ? 'text-zinc-500' : 'text-zinc-400'}`}>
-                  Color-Coded
+              <div className="flex items-center justify-between px-1 mb-2">
+                <span className="text-[10px] font-mono uppercase tracking-wider text-[#8b949e]">
+                  Academic Courses ({currentSemester === 'S1' ? s1Subjects.length : s2Subjects.length})
+                </span>
+                <span className="text-[10px] font-mono text-[#8b949e]">
+                  M1 - M5
                 </span>
               </div>
 
-              {/* Course list for Current Semester */}
+              {/* Course items */}
               <div className="space-y-1">
                 {(currentSemester === 'S1' ? s1Subjects : s2Subjects).map((sub) => 
                   renderSubjectItem(sub, currentSemester)
                 )}
               </div>
 
-              {/* Option to view other semester courses */}
-              <div className={`mt-4 pt-3 border-t ${isLight ? 'border-zinc-200' : 'border-[#27272a]'}`}>
-                <div className="flex items-center justify-between px-2 mb-2">
-                  <span className={`text-[10px] font-black uppercase tracking-wider ${isLight ? 'text-zinc-400' : 'text-zinc-500'}`}>
-                    {currentSemester === 'S1' ? 'Semester 2 Courses' : 'Semester 1 Courses'}
-                  </span>
-                  <button
-                    onClick={() => onSelectSemester(currentSemester === 'S1' ? 'S2' : 'S1')}
-                    className={`text-[10px] font-bold underline ${isLight ? 'text-zinc-800 hover:text-black' : 'text-zinc-300 hover:text-white'}`}
-                  >
-                    Switch
-                  </button>
-                </div>
-                <div className="space-y-1">
-                  {(currentSemester === 'S1' ? s2Subjects : s1Subjects).map((sub) => 
-                    renderSubjectItem(sub, currentSemester === 'S1' ? 'S2' : 'S1')
-                  )}
-                </div>
+              {/* Other semester toggle */}
+              <div className="mt-3 pt-2.5 border-t border-[#30363d] flex items-center justify-between px-1 text-xs text-[#8b949e]">
+                <span>Switch to {currentSemester === 'S1' ? 'Semester 2' : 'Semester 1'}</span>
+                <button
+                  onClick={() => onSelectSemester(currentSemester === 'S1' ? 'S2' : 'S1')}
+                  className="text-[#58a6ff] hover:underline font-mono text-xs"
+                >
+                  View ({currentSemester === 'S1' ? s2Subjects.length : s1Subjects.length})
+                </button>
               </div>
             </div>
           </div>
 
-          {/* Bottom Footer Actions */}
-          <div className={`pt-3 border-t space-y-2 shrink-0 ${isLight ? 'border-zinc-200' : 'border-[#27272a]'}`}>
-            {/* Theme Switcher Quick Button */}
-            {onOpenThemeModal && (
-              <button
-                onClick={() => {
-                  onOpenThemeModal();
-                  if (onCloseMobile) onCloseMobile();
-                }}
-                className={`w-full flex items-center justify-between px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
-                  isLight 
-                    ? 'bg-zinc-100 hover:bg-zinc-200 text-zinc-900 border border-zinc-200' 
-                    : 'bg-[#121214] hover:bg-zinc-900 text-white border border-[#27272a]'
-                }`}
-              >
-                <div className="flex items-center gap-2">
-                  <Palette className="w-4 h-4 text-zinc-400" />
-                  <span>UI Theme Studio</span>
-                </div>
-                <span className="text-[10px] uppercase font-mono px-1.5 py-0.2 rounded bg-white/10 text-zinc-400">
-                  B&W
-                </span>
-              </button>
-            )}
-
-            {/* Focus Room Quick Trigger */}
+          {/* Bottom Actions: Focus Room, Theme, Settings */}
+          <div className="pt-2.5 border-t border-[#30363d] space-y-1 shrink-0 text-xs">
+            {/* Focus Room */}
             <button
               onClick={() => {
                 onOpenFocusModal();
                 if (onCloseMobile) onCloseMobile();
               }}
-              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-bold transition-all shadow-md group ${
-                isLight
-                  ? 'bg-zinc-900 text-white hover:bg-black'
-                  : 'bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-white'
-              }`}
+              className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-md hover:bg-[#161b22] text-[#c9d1d9] border border-[#30363d] transition-all"
             >
               <div className="flex items-center gap-2">
-                <Flame className="w-4 h-4 text-zinc-300 group-hover:scale-110 transition-transform" />
-                <span>Focus Room & Lo-Fi</span>
+                <Flame className="w-3.5 h-3.5 text-[#f97316]" />
+                <span className="font-medium">Focus Room & Timer</span>
               </div>
-              <span className="text-[10px] bg-white/10 text-zinc-200 px-2 py-0.5 rounded-full font-bold">
-                Open
+              <span className="text-[10px] font-mono text-[#8b949e]">
+                Lo-Fi
               </span>
             </button>
 
@@ -494,14 +378,14 @@ export default function Sidebar({
                 onNavigate('settings');
                 if (onCloseMobile) onCloseMobile();
               }}
-              className={`w-full flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-bold transition-all text-left ${
+              className={`w-full flex items-center gap-2 px-2.5 py-1.5 rounded-md text-xs transition-all text-left ${
                 currentView === 'settings'
-                  ? isLight ? 'bg-black text-white font-black' : 'bg-white text-black font-black'
-                  : isLight ? 'text-zinc-600 hover:bg-zinc-200' : 'text-zinc-400 hover:bg-zinc-900 hover:text-white'
+                  ? 'bg-[#21262d] text-[#f0f6fc] font-semibold border border-[#30363d]'
+                  : 'text-[#8b949e] hover:bg-[#161b22] hover:text-[#c9d1d9]'
               }`}
             >
-              <SettingsIcon className={`w-4 h-4 ${isLight ? 'text-zinc-500' : 'text-zinc-400'}`} />
-              <span>Settings & Theme Studio</span>
+              <SettingsIcon className="w-3.5 h-3.5 text-[#8b949e]" />
+              <span>Settings</span>
             </button>
           </div>
         </div>

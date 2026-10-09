@@ -116,45 +116,44 @@ export default function RevisionMode({
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
       {/* Header Banner */}
-      <div className="p-6 sm:p-7 rounded-[28px] bg-[#121214] border border-zinc-800 flex flex-col md:flex-row md:items-center justify-between gap-5 relative overflow-hidden shadow-sm">
-        <div className="relative z-10">
+      <div className="p-5 rounded-lg bg-[#161b22] border border-[#30363d] flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
           <div className="flex items-center gap-2">
-            <span className="text-xs font-bold uppercase tracking-wider text-emerald-300 bg-emerald-950/70 px-3 py-1 rounded-full border border-emerald-800/80 flex items-center gap-1.5">
+            <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-emerald-400 bg-emerald-950/40 px-2.5 py-0.5 rounded border border-emerald-800/60 flex items-center gap-1.5">
               <Award className="w-3.5 h-3.5 text-emerald-400" />
               Pre-Exam Sprint
             </span>
           </div>
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight mt-2">
+          <h2 className="text-xl sm:text-2xl font-bold text-[#f0f6fc] tracking-tight mt-1.5">
             Revision Checklist Mode
           </h2>
-          <p className="text-xs text-zinc-400 mt-1 max-w-xl font-medium">
+          <p className="text-xs text-[#8b949e] mt-0.5 max-w-xl">
             Streamlined high-yield checklist showing only topics marked <em>Studied</em> or <em>Needs Revision</em>. 
-            Review your concepts and check them off to achieve 100% exam readiness.
           </p>
         </div>
 
         {/* Global Revision Progress Stat */}
-        <div className="bg-[#18181b] p-4.5 rounded-[22px] border border-zinc-700/80 shadow-sm shrink-0 self-start md:self-auto min-w-[220px]">
-          <div className="flex items-center justify-between text-xs mb-1.5">
-            <span className="text-zinc-400 font-bold">Revision Progress</span>
-            <span className="font-black text-emerald-400 text-sm">{revisionPercentage}%</span>
+        <div className="bg-[#0d1117] p-3.5 rounded-md border border-[#30363d] shrink-0 self-start md:self-auto min-w-[200px]">
+          <div className="flex items-center justify-between text-xs mb-1">
+            <span className="text-[#8b949e]">Revision Progress</span>
+            <span className="font-mono font-bold text-[#2ea043]">{revisionPercentage}%</span>
           </div>
-          <div className="w-full bg-zinc-900 h-2.5 rounded-full overflow-hidden mb-2">
+          <div className="w-full bg-[#21262d] h-1.5 rounded-full overflow-hidden mb-1.5">
             <div 
-              className="h-full bg-gradient-to-r from-emerald-500 to-teal-400 transition-all duration-500"
+              className="h-full bg-[#238636] transition-all duration-300"
               style={{ width: `${revisionPercentage}%` }}
             />
           </div>
-          <div className="text-[11px] text-zinc-400 font-medium text-center">
-            <strong className="text-white">{pendingRevisionList.length}</strong> items remaining to revise
+          <div className="text-[11px] text-[#8b949e] font-mono text-center">
+            <strong className="text-[#f0f6fc]">{pendingRevisionList.length}</strong> items remaining to revise
           </div>
         </div>
       </div>
 
       {/* Toolbar: Filters & Search */}
-      <div className="flex flex-col sm:flex-row items-center gap-3">
+      <div className="flex flex-col sm:flex-row items-center gap-2.5">
         {/* Monochrome Segmented Switcher */}
-        <div className="flex items-center p-1 bg-[#121214] border border-zinc-800 rounded-2xl w-full sm:w-auto shadow-inner">
+        <div className="flex items-center p-0.5 bg-[#0d1117] border border-[#30363d] rounded-md w-full sm:w-auto">
           {['ALL', 'S1', 'S2'].map(sem => (
             <button
               key={sem}
@@ -162,10 +161,10 @@ export default function RevisionMode({
                 setSelectedSemester(sem);
                 setSelectedSubjectId('ALL');
               }}
-              className={`flex-1 sm:flex-none px-4 py-1.5 rounded-xl text-xs font-bold transition-all ${
+              className={`flex-1 sm:flex-none px-3 py-1 rounded text-xs font-semibold transition-all ${
                 selectedSemester === sem
-                  ? 'bg-white text-black shadow-sm'
-                  : 'text-zinc-400 hover:text-white'
+                  ? 'bg-[#21262d] text-[#f0f6fc] border border-[#30363d]'
+                  : 'text-[#8b949e] hover:text-[#f0f6fc]'
               }`}
             >
               {sem === 'ALL' ? 'Both Semesters' : sem}
@@ -178,13 +177,13 @@ export default function RevisionMode({
           <select
             value={selectedSubjectId}
             onChange={(e) => setSelectedSubjectId(e.target.value)}
-            className="w-full bg-[#121214] border border-zinc-800 rounded-2xl px-3.5 py-2 text-xs text-zinc-200 font-medium focus:outline-none focus:border-zinc-500 shadow-sm cursor-pointer"
+            className="w-full bg-[#0d1117] border border-[#30363d] rounded-md px-3 py-1.5 text-xs text-[#f0f6fc] focus:outline-none focus:border-[#58a6ff] cursor-pointer"
           >
-            <option value="ALL" className="bg-[#121214] text-zinc-200">All Subjects</option>
+            <option value="ALL" className="bg-[#161b22] text-[#f0f6fc]">All Subjects</option>
             {allAvailableSubjects
               .filter(s => selectedSemester === 'ALL' || s.semester === selectedSemester)
               .map(s => (
-                <option key={s.id} value={s.id} className="bg-[#121214] text-zinc-200">
+                <option key={s.id} value={s.id} className="bg-[#161b22] text-[#f0f6fc]">
                   {s.semester}: {s.name}
                 </option>
               ))}
@@ -193,13 +192,13 @@ export default function RevisionMode({
 
         {/* Search Input */}
         <div className="relative flex-1 w-full">
-          <Search className="w-4 h-4 absolute left-3 top-2.5 text-zinc-500" />
+          <Search className="w-3.5 h-3.5 absolute left-3 top-2.5 text-[#8b949e]" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search topics, modules, or notes..."
-            className="w-full bg-[#121214] border border-zinc-800 rounded-2xl pl-9 pr-3 py-2 text-xs text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-zinc-500 shadow-sm"
+            className="w-full bg-[#0d1117] border border-[#30363d] rounded-md pl-8 pr-3 py-1.5 text-xs text-[#f0f6fc] placeholder-[#8b949e] focus:outline-none focus:border-[#58a6ff]"
           />
         </div>
       </div>

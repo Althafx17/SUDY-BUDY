@@ -109,41 +109,41 @@ export default function NotesVault({
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
       {/* Header */}
-      <div className="p-6 sm:p-7 rounded-[28px] bg-[#121214] border border-zinc-800 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm">
+      <div className="p-5 rounded-lg bg-[#161b22] border border-[#30363d] flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-xs font-bold uppercase tracking-wider text-zinc-300 bg-zinc-800 px-3 py-1 rounded-full border border-zinc-700 flex items-center gap-1.5">
-              <FileText className="w-3.5 h-3.5 text-zinc-300" />
-              Central Notes Vault
+            <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#8b949e] bg-[#0d1117] px-2.5 py-0.5 rounded border border-[#30363d] flex items-center gap-1.5">
+              <FileText className="w-3 h-3 text-[#8b949e]" />
+              Notes Vault
             </span>
           </div>
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight mt-2">
+          <h2 className="text-xl sm:text-2xl font-bold text-[#f0f6fc] tracking-tight mt-1.5">
             Study Notes & Knowledge Base
           </h2>
-          <p className="text-xs text-zinc-400 mt-1 max-w-xl font-medium">
+          <p className="text-xs text-[#8b949e] mt-0.5 max-w-xl">
             Search, filter, review, and export all concept summaries, formulas, and cheat-sheets attached across your curriculum topics.
           </p>
         </div>
 
         <button
           onClick={handleExportMarkdown}
-          className="px-4 py-2.5 bg-white hover:bg-zinc-200 text-black rounded-2xl text-xs font-bold flex items-center gap-2 shadow-sm transition-all self-start md:self-auto"
+          className="btn-gh px-3 py-1.5 text-xs flex items-center gap-2 self-start md:self-auto"
         >
-          <Download className="w-4 h-4" />
+          <Download className="w-3.5 h-3.5" />
           <span>Export Markdown Guide</span>
         </button>
       </div>
 
       {/* Search and Filters */}
-      <div className="flex flex-col sm:flex-row items-center gap-3">
+      <div className="flex flex-col sm:flex-row items-center gap-2.5">
         <div className="relative flex-1 w-full">
-          <Search className="w-4 h-4 absolute left-3 top-2.5 text-zinc-500" />
+          <Search className="w-3.5 h-3.5 absolute left-3 top-2.5 text-[#8b949e]" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search within note contents, topic names, or subjects..."
-            className="w-full bg-[#121214] border border-zinc-800 rounded-2xl pl-9 pr-3 py-2 text-xs text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-zinc-500 shadow-sm"
+            className="w-full bg-[#0d1117] border border-[#30363d] rounded-md pl-8 pr-3 py-1.5 text-xs text-[#f0f6fc] placeholder-[#8b949e] focus:outline-none focus:border-[#58a6ff]"
           />
         </div>
 
@@ -152,11 +152,11 @@ export default function NotesVault({
           <select
             value={selectedTag}
             onChange={(e) => setSelectedTag(e.target.value)}
-            className="w-full bg-[#121214] border border-zinc-800 rounded-2xl px-3.5 py-2 text-xs text-zinc-200 font-medium focus:outline-none focus:border-zinc-500 shadow-sm cursor-pointer"
+            className="w-full bg-[#0d1117] border border-[#30363d] rounded-md px-3 py-1.5 text-xs text-[#f0f6fc] focus:outline-none focus:border-[#58a6ff] cursor-pointer"
           >
-            <option value="ALL" className="bg-[#121214] text-zinc-200">All Note Tags ({allTags.size})</option>
+            <option value="ALL" className="bg-[#161b22] text-[#f0f6fc]">All Note Tags ({allTags.size})</option>
             {Array.from(allTags).map(tag => (
-              <option key={tag} value={tag} className="bg-[#121214] text-zinc-200">
+              <option key={tag} value={tag} className="bg-[#161b22] text-[#f0f6fc]">
                 #{tag}
               </option>
             ))}

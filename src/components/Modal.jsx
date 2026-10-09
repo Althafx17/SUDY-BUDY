@@ -15,38 +15,38 @@ export default function Modal({ isOpen, onClose, title, subtitle, children, maxW
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto font-sans">
       {/* Backdrop */}
       <div 
-        className="fixed inset-0 bg-black/80 backdrop-blur-md transition-opacity animate-in fade-in duration-200"
+        className="fixed inset-0 bg-black/75 backdrop-blur-xs transition-opacity animate-in fade-in duration-150"
         onClick={onClose}
       />
 
       {/* Modal Dialog Card */}
-      <div className={`relative w-full ${maxWidth} bg-[#121214] border border-zinc-800 rounded-[28px] shadow-2xl p-6 sm:p-7 text-zinc-100 z-10 backdrop-blur-2xl transition-all transform scale-100`}>
+      <div className={`relative w-full ${maxWidth} bg-[#161b22] border border-[#30363d] rounded-lg shadow-2xl p-5 text-[#f0f6fc] z-10 transition-all`}>
         {/* Header */}
-        <div className="flex items-start justify-between pb-4 border-b border-zinc-800">
+        <div className="flex items-start justify-between pb-3 border-b border-[#30363d]">
           <div>
-            <h3 className="text-xl font-bold tracking-tight text-white flex items-center gap-2">
+            <h3 className="text-base font-bold tracking-tight text-[#f0f6fc]">
               {title}
             </h3>
             {subtitle && (
-              <p className="text-xs text-zinc-400 mt-1 font-medium">
+              <p className="text-xs text-[#8b949e] mt-0.5">
                 {subtitle}
               </p>
             )}
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 text-zinc-400 hover:text-white rounded-xl hover:bg-zinc-800 transition-colors"
+            className="p-1 text-[#8b949e] hover:text-[#f0f6fc] rounded hover:bg-[#21262d] transition-colors"
             title="Close dialog"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Content */}
-        <div className="mt-4">
+        <div className="mt-3.5">
           {children}
         </div>
       </div>

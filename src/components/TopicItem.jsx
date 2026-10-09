@@ -246,15 +246,15 @@ export default function TopicItem({
   const statusBadge = getStatusBadge();
 
   return (
-    <div className={`group rounded-[22px] border transition-all duration-300 ${
+    <div className={`group rounded-md border transition-all ${
       topic.status === 'revised' 
-        ? 'bg-[#121413] border-emerald-900/60 shadow-sm' 
+        ? 'bg-[#161b22] border-[#238636]' 
         : topic.status === 'needs-revision'
-        ? 'bg-[#151310] border-amber-900/60 shadow-sm'
-        : 'bg-[#121214] border-zinc-800/80 hover:border-zinc-700 shadow-sm'
+        ? 'bg-[#161b22] border-[#f97316]/60'
+        : 'bg-[#161b22] border-[#30363d] hover:border-[#8b949e]'
     }`}>
       {/* Main Bar */}
-      <div className="p-4 sm:p-4.5 flex flex-col md:flex-row md:items-center justify-between gap-3">
+      <div className="p-3.5 flex flex-col md:flex-row md:items-center justify-between gap-3">
         {/* Left: Checkmark / Title */}
         <div className="flex items-start gap-3 flex-1 min-w-0">
           <button
@@ -264,26 +264,26 @@ export default function TopicItem({
               else if (topic.status === 'needs-revision') handleStatusChange('revised');
               else handleStatusChange('not-started');
             }}
-            className="mt-0.5 shrink-0 text-zinc-500 hover:text-zinc-300 transition-colors"
+            className="mt-0.5 shrink-0 text-[#8b949e] hover:text-[#f0f6fc] transition-colors"
             title="Cycle topic status"
           >
             {topic.status === 'revised' ? (
-              <CheckCircle2 className="w-5 h-5 text-emerald-400 fill-emerald-950/60" />
+              <CheckCircle2 className="w-5 h-5 text-[#2ea043] fill-[#238636]/20" />
             ) : topic.status === 'needs-revision' ? (
-              <AlertCircle className="w-5 h-5 text-amber-400 fill-amber-950/60" />
+              <AlertCircle className="w-5 h-5 text-[#f97316] fill-[#f97316]/20" />
             ) : topic.status === 'studied' ? (
-              <div className="w-5 h-5 rounded-full border-2 border-white flex items-center justify-center">
-                <div className="w-2.5 h-2.5 rounded-full bg-white" />
+              <div className="w-5 h-5 rounded-full border-2 border-[#58a6ff] flex items-center justify-center">
+                <div className="w-2.5 h-2.5 rounded-full bg-[#58a6ff]" />
               </div>
             ) : (
-              <Circle className="w-5 h-5 text-zinc-600 hover:text-zinc-400" />
+              <Circle className="w-5 h-5 text-[#484f58] hover:text-[#8b949e]" />
             )}
           </button>
 
           <div className="flex-1 min-w-0">
             <div className="flex flex-wrap items-center gap-2">
-              <span className={`text-base font-bold transition-all ${
-                topic.status === 'revised' ? 'text-zinc-500 line-through/30' : 'text-zinc-100'
+              <span className={`text-sm font-semibold transition-all ${
+                topic.status === 'revised' ? 'text-[#8b949e] line-through/40' : 'text-[#f0f6fc]'
               }`}>
                 {topic.name}
               </span>
@@ -293,24 +293,24 @@ export default function TopicItem({
                 <select
                   value={topic.status}
                   onChange={(e) => handleStatusChange(e.target.value)}
-                  className={`text-xs font-bold px-3 py-1 rounded-full border appearance-none pr-6 cursor-pointer outline-none transition-colors ${statusBadge.color}`}
+                  className={`text-[11px] font-mono font-semibold px-2 py-0.5 rounded border appearance-none pr-5 cursor-pointer outline-none transition-colors ${statusBadge.color}`}
                 >
-                  <option value="not-started" className="bg-zinc-900 text-zinc-300">Not Started</option>
-                  <option value="studied" className="bg-zinc-900 text-zinc-300">Studied</option>
-                  <option value="needs-revision" className="bg-zinc-900 text-amber-300">Needs Revision</option>
-                  <option value="revised" className="bg-zinc-900 text-emerald-300">Revised</option>
+                  <option value="not-started" className="bg-[#161b22] text-[#8b949e]">Not Started</option>
+                  <option value="studied" className="bg-[#161b22] text-[#f0f6fc]">Studied</option>
+                  <option value="needs-revision" className="bg-[#161b22] text-[#f97316]">Needs Revision</option>
+                  <option value="revised" className="bg-[#161b22] text-[#2ea043]">Revised</option>
                 </select>
-                <ChevronDown className="w-3 h-3 absolute right-2 pointer-events-none opacity-60" />
+                <ChevronDown className="w-3 h-3 absolute right-1.5 pointer-events-none opacity-60" />
               </div>
 
-              {/* Revision toggle (shown when studied or needs-revision) */}
+              {/* Revision toggle */}
               {isStudiedOrAbove && (
                 <button
                   onClick={handleToggleRevisionFlag}
-                  className={`inline-flex items-center gap-1 text-xs font-bold px-3 py-1 rounded-full border transition-all ${
+                  className={`inline-flex items-center gap-1 text-[11px] font-mono px-2 py-0.5 rounded border transition-all ${
                     topic.status === 'needs-revision'
-                      ? 'bg-amber-950/70 text-amber-300 border-amber-800 shadow-sm'
-                      : 'bg-zinc-900 text-zinc-400 border-zinc-800 hover:text-amber-300 hover:border-amber-800 hover:bg-amber-950/40'
+                      ? 'bg-[#f97316]/15 text-[#f97316] border-[#f97316]/40'
+                      : 'bg-[#0d1117] text-[#8b949e] border-[#30363d] hover:text-[#f97316]'
                   }`}
                   title="Toggle revision flag"
                 >
@@ -323,39 +323,39 @@ export default function TopicItem({
             {/* Sub-topics count, PYQ badge, YouTube badge, notes & tags */}
             <div className="flex flex-wrap items-center gap-2 mt-2">
               {topic.subTopics && topic.subTopics.length > 0 && (
-                <span className="text-xs font-medium text-zinc-300 bg-zinc-900/90 px-2 py-0.5 rounded-lg border border-zinc-800 flex items-center gap-1">
-                  <CheckSquare className="w-3.5 h-3.5 text-zinc-400" />
+                <span className="text-xs font-mono text-[#c9d1d9] bg-[#0d1117] px-2 py-0.5 rounded border border-[#30363d] flex items-center gap-1">
+                  <CheckSquare className="w-3 h-3 text-[#8b949e]" />
                   <span>{topic.subTopics.filter(st => st.done).length}/{topic.subTopics.length} to-dos ({completionPercent}%)</span>
                 </span>
               )}
 
               {/* Topic-Wise Previous Exam Questions Badge */}
               {totalPQCount > 0 && (
-                <span className="text-xs font-bold text-zinc-200 bg-zinc-900/90 px-2.5 py-0.5 rounded-lg border border-zinc-700/80 flex items-center gap-1.5 shadow-2xs">
-                  <Award className="w-3.5 h-3.5 text-zinc-300" />
+                <span className="text-xs font-mono text-[#f0f6fc] bg-[#0d1117] px-2 py-0.5 rounded border border-[#30363d] flex items-center gap-1.5">
+                  <Award className="w-3 h-3 text-[#e3b341]" />
                   <span>{solvedPQCount}/{totalPQCount} PYQ{totalPQCount > 1 ? 's' : ''} ({totalPQMarks} M)</span>
                 </span>
               )}
 
               {topic.youtubeUrl && (
-                <span className="text-xs text-red-400 bg-red-950/40 px-2 py-0.5 rounded-lg border border-red-900/50 flex items-center gap-1 font-bold">
-                  <YouTubeIcon className="w-3.5 h-3.5 text-red-500" /> YT Video
+                <span className="text-xs text-red-400 bg-red-950/30 px-2 py-0.5 rounded border border-red-900/40 flex items-center gap-1 font-mono">
+                  <YouTubeIcon className="w-3 h-3 text-red-500" /> Video
                 </span>
               )}
 
               {topic.notes && topic.notes.trim().length > 0 && (
-                <span className="text-xs text-zinc-300 bg-zinc-900/90 px-2 py-0.5 rounded-lg border border-zinc-800 flex items-center gap-1 font-medium">
-                  <FileText className="w-3.5 h-3.5 text-zinc-400" /> Note attached
+                <span className="text-xs text-[#c9d1d9] bg-[#0d1117] px-2 py-0.5 rounded border border-[#30363d] flex items-center gap-1">
+                  <FileText className="w-3 h-3 text-[#8b949e]" /> Notes
                 </span>
               )}
 
               {/* Tags */}
               {(topic.tags || []).map((tag, idx) => (
-                <span key={idx} className="text-[11px] font-semibold bg-zinc-900 text-zinc-300 px-2 py-0.5 rounded-md border border-zinc-800 flex items-center gap-1">
+                <span key={idx} className="text-[11px] font-mono bg-[#0d1117] text-[#8b949e] px-2 py-0.5 rounded border border-[#30363d] flex items-center gap-1">
                   #{tag}
                   <button 
                     onClick={() => handleRemoveTag(tag)}
-                    className="hover:text-red-400 text-zinc-500 ml-0.5 font-bold"
+                    className="hover:text-red-400 text-[#484f58] ml-0.5"
                   >
                     ×
                   </button>
@@ -366,43 +366,39 @@ export default function TopicItem({
         </div>
 
         {/* Right Action buttons */}
-        <div className="flex items-center gap-2 shrink-0 self-end md:self-center">
+        <div className="flex items-center gap-1.5 shrink-0 self-end md:self-center">
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className={`flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-xl border transition-all ${
-              isExpanded 
-                ? 'bg-white text-black border-white shadow-xs' 
-                : 'bg-zinc-900 text-zinc-300 border-zinc-800 hover:bg-zinc-800 hover:text-white'
-            }`}
+            className="btn-gh text-xs px-2.5 py-1 flex items-center gap-1"
           >
-            <FileText className="w-3.5 h-3.5 text-current" />
-            <span>To-Dos & Media</span>
-            {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+            <FileText className="w-3 h-3" />
+            <span>Details</span>
+            {isExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
           </button>
 
           <button
             onClick={() => onDeleteTopic(topic.id)}
-            className="p-1.5 text-zinc-500 hover:text-rose-400 hover:bg-rose-950/40 rounded-xl transition-colors"
+            className="p-1 text-[#8b949e] hover:text-red-400 hover:bg-red-950/30 rounded transition-colors"
             title="Delete topic"
           >
-            <Trash2 className="w-4 h-4" />
+            <Trash2 className="w-3.5 h-3.5" />
           </button>
         </div>
       </div>
 
       {/* Progress Bar under topic */}
       {topic.subTopics && topic.subTopics.length > 0 && (
-        <div className="w-full bg-zinc-900 h-1.5">
+        <div className="w-full bg-[#0d1117] h-1 border-t border-[#30363d]">
           <div 
-            className="bg-gradient-to-r from-zinc-400 to-white h-1.5 transition-all duration-300"
+            className="bg-[#238636] h-1 transition-all"
             style={{ width: `${completionPercent}%` }}
           />
         </div>
       )}
 
-      {/* Expanded Drawer: To-Dos, YouTube Video, Notes & Tags */}
+      {/* Expanded Drawer */}
       {isExpanded && (
-        <div className="p-5 border-t border-zinc-800 bg-[#0d0d0f] rounded-b-[22px] space-y-4 transition-all">
+        <div className="p-4 border-t border-[#30363d] bg-[#0d1117] rounded-b-md space-y-3.5 transition-all text-xs">
           {/* Attached YouTube Lecture Video Section */}
           <div>
             <div className="flex items-center justify-between mb-2">
