@@ -22,12 +22,17 @@ export default function App() {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (parsed && parsed.S1?.subjects?.some(s => s.code === 'MAT101') && parsed.S2?.subjects?.some(s => s.code === 'MAT102')) {
+        if (
+          parsed && 
+          typeof parsed === 'object' &&
+          Array.isArray(parsed.S1?.subjects) && 
+          Array.isArray(parsed.S2?.subjects)
+        ) {
           return parsed;
         }
       }
     } catch (e) {
-      console.error('Error loading study-ledger from localStorage:', e);
+      console.warn('Error loading study-ledger from localStorage, falling back to INITIAL_DATA:', e);
     }
     return INITIAL_DATA;
   });
@@ -161,7 +166,7 @@ export default function App() {
   };
 
   // Find active subject object if in subject view
-  const currentSemesterSubjects = data[currentSemester]?.subjects || [];
+  const currentSemesterSubjects = (data && data[currentSemester]?.subjects) || [];
   const activeSubject = activeSubjectId 
     ? currentSemesterSubjects.find(s => s.id === activeSubjectId)
     : currentSemesterSubjects[0];
