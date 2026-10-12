@@ -326,7 +326,7 @@ export default function Dashboard({
             <div className="text-xs font-semibold text-[#c9d1d9] mt-1">
               {nearestItem ? 'Days to Exam' : 'Longest Streak'}
             </div>
-            <div className="text-[10px] text-[#8b949e] mt-1 font-mono truncate max-w-[90px]" title={nearestItem ? nearestItem.subject.name : 'Aug 17 - Aug 23'}>
+            <div className="text-[10px] text-[#8b949e] mt-1 font-mono truncate max-w-22.5" title={nearestItem ? nearestItem.subject.name : 'Aug 17 - Aug 23'}>
               {nearestItem ? nearestItem.subject.code : 'Aug 17 - Aug 23'}
             </div>
           </div>

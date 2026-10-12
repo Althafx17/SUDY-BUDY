@@ -454,10 +454,10 @@ Q10. Obtain the Fourier series expansion of periodic function f(x) = x^2 in the 
   return (
     <>
       {/* Master PDF Hub Card */}
-      <div className="p-5 sm:p-6 rounded-[26px] bg-gradient-to-br from-indigo-900/90 via-purple-900/90 to-slate-900 text-white shadow-lg relative overflow-hidden">
+      <div className="p-5 sm:p-6 rounded-[26px] bg-linear-to-br from-indigo-900/90 via-purple-900/90 to-slate-900 text-white shadow-lg relative overflow-hidden">
         {/* Ambient glow accent */}
-        <div className="absolute top-0 right-0 w-80 h-80 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none -z-0" />
-        <div className="absolute bottom-0 left-1/3 w-60 h-60 bg-pink-500/10 rounded-full blur-3xl pointer-events-none -z-0" />
+        <div className="absolute top-0 right-0 w-80 h-80 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none z-0" />
+        <div className="absolute bottom-0 left-1/3 w-60 h-60 bg-pink-500/10 rounded-full blur-3xl pointer-events-none z-0" />
 
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-5">
           <div className="space-y-2 flex-1 min-w-0">
@@ -505,7 +505,7 @@ Q10. Obtain the Fourier series expansion of periodic function f(x) = x^2 in the 
 
                 <button
                   onClick={handleOpenCategorizer}
-                  className="px-4 py-2 bg-gradient-to-r from-violet-500 to-indigo-500 hover:from-violet-600 hover:to-indigo-600 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-md shadow-violet-900/40 transition-all"
+                  className="px-4 py-2 bg-linear-to-r from-violet-500 to-indigo-500 hover:from-violet-600 hover:to-indigo-600 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-md shadow-violet-900/40 transition-all"
                 >
                   <Sparkles className="w-3.5 h-3.5 text-amber-300" />
                   <span>Categorize by Module</span>
@@ -531,7 +531,7 @@ Q10. Obtain the Fourier series expansion of periodic function f(x) = x^2 in the 
               <>
                 <button
                   onClick={() => setIsUploadModalOpen(true)}
-                  className="px-5 py-2.5 bg-gradient-to-r from-violet-500 to-indigo-500 hover:from-violet-600 hover:to-indigo-600 text-white rounded-2xl text-xs font-bold flex items-center gap-2 shadow-md shadow-violet-900/40 transition-all"
+                  className="px-5 py-2.5 bg-linear-to-r from-violet-500 to-indigo-500 hover:from-violet-600 hover:to-indigo-600 text-white rounded-2xl text-xs font-bold flex items-center gap-2 shadow-md shadow-violet-900/40 transition-all"
                 >
                   <Upload className="w-4 h-4" />
                   <span>Update Entire PDF</span>
@@ -737,7 +737,7 @@ Q10. Obtain the Fourier series expansion of periodic function f(x) = x^2 in the 
                     setIsViewerModalOpen(false);
                     handleOpenCategorizer();
                   }}
-                  className="px-3.5 py-1.5 bg-gradient-to-r from-violet-600 to-indigo-600 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm"
+                  className="px-3.5 py-1.5 bg-linear-to-r from-violet-600 to-indigo-600 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm"
                 >
                   <Sparkles className="w-3.5 h-3.5 text-amber-300" />
                   <span className="hidden sm:inline">Categorize into Modules</span>
@@ -813,7 +813,7 @@ Q10. Obtain the Fourier series expansion of periodic function f(x) = x^2 in the 
             {/* Modal Header */}
             <div className="p-4 sm:px-6 border-b border-slate-200 flex items-center justify-between bg-slate-50/80 shrink-0">
               <div className="flex items-center gap-2.5 min-w-0">
-                <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-violet-600 to-indigo-600 text-white flex items-center justify-center font-black">
+                <div className="w-8 h-8 rounded-xl bg-linear-to-tr from-violet-600 to-indigo-600 text-white flex items-center justify-center font-black">
                   <Sparkles className="w-4 h-4 text-amber-300" />
                 </div>
                 <div>
@@ -1036,7 +1036,7 @@ Q10. Obtain the Fourier series expansion of periodic function f(x) = x^2 in the 
                     <button
                       onClick={handleCompileQuestions}
                       disabled={selectedQIds.size === 0}
-                      className="px-5 py-2 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 disabled:opacity-50 text-white rounded-xl text-xs font-bold flex items-center gap-2 shadow-md shadow-violet-200 transition-all"
+                      className="px-5 py-2 bg-linear-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 disabled:opacity-50 text-white rounded-xl text-xs font-bold flex items-center gap-2 shadow-md shadow-violet-200 transition-all"
                     >
                       <Sparkles className="w-3.5 h-3.5 text-amber-300" />
                       <span>Compile into Module Bank</span>

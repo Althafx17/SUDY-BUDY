@@ -144,7 +144,7 @@ export default function ContributionGraph({
 
       {/* Grid Container (Horizontally scrollable for small screens) */}
       <div className="overflow-x-auto pb-1.5 pt-0.5 select-none relative custom-scrollbar">
-        <div className="inline-block min-w-[720px]">
+        <div className="inline-block min-w-180">
           {/* Month Labels Row */}
           <div className="flex mb-1.5 pl-7 text-[10px] font-mono text-[#8b949e] relative h-4">
             {monthLabels.map((m, idx) => (
@@ -162,19 +162,19 @@ export default function ContributionGraph({
           <div className="flex gap-1 items-start">
             {/* Weekday indicators (Mon, Wed, Fri) */}
             <div className="flex flex-col gap-1 pr-1.5 text-[9px] font-mono text-[#8b949e] leading-none shrink-0 w-6">
-              <span className="h-[10px]"></span>
-              <span className="h-[10px] flex items-center">Mon</span>
-              <span className="h-[10px]"></span>
-              <span className="h-[10px] flex items-center">Wed</span>
-              <span className="h-[10px]"></span>
-              <span className="h-[10px] flex items-center">Fri</span>
-              <span className="h-[10px]"></span>
+              <span className="h-2.5"></span>
+              <span className="h-2.5 flex items-center">Mon</span>
+              <span className="h-2.5"></span>
+              <span className="h-2.5 flex items-center">Wed</span>
+              <span className="h-2.5"></span>
+              <span className="h-2.5 flex items-center">Fri</span>
+              <span className="h-2.5"></span>
             </div>
 
             {/* Weeks Columns */}
-            <div className="flex gap-[3px]">
+            <div className="flex gap-0.75">
               {weeks.map((week, wIdx) => (
-                <div key={wIdx} className="flex flex-col gap-[3px]">
+                <div key={wIdx} className="flex flex-col gap-0.75">
                   {week.map((day, dIdx) => {
                     const colorClass = LEVEL_COLORS[day.level] || LEVEL_COLORS[0];
                     return (
@@ -182,7 +182,7 @@ export default function ContributionGraph({
                         key={dIdx}
                         onMouseEnter={() => setHoveredDay(day)}
                         onMouseLeave={() => setHoveredDay(null)}
-                        className={`w-[10.5px] h-[10.5px] rounded-[2px] border ${colorClass} transition-transform hover:scale-125 hover:z-20 cursor-pointer ${
+                        className={`w-[10.5px] h-[10.5px] rounded-xs border ${colorClass} transition-transform hover:scale-125 hover:z-20 cursor-pointer ${
                           day.isFuture ? 'opacity-20 cursor-default' : ''
                         }`}
                       />
@@ -198,7 +198,7 @@ export default function ContributionGraph({
       {/* Floating or Status Indicator Info & Legend */}
       <div className="mt-3 pt-2.5 border-t border-[#30363d] flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[11px] font-mono text-[#8b949e]">
         {/* Tooltip / Status Display */}
-        <div className="min-h-[18px] flex items-center">
+        <div className="min-h-4.5 flex items-center">
           {hoveredDay ? (
             <span className="text-[#f0f6fc]">
               <strong className="text-[#3fb950] font-semibold">
@@ -217,12 +217,12 @@ export default function ContributionGraph({
         {/* GitHub Green Heat Legend */}
         <div className="flex items-center gap-1.5 self-end sm:self-auto">
           <span>Less</span>
-          <div className="flex gap-[3px] items-center">
-            <span className="w-[10px] h-[10px] rounded-[2px] border bg-[#161b22] border-[#30363d]/60" />
-            <span className="w-[10px] h-[10px] rounded-[2px] border bg-[#0e4429] border-[#0e4429]" />
-            <span className="w-[10px] h-[10px] rounded-[2px] border bg-[#006d32] border-[#006d32]" />
-            <span className="w-[10px] h-[10px] rounded-[2px] border bg-[#26a641] border-[#26a641]" />
-            <span className="w-[10px] h-[10px] rounded-[2px] border bg-[#39d353] border-[#39d353]" />
+          <div className="flex gap-0.75 items-center">
+            <span className="w-2.5 h-2.5 rounded-xs border bg-[#161b22] border-[#30363d]/60" />
+            <span className="w-2.5 h-2.5 rounded-xs border bg-[#0e4429] border-[#0e4429]" />
+            <span className="w-2.5 h-2.5 rounded-xs border bg-[#006d32] border-[#006d32]" />
+            <span className="w-2.5 h-2.5 rounded-xs border bg-[#26a641] border-[#26a641]" />
+            <span className="w-2.5 h-2.5 rounded-xs border bg-[#39d353] border-[#39d353]" />
           </div>
           <span>More</span>
         </div>

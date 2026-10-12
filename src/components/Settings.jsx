@@ -190,7 +190,7 @@ export default function Settings({
 
                     {isActive && (
                       <div className="w-5 h-5 rounded-full bg-white text-black flex items-center justify-center shrink-0 shadow-sm font-black">
-                        <Check className="w-3 h-3 stroke-[3]" />
+                        <Check className="w-3 h-3 stroke-3" />
                       </div>
                     )}
                   </div>

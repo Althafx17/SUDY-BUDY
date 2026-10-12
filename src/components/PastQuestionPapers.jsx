@@ -707,7 +707,7 @@ export default function PastQuestionPapers({
 
         <button
           onClick={() => setIsAddPaperOpen(true)}
-          className="px-4 py-2.5 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white rounded-2xl text-xs font-bold flex items-center gap-2 shadow-md shadow-violet-200 transition-all self-start md:self-auto"
+          className="px-4 py-2.5 bg-linear-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white rounded-2xl text-xs font-bold flex items-center gap-2 shadow-md shadow-violet-200 transition-all self-start md:self-auto"
         >
           <Plus className="w-4 h-4" />
           <span>Add Question Paper</span>
@@ -944,7 +944,7 @@ export default function PastQuestionPapers({
                   {/* Module Heading Banner */}
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-100 gap-2">
                     <div className="flex items-center gap-3">
-                      <span className={`w-8 h-8 rounded-xl bg-gradient-to-br ${modRainbow.gradient} text-white flex items-center justify-center font-black text-xs shadow-sm`}>
+                      <span className={`w-8 h-8 rounded-xl bg-linear-to-br ${modRainbow.gradient} text-white flex items-center justify-center font-black text-xs shadow-sm`}>
                         M{mGroup.moduleNumber}
                       </span>
                       <div>
@@ -1242,8 +1242,8 @@ export default function PastQuestionPapers({
                             <div className="flex items-start sm:items-center gap-3.5">
                               <div className={`w-12 h-12 rounded-2xl text-white flex flex-col items-center justify-center shrink-0 shadow-md ${
                                 isSetA 
-                                  ? 'bg-gradient-to-br from-violet-600 to-indigo-600 shadow-violet-200' 
-                                  : 'bg-gradient-to-br from-indigo-500 to-cyan-600 shadow-indigo-200'
+                                  ? 'bg-linear-to-br from-violet-600 to-indigo-600 shadow-violet-200' 
+                                  : 'bg-linear-to-br from-indigo-500 to-cyan-600 shadow-indigo-200'
                               }`}>
                                 <span className="text-[9px] font-black uppercase tracking-wider leading-none">SET</span>
                                 <span className="text-base font-black leading-none mt-0.5">{isSetA ? 'A' : 'B'}</span>
@@ -1481,7 +1481,7 @@ export default function PastQuestionPapers({
                                         {/* Module Section Header Banner */}
                                         <div className={`p-4 ${modRainbow.bg} border-b border-slate-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3`}>
                                           <div className="flex items-center gap-3">
-                                            <span className={`w-8 h-8 rounded-xl bg-gradient-to-br ${modRainbow.gradient} text-white flex items-center justify-center font-black text-xs shadow-sm shrink-0`}>
+                                            <span className={`w-8 h-8 rounded-xl bg-linear-to-br ${modRainbow.gradient} text-white flex items-center justify-center font-black text-xs shadow-sm shrink-0`}>
                                               M{modNum}
                                             </span>
                                             <div>

@@ -133,7 +133,7 @@ export default function RevisionMode({
         </div>
 
         {/* Global Revision Progress Stat */}
-        <div className="bg-[#0d1117] p-3.5 rounded-md border border-[#30363d] shrink-0 self-start md:self-auto min-w-[200px]">
+        <div className="bg-[#0d1117] p-3.5 rounded-md border border-[#30363d] shrink-0 self-start md:self-auto min-w-50">
           <div className="flex items-center justify-between text-xs mb-1">
             <span className="text-[#8b949e]">Revision Progress</span>
             <span className="font-mono font-bold text-[#2ea043]">{revisionPercentage}%</span>

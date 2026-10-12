@@ -219,7 +219,7 @@ export default function Sidebar({
                       @Althafx17
                     </span>
                   </div>
-                  <p className="text-[10px] text-[#8b949e] font-sans truncate max-w-[170px]">
+                  <p className="text-[10px] text-[#8b949e] font-sans truncate max-w-42.5">
                     SOFTWARE ENGINEER / MERN
                   </p>
                 </div>

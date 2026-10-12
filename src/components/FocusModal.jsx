@@ -109,7 +109,7 @@ export default function FocusModal({
       />
 
       {/* Main Focus Modal Card */}
-      <div className="relative w-full max-w-2xl bg-[#121214] border border-zinc-800 rounded-[32px] shadow-2xl p-6 sm:p-8 text-zinc-100 z-10 backdrop-blur-3xl transition-all">
+      <div className="relative w-full max-w-2xl bg-[#121214] border border-zinc-800 rounded-4xl shadow-2xl p-6 sm:p-8 text-zinc-100 z-10 backdrop-blur-3xl transition-all">
         {/* Top Bar: Title & Close */}
         <div className="flex items-center justify-between pb-4 border-b border-zinc-800">
           <div className="flex items-center gap-3">
