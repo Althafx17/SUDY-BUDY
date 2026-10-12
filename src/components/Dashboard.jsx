@@ -2,18 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { 
   Search, 
   Calendar, 
-  MapPin, 
-  Clock, 
   ArrowRight, 
   Plus, 
   BookOpen, 
-  Award, 
   FileText,
   Flame,
-  Trophy,
-  GitBranch
+  Trophy
 } from 'lucide-react';
 import Modal from './Modal';
+import ContributionGraph from './ContributionGraph';
 import { SUBJECT_COLORS, MODULE_RAINBOW_COLORS, getModuleRainbowColor } from '../constants/initialData';
 import { 
   calculateSubjectProgress, 
@@ -138,13 +135,13 @@ export default function Dashboard({
   });
 
   return (
-    <div className="space-y-5 text-[#f0f6fc] font-sans">
+    <div className="space-y-4 text-[#f0f6fc] font-sans">
       {/* Simple Clean Header: Overview Title & Semester Switcher */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-[#30363d]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2.5 border-b border-[#30363d]">
         <div className="flex items-center gap-2.5">
           <BookOpen className="w-5 h-5 text-[#8b949e]" />
           <div>
-            <h1 className="text-lg sm:text-xl font-bold text-[#f0f6fc] tracking-tight leading-none">
+            <h1 className="text-base sm:text-lg font-bold text-[#f0f6fc] tracking-tight leading-none">
               Academic Overview
             </h1>
             <p className="text-xs text-[#8b949e] mt-1 font-mono">
@@ -195,12 +192,12 @@ export default function Dashboard({
         </div>
       </div>
 
-      {/* GitHub Stats Row (Replicating Image 1) */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      {/* GitHub Stats Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3.5">
         {/* Card 1: Althaf k's Study Stats */}
-        <div className="bg-[#161b22] border border-[#30363d] rounded-md p-4 sm:p-5 flex flex-col justify-between">
-          <div className="flex items-center justify-between border-b border-[#30363d] pb-2 mb-3">
-            <h3 className="text-sm font-semibold text-[#f0f6fc]">
+        <div className="bg-[#161b22] border border-[#30363d] rounded-md p-3.5 sm:p-4 flex flex-col justify-between">
+          <div className="flex items-center justify-between border-b border-[#30363d] pb-2 mb-2.5">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-[#f0f6fc]">
               Althaf k's GitHub Stats
             </h3>
             <span className="text-[10px] font-mono text-[#8b949e]">
@@ -232,9 +229,9 @@ export default function Dashboard({
               </div>
             </div>
 
-            {/* Circular Letter Grade Gauge (Grade 'C' / 'A+' like Screenshot 1) */}
-            <div className="relative w-22 h-22 flex items-center justify-center shrink-0">
-              <svg className="w-22 h-22 transform -rotate-90" viewBox="0 0 100 100">
+            {/* Circular Letter Grade Gauge */}
+            <div className="relative w-20 h-20 flex items-center justify-center shrink-0">
+              <svg className="w-20 h-20 transform -rotate-90" viewBox="0 0 100 100">
                 <circle
                   cx="50"
                   cy="50"
@@ -256,7 +253,7 @@ export default function Dashboard({
                 />
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-2xl font-black font-mono text-[#f0f6fc]">
+                <span className="text-xl font-black font-mono text-[#f0f6fc]">
                   {grade}
                 </span>
                 <span className="text-[9px] text-[#8b949e] font-mono uppercase">
@@ -267,8 +264,8 @@ export default function Dashboard({
           </div>
         </div>
 
-        {/* Card 2: 3-Column Streak & Contribution Card (Screenshot 1) */}
-        <div className="bg-[#161b22] border border-[#30363d] rounded-md p-4 sm:p-5 grid grid-cols-3 divide-x divide-[#30363d]">
+        {/* Card 2: 3-Column Streak & Contribution Card */}
+        <div className="bg-[#161b22] border border-[#30363d] rounded-md p-3.5 sm:p-4 grid grid-cols-3 divide-x divide-[#30363d]">
           {/* Col 1 */}
           <div className="flex flex-col items-center justify-center text-center px-1">
             <div className="text-2xl sm:text-3xl font-black font-mono text-[#f0f6fc]">
@@ -336,10 +333,17 @@ export default function Dashboard({
         </div>
       </div>
 
-      {/* Card 3: Most Used Languages / Curriculum Module Progress Bar (Screenshot 1) */}
-      <div className="bg-[#161b22] border border-[#30363d] rounded-md p-4 sm:p-5">
-        <div className="flex items-center justify-between border-b border-[#30363d] pb-2 mb-3">
-          <h3 className="text-sm font-semibold text-[#f0f6fc]">
+      {/* GitHub-Style Study Activity Contribution Calendar */}
+      <ContributionGraph 
+        totalContributions={907}
+        currentStreak={14}
+        topicsCompleted={stats.completedTopics}
+      />
+
+      {/* Card 3: Most Used Languages / Curriculum Module Progress Bar */}
+      <div className="bg-[#161b22] border border-[#30363d] rounded-md p-3.5 sm:p-4">
+        <div className="flex items-center justify-between border-b border-[#30363d] pb-2 mb-2.5">
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-[#f0f6fc]">
             Most Used Languages & Curriculum Modules
           </h3>
           <span className="text-[10px] font-mono text-[#8b949e]">
@@ -348,7 +352,7 @@ export default function Dashboard({
         </div>
 
         {/* Horizontal Segmented Bar */}
-        <div className="w-full h-3 rounded-full overflow-hidden flex bg-[#0d1117] border border-[#30363d]">
+        <div className="w-full h-2.5 rounded-full overflow-hidden flex bg-[#0d1117] border border-[#30363d]">
           {moduleMasteryStats.map((mod) => {
             const widthPct = ((mod.barWeight / totalBarWeight) * 100).toFixed(1);
             return (
@@ -363,7 +367,7 @@ export default function Dashboard({
         </div>
 
         {/* Legend with Color Dots, Explicit Color Codes, and Percentages */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mt-3.5 text-xs font-mono">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 mt-3 text-xs font-mono">
           {moduleMasteryStats.map((mod) => {
             const widthPct = ((mod.barWeight / totalBarWeight) * 100).toFixed(1);
             return (
@@ -372,7 +376,7 @@ export default function Dashboard({
                   className="w-2.5 h-2.5 rounded-full shrink-0" 
                   style={{ backgroundColor: mod.hex }} 
                 />
-                <span className="text-[#c9d1d9] font-sans truncate">
+                <span className="text-[#c9d1d9] font-sans truncate text-[11px]">
                   Module {mod.moduleNumber}
                 </span>
                 <span 
@@ -385,7 +389,7 @@ export default function Dashboard({
                 >
                   {mod.colorCode}
                 </span>
-                <span className="text-[#8b949e] ml-auto">
+                <span className="text-[#8b949e] ml-auto text-[11px]">
                   {widthPct}%
                 </span>
               </div>
@@ -394,8 +398,8 @@ export default function Dashboard({
         </div>
       </div>
 
-      {/* Card 4: GitHub Trophies (Screenshot 1) */}
-      <div className="bg-[#161b22] border border-[#30363d] rounded-md p-3.5">
+      {/* Card 4: GitHub Trophies */}
+      <div className="bg-[#161b22] border border-[#30363d] rounded-md p-3 sm:p-3.5">
         <div className="flex items-center gap-2 mb-2.5">
           <Trophy className="w-3.5 h-3.5 text-[#e3b341]" />
           <h3 className="text-xs font-semibold text-[#f0f6fc] uppercase tracking-wider">
@@ -403,32 +407,32 @@ export default function Dashboard({
           </h3>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs">
-          <div className="bg-[#0d1117] border border-[#30363d] rounded p-2 flex items-center gap-2">
-            <span className="text-lg">🦈</span>
+          <div className="bg-[#0d1117] border border-[#30363d] hover:border-[#8b949e] transition-colors rounded p-2 flex items-center gap-2">
+            <span className="text-base">🦈</span>
             <div>
               <div className="font-semibold text-[#f0f6fc] text-[11px]">Pull Shark</div>
               <div className="text-[10px] text-[#8b949e] font-mono">{totalPYQs} PYQs</div>
             </div>
           </div>
 
-          <div className="bg-[#0d1117] border border-[#30363d] rounded p-2 flex items-center gap-2">
-            <span className="text-lg">⚡</span>
+          <div className="bg-[#0d1117] border border-[#30363d] hover:border-[#8b949e] transition-colors rounded p-2 flex items-center gap-2">
+            <span className="text-base">⚡</span>
             <div>
               <div className="font-semibold text-[#f0f6fc] text-[11px]">Quickdraw</div>
               <div className="text-[10px] text-[#8b949e] font-mono">14d Streak</div>
             </div>
           </div>
 
-          <div className="bg-[#0d1117] border border-[#30363d] rounded p-2 flex items-center gap-2">
-            <span className="text-lg">❄️</span>
+          <div className="bg-[#0d1117] border border-[#30363d] hover:border-[#8b949e] transition-colors rounded p-2 flex items-center gap-2">
+            <span className="text-base">❄️</span>
             <div>
               <div className="font-semibold text-[#f0f6fc] text-[11px]">Code Vault</div>
               <div className="text-[10px] text-[#8b949e] font-mono">Notes Synced</div>
             </div>
           </div>
 
-          <div className="bg-[#0d1117] border border-[#30363d] rounded p-2 flex items-center gap-2">
-            <span className="text-lg">🎯</span>
+          <div className="bg-[#0d1117] border border-[#30363d] hover:border-[#8b949e] transition-colors rounded p-2 flex items-center gap-2">
+            <span className="text-base">🎯</span>
             <div>
               <div className="font-semibold text-[#f0f6fc] text-[11px]">Pair Pro</div>
               <div className="text-[10px] text-[#8b949e] font-mono">Study Buddy</div>
@@ -480,7 +484,7 @@ export default function Dashboard({
                 <div
                   key={sub.id}
                   onClick={() => onOpenSubject(sub.id)}
-                  className="bg-[#161b22] hover:bg-[#1c2128] border border-[#30363d] hover:border-[#8b949e] rounded-md p-3.5 cursor-pointer transition-all flex flex-col justify-between group"
+                  className="bg-[#161b22] hover:bg-[#1c2128] border border-[#30363d] hover:border-[#58a6ff]/50 rounded-md p-3.5 cursor-pointer transition-all flex flex-col justify-between group shadow-sm"
                 >
                   <div>
                     {/* Header: Book icon + repo slug + Public */}
@@ -491,7 +495,7 @@ export default function Dashboard({
                           {repoSlug}
                         </span>
                       </div>
-                      <span className="text-[10px] font-mono px-2 py-0.2 rounded-full border border-[#30363d] text-[#8b949e] shrink-0">
+                      <span className="text-[10px] font-mono px-2 py-0.5 rounded-full border border-[#30363d] text-[#8b949e] shrink-0">
                         Public
                       </span>
                     </div>

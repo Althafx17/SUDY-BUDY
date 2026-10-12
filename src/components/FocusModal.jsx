@@ -43,7 +43,7 @@ export default function FocusModal({
     lofi: 'https://www.youtube.com/watch?v=jfKfPfyJRdk',
     rain: 'https://www.youtube.com/watch?v=mPZkdNFkNps',
     binaural: 'https://www.youtube.com/watch?v=WPni755-Krg'
-  };
+  }; 
 
   const subjects = data[currentSemester]?.subjects || [];
 
