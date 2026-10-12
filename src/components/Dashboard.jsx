@@ -46,9 +46,9 @@ export default function Dashboard({
     return () => clearInterval(timer);
   }, []);
 
-  const semesterData = data[currentSemester] || { subjects: [] };
-  const subjects = semesterData.subjects || [];
-  const stats = getSemesterStats(semesterData);
+  const semesterData = data?.[currentSemester] || { subjects: [] };
+  const subjects = semesterData?.subjects || [];
+  const stats = getSemesterStats(semesterData) || { overallProgress: 0, totalTopics: 0, completedTopics: 0, revisedTopics: 0, revisionProgress: 0 };
 
   // Total past question papers count across semester
   const totalPYQs = subjects.reduce((sum, s) => sum + (s.pastPapers?.length || 0), 0);
@@ -63,6 +63,7 @@ export default function Dashboard({
 
   // Calculate grade based on overall progress
   const getGrade = (pct) => {
+    if (typeof pct !== 'number' || isNaN(pct)) return 'C';
     if (pct >= 85) return 'S';
     if (pct >= 70) return 'A+';
     if (pct >= 55) return 'A';
@@ -78,11 +79,11 @@ export default function Dashboard({
     let completedTopicsInMod = 0;
 
     subjects.forEach(sub => {
-      const targetMod = (sub.modules || []).find(m => (m.number || 0) === modNumber);
+      const targetMod = (sub.modules || []).find(m => (m?.number || 0) === modNumber);
       if (targetMod) {
         const tCount = targetMod.topics?.length || 0;
         totalTopicsInMod += tCount;
-        completedTopicsInMod += (targetMod.topics || []).filter(t => t.status === 'studied' || t.status === 'revised').length;
+        completedTopicsInMod += (targetMod.topics || []).filter(t => t?.status === 'studied' || t?.status === 'revised').length;
       }
     });
 
@@ -92,11 +93,11 @@ export default function Dashboard({
       totalTopics: totalTopicsInMod,
       completedTopics: completedTopicsInMod,
       progress: pct,
-      barWeight: totalTopicsInMod > 0 ? totalTopicsInMod : [35, 25, 20, 12, 8][idx]
+      barWeight: totalTopicsInMod > 0 ? totalTopicsInMod : ([35, 25, 20, 12, 8][idx] || 10)
     };
   });
 
-  const totalBarWeight = moduleMasteryStats.reduce((sum, m) => sum + m.barWeight, 0) || 100;
+  const totalBarWeight = moduleMasteryStats.reduce((sum, m) => sum + (m.barWeight || 0), 0) || 100;
 
   const handleCreateSubject = (e) => {
     e.preventDefault();

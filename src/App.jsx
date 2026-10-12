@@ -28,7 +28,12 @@ export default function App() {
           Array.isArray(parsed.S1?.subjects) && 
           Array.isArray(parsed.S2?.subjects)
         ) {
-          return parsed;
+          return {
+            ...INITIAL_DATA,
+            ...parsed,
+            S1: { examWindowDate: '', ...parsed.S1 },
+            S2: { examWindowDate: '', ...parsed.S2 }
+          };
         }
       }
     } catch (e) {
@@ -62,6 +67,10 @@ export default function App() {
   const [isFocusModalOpen, setIsFocusModalOpen] = useState(false);
   const [isThemeModalOpen, setIsThemeModalOpen] = useState(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+
+  // Safe data guarantee: never undefined or missing semesters
+  const safeData = (data && typeof data === 'object' && data.S1 && data.S2) ? data : INITIAL_DATA;
+  const safeSemester = (safeData[currentSemester]) ? currentSemester : 'S1';
 
   // Sync data to localStorage
   useEffect(() => {
@@ -166,7 +175,7 @@ export default function App() {
   };
 
   // Find active subject object if in subject view
-  const currentSemesterSubjects = (data && data[currentSemester]?.subjects) || [];
+  const currentSemesterSubjects = (safeData && safeData[safeSemester]?.subjects) || [];
   const activeSubject = activeSubjectId 
     ? currentSemesterSubjects.find(s => s.id === activeSubjectId)
     : currentSemesterSubjects[0];
@@ -207,9 +216,9 @@ export default function App() {
       {!isAppleTheme && (
         <Sidebar
           currentView={currentView}
-          currentSemester={currentSemester}
+          currentSemester={safeSemester}
           onSelectSemester={setCurrentSemester}
-          data={data}
+          data={safeData}
           activeSubjectId={activeSubjectId}
           activeModuleId={activeModuleId}
           onNavigate={handleNavigation}
@@ -227,7 +236,7 @@ export default function App() {
         {/* Top Navbar */}
         <Navbar
           currentView={currentView}
-          currentSemester={currentSemester}
+          currentSemester={safeSemester}
           onSelectSemester={setCurrentSemester}
           onNavigate={handleNavigation}
           onOpenFocusModal={() => setIsFocusModalOpen(true)}
@@ -248,10 +257,10 @@ export default function App() {
         >
           {currentView === 'dashboard' && (
             <Dashboard
-              data={data}
-              currentSemester={currentSemester}
+              data={safeData}
+              currentSemester={safeSemester}
               onSelectSemester={setCurrentSemester}
-              onOpenSubject={(subId, modId) => handleOpenSubject(subId, currentSemester, modId)}
+              onOpenSubject={(subId, modId) => handleOpenSubject(subId, safeSemester, modId)}
               onAddSubject={handleAddSubject}
               onNavigateToTimetable={() => setCurrentView('timetable')}
             />
@@ -261,7 +270,7 @@ export default function App() {
             activeSubject ? (
               <SubjectView
                 subject={activeSubject}
-                semesterKey={currentSemester}
+                semesterKey={safeSemester}
                 onBack={() => {
                   setCurrentView('dashboard');
                   setActiveModuleId(null);
@@ -271,11 +280,13 @@ export default function App() {
                 initialModuleId={activeModuleId}
               />
             ) : (
-              <div className="p-12 rounded-[28px] text-center border border-slate-200 bg-white shadow-sm">
-                <h2 className="text-xl font-bold text-slate-800">No course selected</h2>
+              <div className="p-12 rounded-xl text-center border border-[#30363d] bg-[#161b22] shadow-sm">
+                <h2 className="text-xl font-bold text-[#f0f6fc]">No course selected</h2>
+                <p className="mt-1 text-xs text-[#8b949e]">Select a subject from the sidebar or return to the dashboard.</p>
                 <button
+                  type="button"
                   onClick={() => setCurrentView('dashboard')}
-                  className="mt-4 px-4 py-2 bg-purple-600 text-white rounded-xl text-xs font-bold"
+                  className="mt-4 px-4 py-2 bg-[#238636] hover:bg-[#2ea043] text-white rounded-lg text-xs font-bold transition-colors"
                 >
                   Back to Dashboard
                 </button>
@@ -285,29 +296,29 @@ export default function App() {
 
           {currentView === 'timetable' && (
             <ExamTimetable
-              data={data}
-              onOpenSubject={(subId) => handleOpenSubject(subId, currentSemester)}
+              data={safeData}
+              onOpenSubject={(subId) => handleOpenSubject(subId, safeSemester)}
             />
           )}
 
           {currentView === 'revision' && (
             <RevisionMode
-              data={data}
+              data={safeData}
               onMarkRevised={handleMarkTopicRevised}
-              onOpenSubject={(subId) => handleOpenSubject(subId, currentSemester)}
+              onOpenSubject={(subId) => handleOpenSubject(subId, safeSemester)}
             />
           )}
 
           {currentView === 'notes' && (
             <NotesVault
-              data={data}
-              onOpenSubject={(subId) => handleOpenSubject(subId, currentSemester)}
+              data={safeData}
+              onOpenSubject={(subId) => handleOpenSubject(subId, safeSemester)}
             />
           )}
 
           {currentView === 'settings' && (
             <Settings
-              data={data}
+              data={safeData}
               onUpdateData={setData}
               onResetData={handleResetData}
               currentTheme={currentTheme}
@@ -315,6 +326,21 @@ export default function App() {
               currentColorAccent={currentColorAccent}
               onSelectColorAccent={setCurrentColorAccent}
             />
+          )}
+
+          {/* Safe fallback for unrecognized or invalid currentView values */}
+          {!['dashboard', 'subject', 'timetable', 'revision', 'notes', 'settings'].includes(currentView) && (
+            <div className="p-12 rounded-xl border border-[#30363d] bg-[#161b22] text-center my-6">
+              <h2 className="text-xl font-bold text-[#f0f6fc]">View Not Found</h2>
+              <p className="mt-2 text-sm text-[#8b949e]">The view &quot;{String(currentView)}&quot; is not recognized.</p>
+              <button
+                type="button"
+                onClick={() => setCurrentView('dashboard')}
+                className="mt-4 px-4 py-2 bg-[#238636] hover:bg-[#2ea043] text-white rounded-lg text-sm font-semibold transition-colors"
+              >
+                Return to Dashboard
+              </button>
+            </div>
           )}
         </main>
       </div>
@@ -325,7 +351,7 @@ export default function App() {
           <RightPanel
             subjects={currentSemesterSubjects}
             onOpenFocusModal={() => setIsFocusModalOpen(true)}
-            onOpenSubject={(subId) => handleOpenSubject(subId, currentSemester)}
+            onOpenSubject={(subId) => handleOpenSubject(subId, safeSemester)}
           />
         </div>
       )}
@@ -334,7 +360,7 @@ export default function App() {
       <FocusModal
         isOpen={isFocusModalOpen}
         onClose={() => setIsFocusModalOpen(false)}
-        data={data}
+        data={safeData}
       />
 
       {/* 5-Theme UI & Layout Switcher Modal */}
