@@ -229,6 +229,7 @@ export default function Sidebar({
               <button
                 onClick={onCloseMobile}
                 className="p-1.5 rounded-md hover:bg-[#21262d] text-[#8b949e] hover:text-white lg:hidden"
+                aria-label="Close navigation sidebar"
               >
                 <X className="w-4 h-4" />
               </button>

@@ -55,7 +55,8 @@ export default function Navbar({
             <button
               onClick={onToggleMobileSidebar}
               className="lg:hidden p-1.5 rounded-md text-[#8b949e] hover:text-[#f0f6fc] hover:bg-[#21262d] border border-[#30363d]"
-              title="Open menu"
+              title="Open navigation menu"
+              aria-label="Open navigation menu"
             >
               <Menu className="w-4 h-4" />
             </button>
@@ -126,19 +127,22 @@ export default function Navbar({
             onClick={onOpenFocusModal}
             className="btn-gh px-2.5 py-1 text-xs flex items-center gap-1.5"
             title="Open Focus Room & Lo-Fi"
+            aria-label="Open Focus Room & Lo-Fi"
           >
-            <Flame className="w-3.5 h-3.5 text-[#f97316]" />
+            <Flame className="w-3.5 h-3.5 text-[#f97316]" aria-hidden="true" />
             <span className="hidden sm:inline">Focus</span>
           </button>
 
           {/* Profile pill */}
-          <div 
+          <button 
+            type="button"
             onClick={() => onNavigate('dashboard')}
             className="w-7 h-7 rounded-full bg-[#21262d] border border-[#30363d] flex items-center justify-center text-xs font-mono font-bold text-[#f0f6fc] cursor-pointer hover:border-[#8b949e]"
             title="Althaf k (@Althafx17)"
+            aria-label="View user profile and academic dashboard"
           >
             Ak
-          </div>
+          </button>
         </div>
       </div>
     </header>

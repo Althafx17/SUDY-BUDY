@@ -137,12 +137,13 @@ export default function NotesVault({
       {/* Search and Filters */}
       <div className="flex flex-col sm:flex-row items-center gap-2.5">
         <div className="relative flex-1 w-full">
-          <Search className="w-3.5 h-3.5 absolute left-3 top-2.5 text-[#8b949e]" />
+          <Search className="w-3.5 h-3.5 absolute left-3 top-2.5 text-[#8b949e]" aria-hidden="true" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search within note contents, topic names, or subjects..."
+            aria-label="Search within note contents, topic names, or subjects"
             className="w-full bg-[#0d1117] border border-[#30363d] rounded-md pl-8 pr-3 py-1.5 text-xs text-[#f0f6fc] placeholder-[#8b949e] focus:outline-none focus:border-[#58a6ff]"
           />
         </div>
@@ -152,6 +153,7 @@ export default function NotesVault({
           <select
             value={selectedTag}
             onChange={(e) => setSelectedTag(e.target.value)}
+            aria-label="Filter notes by tag"
             className="w-full bg-[#0d1117] border border-[#30363d] rounded-md px-3 py-1.5 text-xs text-[#f0f6fc] focus:outline-none focus:border-[#58a6ff] cursor-pointer"
           >
             <option value="ALL" className="bg-[#161b22] text-[#f0f6fc]">All Note Tags ({allTags.size})</option>

@@ -15,6 +15,9 @@ export default function ThemeModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in">
       <div 
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="theme-modal-title"
         className="w-full max-w-2xl bg-[#121214] rounded-[28px] shadow-2xl border border-zinc-800 overflow-hidden flex flex-col max-h-[90vh] animate-in zoom-in-95 text-zinc-100"
         onClick={(e) => e.stopPropagation()}
       >
@@ -22,10 +25,10 @@ export default function ThemeModal({
         <div className="p-6 pb-4 border-b border-zinc-800 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-2xl bg-zinc-800 border border-zinc-700 flex items-center justify-center text-white shadow-md">
-              <Palette className="w-5 h-5 text-zinc-200" />
+              <Palette className="w-5 h-5 text-zinc-200" aria-hidden="true" />
             </div>
             <div>
-              <h2 className="text-xl font-black text-white tracking-tight flex items-center gap-2">
+              <h2 id="theme-modal-title" className="text-xl font-black text-white tracking-tight flex items-center gap-2">
                 <span>UI & Layout Theme Studio</span>
               </h2>
               <p className="text-xs text-zinc-400 font-medium">
@@ -37,6 +40,8 @@ export default function ThemeModal({
           <button
             onClick={onClose}
             className="p-2 text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-full transition-colors"
+            title="Close Theme Studio"
+            aria-label="Close Theme Studio"
           >
             <X className="w-5 h-5" />
           </button>

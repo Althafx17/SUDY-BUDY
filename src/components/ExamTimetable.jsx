@@ -206,6 +206,7 @@ export default function ExamTimetable({
                     <button
                       className="p-3 rounded-full bg-zinc-800 group-hover:bg-white text-zinc-300 group-hover:text-black transition-all self-center shadow-sm"
                       title="Open subject details"
+                      aria-label={`Open ${entry.subject.name} details`}
                     >
                       <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
                     </button>

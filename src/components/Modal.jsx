@@ -23,11 +23,16 @@ export default function Modal({ isOpen, onClose, title, subtitle, children, maxW
       />
 
       {/* Modal Dialog Card */}
-      <div className={`relative w-full ${maxWidth} bg-[#161b22] border border-[#30363d] rounded-lg shadow-2xl p-5 text-[#f0f6fc] z-10 transition-all`}>
+      <div 
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-title"
+        className={`relative w-full ${maxWidth} bg-[#161b22] border border-[#30363d] rounded-lg shadow-2xl p-5 text-[#f0f6fc] z-10 transition-all`}
+      >
         {/* Header */}
         <div className="flex items-start justify-between pb-3 border-b border-[#30363d]">
           <div>
-            <h3 className="text-base font-bold tracking-tight text-[#f0f6fc]">
+            <h3 id="modal-title" className="text-base font-bold tracking-tight text-[#f0f6fc]">
               {title}
             </h3>
             {subtitle && (
@@ -40,6 +45,7 @@ export default function Modal({ isOpen, onClose, title, subtitle, children, maxW
             onClick={onClose}
             className="p-1 text-[#8b949e] hover:text-[#f0f6fc] rounded hover:bg-[#21262d] transition-colors"
             title="Close dialog"
+            aria-label="Close dialog"
           >
             <X className="w-4 h-4" />
           </button>

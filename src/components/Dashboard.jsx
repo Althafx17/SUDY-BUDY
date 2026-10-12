@@ -231,7 +231,7 @@ export default function Dashboard({
 
             {/* Circular Letter Grade Gauge */}
             <div className="relative w-20 h-20 flex items-center justify-center shrink-0">
-              <svg className="w-20 h-20 transform -rotate-90" viewBox="0 0 100 100">
+              <svg className="w-20 h-20 transform -rotate-90" viewBox="0 0 100 100" aria-hidden="true">
                 <circle
                   cx="50"
                   cy="50"
@@ -282,7 +282,7 @@ export default function Dashboard({
           {/* Col 2: Center Flame Ring */}
           <div className="flex flex-col items-center justify-center text-center px-1">
             <div className="relative w-12 h-12 flex items-center justify-center mb-1">
-              <svg className="w-12 h-12 transform -rotate-90" viewBox="0 0 50 50">
+              <svg className="w-12 h-12 transform -rotate-90" viewBox="0 0 50 50" aria-hidden="true">
                 <circle
                   cx="25"
                   cy="25"
@@ -454,12 +454,13 @@ export default function Dashboard({
           </div>
 
           <div className="relative w-full sm:w-64">
-            <Search className="w-3.5 h-3.5 text-[#8b949e] absolute left-2.5 top-1/2 -translate-y-1/2" />
+            <Search className="w-3.5 h-3.5 text-[#8b949e] absolute left-2.5 top-1/2 -translate-y-1/2" aria-hidden="true" />
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Filter repositories..."
+              aria-label="Filter repositories"
               className="w-full bg-[#0d1117] border border-[#30363d] rounded-md pl-8 pr-3 py-1 text-xs text-[#f0f6fc] placeholder-[#8b949e] focus:outline-none focus:border-[#58a6ff]"
             />
           </div>

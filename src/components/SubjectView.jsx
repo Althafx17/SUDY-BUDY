@@ -572,6 +572,7 @@ export default function SubjectView({
                     }}
                     className="p-2 text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-xl transition-colors border border-zinc-800"
                     title="Rename this module"
+                    aria-label="Rename this module"
                   >
                     <Edit3 className="w-4 h-4" />
                   </button>
@@ -590,12 +591,13 @@ export default function SubjectView({
               {/* Search & Filter Toolbar */}
               <div className="flex flex-col sm:flex-row items-center gap-3">
                 <div className="relative flex-1 w-full">
-                  <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500" />
+                  <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500" aria-hidden="true" />
                   <input
                     type="text"
                     value={topicSearch}
                     onChange={(e) => setTopicSearch(e.target.value)}
                     placeholder="Search topics, notes, or tags in this module..."
+                    aria-label="Search topics, notes, or tags in this module"
                     className="w-full bg-[#0c0c0e] border border-zinc-800 rounded-xl pl-9 pr-3.5 py-2 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-600"
                   />
                 </div>

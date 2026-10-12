@@ -266,6 +266,7 @@ export default function TopicItem({
             }}
             className="mt-0.5 shrink-0 text-[#8b949e] hover:text-[#f0f6fc] transition-colors"
             title="Cycle topic status"
+            aria-label={`Cycle status for ${topic.name}, current status is ${topic.status}`}
           >
             {topic.status === 'revised' ? (
               <CheckCircle2 className="w-5 h-5 text-[#2ea043] fill-[#238636]/20" />
@@ -293,6 +294,7 @@ export default function TopicItem({
                 <select
                   value={topic.status}
                   onChange={(e) => handleStatusChange(e.target.value)}
+                  aria-label={`Status for ${topic.name}`}
                   className={`text-[11px] font-mono font-semibold px-2 py-0.5 rounded border appearance-none pr-5 cursor-pointer outline-none transition-colors ${statusBadge.color}`}
                 >
                   <option value="not-started" className="bg-[#161b22] text-[#8b949e]">Not Started</option>
@@ -355,6 +357,7 @@ export default function TopicItem({
                   #{tag}
                   <button 
                     onClick={() => handleRemoveTag(tag)}
+                    aria-label={`Remove tag ${tag}`}
                     className="hover:text-red-400 text-[#484f58] ml-0.5"
                   >
                     ×
@@ -369,6 +372,8 @@ export default function TopicItem({
         <div className="flex items-center gap-1.5 shrink-0 self-end md:self-center">
           <button
             onClick={() => setIsExpanded(!isExpanded)}
+            aria-expanded={isExpanded}
+            aria-label={`${isExpanded ? 'Hide' : 'Show'} details for ${topic.name}`}
             className="btn-gh text-xs px-2.5 py-1 flex items-center gap-1"
           >
             <FileText className="w-3 h-3" />
@@ -380,6 +385,7 @@ export default function TopicItem({
             onClick={() => onDeleteTopic(topic.id)}
             className="p-1 text-[#8b949e] hover:text-red-400 hover:bg-red-950/30 rounded transition-colors"
             title="Delete topic"
+            aria-label={`Delete topic ${topic.name}`}
           >
             <Trash2 className="w-3.5 h-3.5" />
           </button>

@@ -109,15 +109,20 @@ export default function FocusModal({
       />
 
       {/* Main Focus Modal Card */}
-      <div className="relative w-full max-w-2xl bg-[#121214] border border-zinc-800 rounded-4xl shadow-2xl p-6 sm:p-8 text-zinc-100 z-10 backdrop-blur-3xl transition-all">
+      <div 
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="focus-modal-title"
+        className="relative w-full max-w-2xl bg-[#121214] border border-zinc-800 rounded-4xl shadow-2xl p-6 sm:p-8 text-zinc-100 z-10 backdrop-blur-3xl transition-all"
+      >
         {/* Top Bar: Title & Close */}
         <div className="flex items-center justify-between pb-4 border-b border-zinc-800">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-2xl bg-zinc-800 border border-zinc-700 flex items-center justify-center shadow-md">
-              <Flame className="w-5 h-5 text-zinc-200" />
+              <Flame className="w-5 h-5 text-zinc-200" aria-hidden="true" />
             </div>
             <div>
-              <h2 className="text-xl font-extrabold text-white tracking-tight flex items-center gap-2">
+              <h2 id="focus-modal-title" className="text-xl font-extrabold text-white tracking-tight flex items-center gap-2">
                 <span>Deep Focus Room</span>
                 <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-300 border border-zinc-700 font-bold">
                   Pomodoro
@@ -132,6 +137,8 @@ export default function FocusModal({
           <button
             onClick={onClose}
             className="p-2 text-zinc-400 hover:text-white rounded-xl bg-zinc-800 hover:bg-zinc-700 transition-colors"
+            title="Close Focus Room"
+            aria-label="Close Focus Room"
           >
             <X className="w-5 h-5" />
           </button>
@@ -243,6 +250,7 @@ export default function FocusModal({
               }}
               className="p-3 rounded-2xl bg-[#18181b] hover:bg-zinc-800 border border-zinc-700 text-zinc-300 hover:text-white transition-colors shadow-sm"
               title="Reset Timer"
+              aria-label="Reset Timer"
             >
               <RotateCcw className="w-4 h-4" />
             </button>
@@ -251,6 +259,7 @@ export default function FocusModal({
               onClick={() => setSecondsLeft(prev => prev + 300)}
               className="px-3.5 py-2.5 rounded-2xl bg-[#18181b] hover:bg-zinc-800 border border-zinc-700 text-xs font-bold text-zinc-300 hover:text-white transition-colors flex items-center gap-1 shadow-sm"
               title="Add 5 minutes"
+              aria-label="Add 5 minutes to timer"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>5m</span>
@@ -293,6 +302,7 @@ export default function FocusModal({
                 setSelectedSubjectId(e.target.value);
                 setSelectedTopicId('');
               }}
+              aria-label="Select Target Subject"
               className="w-full bg-[#09090b] border border-zinc-700 rounded-xl px-3.5 py-2 text-xs text-zinc-100 font-medium focus:outline-none focus:border-zinc-500 shadow-sm"
             >
               <option value="">Select Target Subject...</option>
@@ -366,6 +376,7 @@ export default function FocusModal({
                   setAmbientAudio('custom');
                 }}
                 placeholder="Paste any YouTube video or lofi stream URL..."
+                aria-label="Custom YouTube or stream URL"
                 className="flex-1 bg-[#09090b] border border-zinc-700 rounded-xl px-3 py-1.5 text-xs text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-zinc-400"
               />
               <button

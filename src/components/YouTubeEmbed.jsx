@@ -64,6 +64,7 @@ export default function YouTubeEmbed({
               onClick={onRemove}
               className="p-1 text-[#8b949e] hover:text-red-400 hover:bg-red-950/20 rounded transition-colors"
               title="Remove attached video"
+              aria-label="Remove attached video"
             >
               <Trash2 className="w-3.5 h-3.5" />
             </button>

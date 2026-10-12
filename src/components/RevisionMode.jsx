@@ -177,6 +177,7 @@ export default function RevisionMode({
           <select
             value={selectedSubjectId}
             onChange={(e) => setSelectedSubjectId(e.target.value)}
+            aria-label="Filter revision topics by subject"
             className="w-full bg-[#0d1117] border border-[#30363d] rounded-md px-3 py-1.5 text-xs text-[#f0f6fc] focus:outline-none focus:border-[#58a6ff] cursor-pointer"
           >
             <option value="ALL" className="bg-[#161b22] text-[#f0f6fc]">All Subjects</option>
@@ -192,12 +193,13 @@ export default function RevisionMode({
 
         {/* Search Input */}
         <div className="relative flex-1 w-full">
-          <Search className="w-3.5 h-3.5 absolute left-3 top-2.5 text-[#8b949e]" />
+          <Search className="w-3.5 h-3.5 absolute left-3 top-2.5 text-[#8b949e]" aria-hidden="true" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search topics, modules, or notes..."
+            aria-label="Search topics, modules, or notes"
             className="w-full bg-[#0d1117] border border-[#30363d] rounded-md pl-8 pr-3 py-1.5 text-xs text-[#f0f6fc] placeholder-[#8b949e] focus:outline-none focus:border-[#58a6ff]"
           />
         </div>

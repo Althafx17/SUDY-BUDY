@@ -190,6 +190,13 @@ export default function App() {
 
   return (
     <div className={getContainerClass()}>
+      {/* Skip to Main Content Link for Keyboard Accessibility */}
+      <a 
+        href="#main-content" 
+        className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:px-3 focus:py-1.5 focus:bg-[#58a6ff] focus:text-black focus:font-bold focus:rounded-md focus:shadow-lg focus:outline-none"
+      >
+        Skip to main content
+      </a>
 
       {/* Render Left Sidebar for all themes EXCEPT Apple Minimalist */}
       {!isAppleTheme && (
@@ -226,9 +233,14 @@ export default function App() {
         />
 
         {/* Content View Container */}
-        <main className={`w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 flex-1 ${
-          isAppleTheme ? 'max-w-6xl' : isEcoursieTheme ? 'max-w-5xl' : 'max-w-7xl'
-        }`}>
+        <main 
+          id="main-content"
+          tabIndex="-1"
+          role="main"
+          className={`w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 flex-1 outline-none ${
+            isAppleTheme ? 'max-w-6xl' : isEcoursieTheme ? 'max-w-5xl' : 'max-w-7xl'
+          }`}
+        >
           {currentView === 'dashboard' && (
             <Dashboard
               data={data}

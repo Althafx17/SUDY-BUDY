@@ -130,6 +130,7 @@ export default function ContributionGraph({
             <button
               key={year}
               onClick={() => setSelectedYear(year)}
+              aria-label={`View study contributions for year ${year}`}
               className={`px-2 py-0.5 rounded transition-colors ${
                 selectedYear === year
                   ? 'bg-[#21262d] text-[#f0f6fc] font-semibold border border-[#30363d]'
@@ -143,10 +144,14 @@ export default function ContributionGraph({
       </div>
 
       {/* Grid Container (Horizontally scrollable for small screens) */}
-      <div className="overflow-x-auto pb-1.5 pt-0.5 select-none relative custom-scrollbar">
+      <div 
+        role="region" 
+        aria-label="Study activity calendar"
+        className="overflow-x-auto pb-1.5 pt-0.5 select-none relative custom-scrollbar"
+      >
         <div className="inline-block min-w-180">
           {/* Month Labels Row */}
-          <div className="flex mb-1.5 pl-7 text-[10px] font-mono text-[#8b949e] relative h-4">
+          <div className="flex mb-1.5 pl-7 text-[10px] font-mono text-[#8b949e] relative h-4" aria-hidden="true">
             {monthLabels.map((m, idx) => (
               <span
                 key={`${m.name}-${idx}`}
@@ -161,7 +166,7 @@ export default function ContributionGraph({
           {/* Days Grid with Weekday Labels on Left */}
           <div className="flex gap-1 items-start">
             {/* Weekday indicators (Mon, Wed, Fri) */}
-            <div className="flex flex-col gap-1 pr-1.5 text-[9px] font-mono text-[#8b949e] leading-none shrink-0 w-6">
+            <div className="flex flex-col gap-1 pr-1.5 text-[9px] font-mono text-[#8b949e] leading-none shrink-0 w-6" aria-hidden="true">
               <span className="h-2.5"></span>
               <span className="h-2.5 flex items-center">Mon</span>
               <span className="h-2.5"></span>
@@ -172,7 +177,7 @@ export default function ContributionGraph({
             </div>
 
             {/* Weeks Columns */}
-            <div className="flex gap-0.75">
+            <div className="flex gap-0.75" role="row">
               {weeks.map((week, wIdx) => (
                 <div key={wIdx} className="flex flex-col gap-0.75">
                   {week.map((day, dIdx) => {
@@ -180,6 +185,9 @@ export default function ContributionGraph({
                     return (
                       <div
                         key={dIdx}
+                        tabIndex={day.isFuture ? -1 : 0}
+                        role="gridcell"
+                        aria-label={`${day.count} study contributions on ${day.dateString}`}
                         onMouseEnter={() => setHoveredDay(day)}
                         onMouseLeave={() => setHoveredDay(null)}
                         className={`w-[10.5px] h-[10.5px] rounded-xs border ${colorClass} transition-transform hover:scale-125 hover:z-20 cursor-pointer ${
