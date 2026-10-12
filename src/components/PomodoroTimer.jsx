@@ -55,6 +55,7 @@ export default function PomodoroTimer() {
 
       <div className="flex items-center gap-1 ml-0.5">
         <button
+          type="button"
           onClick={toggleRun}
           className={`p-1 rounded-lg text-xs transition-colors ${
             isRunning 
@@ -62,22 +63,27 @@ export default function PomodoroTimer() {
               : 'bg-white text-black hover:bg-zinc-200 shadow-sm'
           }`}
           title={isRunning ? 'Pause Timer' : 'Start Focus Timer'}
+          aria-label={isRunning ? 'Pause Timer' : 'Start Focus Timer'}
         >
           {isRunning ? <Pause className="w-3 h-3" /> : <Play className="w-3 h-3 ml-0.5" />}
         </button>
 
         <button
+          type="button"
           onClick={resetTimer}
           className="p-1 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 text-xs transition-colors"
           title="Reset Timer"
+          aria-label="Reset Timer"
         >
           <RotateCcw className="w-3 h-3" />
         </button>
 
         <button
-          onClick={switchMode(mode === 'focus' ? 'break' : 'focus')}
+          type="button"
+          onClick={() => switchMode(mode === 'focus' ? 'break' : 'focus')}
           className="text-[10px] uppercase font-bold px-1.5 py-0.5 rounded text-zinc-300 hover:bg-zinc-800 hover:text-white transition-colors"
           title="Switch Focus/Break"
+          aria-label="Switch between Focus and Break modes"
         >
           {mode === 'focus' ? 'Focus' : 'Break'}
         </button>
