@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { calculateStreak, calculateTotalSessions } from '../utils/studyActivity';
 
 const LEVEL_COLORS = {
   0: 'bg-[#161b22] border-[#30363d]/60',
@@ -9,73 +10,62 @@ const LEVEL_COLORS = {
 };
 
 export default function ContributionGraph({ 
-  totalContributions = 907, 
-  currentStreak = 14,
+  activityMap = {},
   topicsCompleted = 0 
 }) {
   const [hoveredDay, setHoveredDay] = useState(null);
-  const [selectedYear, setSelectedYear] = useState('2026');
+  const currentYearStr = String(new Date().getFullYear());
+  const [selectedYear, setSelectedYear] = useState(currentYearStr);
 
-  // Generate 52 weeks of realistic study contribution data ending around current date
-  const { weeks, monthLabels, totalCount } = useMemo(() => {
-    // 52 weeks * 7 days
+  const realStreak = useMemo(() => calculateStreak(activityMap), [activityMap]);
+  const totalRealSessions = useMemo(() => calculateTotalSessions(activityMap), [activityMap]);
+
+  // Generate 52 weeks of real study tracking calendar ending at current week
+  const { weeks, monthLabels, yearSessionCount } = useMemo(() => {
     const totalWeeks = 52;
-    const endDate = new Date('2026-10-12T12:00:00'); // current mock baseline date
-    const days = [];
+    const now = new Date();
+    // End date is upcoming Saturday to align the full current week
+    const endDate = new Date(now);
+    endDate.setDate(now.getDate() + (6 - now.getDay()));
+    endDate.setHours(23, 59, 59, 999);
 
-    // Calculate start date (52 weeks back, aligned to Sunday)
     const startDate = new Date(endDate);
-    startDate.setDate(endDate.getDate() - (totalWeeks * 7 - 1) - endDate.getDay());
+    startDate.setDate(endDate.getDate() - (totalWeeks * 7 - 1));
+    startDate.setHours(0, 0, 0, 0);
 
-    let runningTotal = 0;
+    const days = [];
+    let countInSelectedYear = 0;
 
     for (let i = 0; i < totalWeeks * 7; i++) {
       const date = new Date(startDate);
       date.setDate(startDate.getDate() + i);
 
-      const isFuture = date > endDate;
-      const diffDays = Math.floor((endDate - date) / (1000 * 60 * 60 * 24));
-      
-      let count = 0;
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const dayNum = String(date.getDate()).padStart(2, '0');
+      const dateKey = `${year}-${month}-${dayNum}`;
+
+      const isFuture = date > now;
+      const count = isFuture ? 0 : (activityMap[dateKey] || 0);
+
       let level = 0;
+      if (count >= 4) level = 4;
+      else if (count >= 3) level = 3;
+      else if (count >= 2) level = 2;
+      else if (count >= 1) level = 1;
 
-      if (!isFuture) {
-        // Current streak simulation (past `currentStreak` days guaranteed active)
-        if (diffDays >= 0 && diffDays < currentStreak) {
-          count = 3 + ((i * 7 + 3) % 6); // 3 to 8
-          level = count >= 6 ? 4 : count >= 4 ? 3 : 2;
-        } else {
-          // Semi-random seeded distribution resembling real student study patterns
-          // Higher on weekdays, study exam spikes around August/September & March
-          const dayOfWeek = date.getDay();
-          const month = date.getMonth();
-          const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
-          
-          const seed = Math.sin(i * 13.37 + month * 5.5) * 10000;
-          const pseudoRand = seed - Math.floor(seed);
-
-          // Study peaks: mid-terms and finals (March, July, August, September, October)
-          const isExamSeason = [2, 6, 7, 8, 9].includes(month);
-          const threshold = isExamSeason ? (isWeekend ? 0.35 : 0.22) : (isWeekend ? 0.55 : 0.38);
-
-          if (pseudoRand > threshold) {
-            count = Math.floor(pseudoRand * (isExamSeason ? 9 : 5)) + 1;
-            level = count >= 7 ? 4 : count >= 5 ? 3 : count >= 3 ? 2 : 1;
-          } else {
-            count = 0;
-            level = 0;
-          }
-        }
+      if (String(year) === selectedYear) {
+        countInSelectedYear += count;
       }
-
-      runningTotal += count;
 
       days.push({
         date,
+        dateKey,
         dateString: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
         count,
         level,
         isFuture,
+        isToday: dateKey === `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`,
         dayOfWeek: date.getDay()
       });
     }
@@ -90,7 +80,6 @@ export default function ContributionGraph({
     const months = [];
     let lastMonth = -1;
     generatedWeeks.forEach((week, wIdx) => {
-      // Look at middle of week (Wednesday)
       const wednesday = week[3] || week[0];
       if (wednesday) {
         const m = wednesday.date.getMonth();
@@ -107,28 +96,36 @@ export default function ContributionGraph({
     return {
       weeks: generatedWeeks,
       monthLabels: months,
-      totalCount: Math.max(runningTotal, totalContributions)
+      yearSessionCount: countInSelectedYear
     };
-  }, [totalContributions, currentStreak]);
+  }, [activityMap, selectedYear]);
 
   return (
     <div className="bg-[#161b22] border border-[#30363d] rounded-md p-4 sm:p-5 text-xs text-[#c9d1d9] font-sans">
-      {/* Calendar Header with Year Selector */}
+      {/* Calendar Header with Real Tracker Data */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#30363d] pb-2.5 mb-3">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <span className="font-semibold text-sm text-[#f0f6fc]">
-            {totalCount.toLocaleString()} study contributions in {selectedYear}
+            {yearSessionCount} study session{yearSessionCount === 1 ? '' : 's'} logged in {selectedYear}
           </span>
-          <span className="text-[10px] font-mono px-2 py-0.5 rounded-full border border-[#238636]/40 bg-[#238636]/10 text-[#3fb950]">
-            {currentStreak}d streak active
+          <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full border ${
+            realStreak > 0 
+              ? 'border-[#238636]/40 bg-[#238636]/10 text-[#3fb950]' 
+              : 'border-[#30363d] bg-[#0d1117] text-[#8b949e]'
+          }`}>
+            {realStreak > 0 ? `${realStreak}d streak active` : '0d streak'}
+          </span>
+          <span className="text-[10px] font-mono text-[#8b949e]">
+            ({totalRealSessions} all-time sessions)
           </span>
         </div>
 
         <div className="flex items-center gap-1.5 self-start sm:self-auto font-mono text-[11px]">
           <span className="text-[#8b949e] mr-1 hidden sm:inline">Year:</span>
-          {['2026', '2025'].map((year) => (
+          {[currentYearStr, String(Number(currentYearStr) - 1)].map((year) => (
             <button
               key={year}
+              type="button"
               onClick={() => setSelectedYear(year)}
               aria-label={`View study contributions for year ${year}`}
               className={`px-2 py-0.5 rounded transition-colors ${
@@ -182,17 +179,19 @@ export default function ContributionGraph({
                 <div key={wIdx} className="flex flex-col gap-0.75">
                   {week.map((day, dIdx) => {
                     const colorClass = LEVEL_COLORS[day.level] || LEVEL_COLORS[0];
+                    const ringClass = day.isToday ? 'ring-1 ring-[#58a6ff]' : '';
                     return (
                       <div
                         key={dIdx}
                         tabIndex={day.isFuture ? -1 : 0}
                         role="gridcell"
-                        aria-label={`${day.count} study contributions on ${day.dateString}`}
+                        aria-label={`${day.count} study sessions on ${day.dateString}`}
                         onMouseEnter={() => setHoveredDay(day)}
                         onMouseLeave={() => setHoveredDay(null)}
-                        className={`w-[10.5px] h-[10.5px] rounded-xs border ${colorClass} transition-transform hover:scale-125 hover:z-20 cursor-pointer ${
+                        className={`w-[10.5px] h-[10.5px] rounded-xs border ${colorClass} ${ringClass} transition-transform hover:scale-125 hover:z-20 cursor-pointer ${
                           day.isFuture ? 'opacity-20 cursor-default' : ''
                         }`}
+                        title={`${day.dateString}: ${day.count} sessions`}
                       />
                     );
                   })}
@@ -203,7 +202,7 @@ export default function ContributionGraph({
         </div>
       </div>
 
-      {/* Floating or Status Indicator Info & Legend */}
+      {/* Status Indicator Info & Legend */}
       <div className="mt-3 pt-2.5 border-t border-[#30363d] flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[11px] font-mono text-[#8b949e]">
         {/* Tooltip / Status Display */}
         <div className="min-h-4.5 flex items-center">
@@ -212,20 +211,21 @@ export default function ContributionGraph({
               <strong className="text-[#3fb950] font-semibold">
                 {hoveredDay.count === 0 ? 'No' : hoveredDay.count}
               </strong>{' '}
-              contribution{hoveredDay.count === 1 ? '' : 's'} on{' '}
+              study session{hoveredDay.count === 1 ? '' : 's'} on{' '}
               <span className="text-[#58a6ff]">{hoveredDay.dateString}</span>
+              {hoveredDay.isToday && <span className="ml-1 text-[#e3b341] font-semibold">(Today)</span>}
             </span>
           ) : (
             <span className="text-[#8b949e]">
-              Hover over a square to view detailed revision and syllabus sessions
+              Hover over a square to view daily study sessions
             </span>
           )}
         </div>
 
-        {/* GitHub Green Heat Legend */}
+        {/* Study Activity Level Legend */}
         <div className="flex items-center gap-1.5 self-end sm:self-auto">
           <span>Less</span>
-          <div className="flex gap-0.75 items-center">
+          <div className="flex gap-0.75 items-center" title="Activity Levels (0 to 4+ sessions)">
             <span className="w-2.5 h-2.5 rounded-xs border bg-[#161b22] border-[#30363d]/60" />
             <span className="w-2.5 h-2.5 rounded-xs border bg-[#0e4429] border-[#0e4429]" />
             <span className="w-2.5 h-2.5 rounded-xs border bg-[#006d32] border-[#006d32]" />

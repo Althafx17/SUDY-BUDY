@@ -12,6 +12,7 @@ import FocusModal from './components/FocusModal';
 import ThemeModal from './components/ThemeModal';
 import { INITIAL_DATA } from './constants/initialData';
 import { THEMES, COLOR_ACCENTS, THEME_STORAGE_KEY, COLOR_ACCENT_KEY } from './constants/themes';
+import { recordStudyEvent } from './utils/studyActivity';
 
 const STORAGE_KEY = 'study-ledger';
 
@@ -132,6 +133,13 @@ export default function App() {
 
   // Quick mark revised from Revision Mode
   const handleMarkTopicRevised = (semesterKey, subjectId, moduleId, topicId) => {
+    // Record genuine study activity for today
+    try {
+      recordStudyEvent();
+    } catch (e) {
+      console.warn('Could not record study event:', e);
+    }
+
     setData(prev => {
       const targetSem = prev[semesterKey];
       if (!targetSem) return prev;
@@ -197,7 +205,7 @@ export default function App() {
 
   const isMonochromeLight = currentTheme === 'monochrome-light';
 
-  // Base layout class matching clean GitHub dark
+  // Base layout class matching clean dark theme
   const getContainerClass = () => {
     return 'min-h-screen bg-[#0d1117] text-[#f0f6fc] font-sans flex flex-col lg:flex-row relative selection:bg-[#1f6feb] selection:text-white';
   };

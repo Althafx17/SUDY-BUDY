@@ -39,7 +39,7 @@ export default function Navbar({
   };
 
   const navItems = [
-    { id: 'dashboard', label: 'Repositories & Stats', icon: LayoutDashboard },
+    { id: 'dashboard', label: 'Dashboard & Stats', icon: LayoutDashboard },
     { id: 'timetable', label: 'Exam Schedule', icon: Calendar },
     { id: 'revision', label: 'Revision Sprint', icon: CheckSquare },
     { id: 'notes', label: 'Notes Vault', icon: FileText },
@@ -49,7 +49,7 @@ export default function Navbar({
   return (
     <header className="sticky top-0 z-30 w-full bg-[#161b22] border-b border-[#30363d] text-[#c9d1d9] font-sans">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between gap-4">
-        {/* Left Side: Mobile Menu Button & GitHub Breadcrumb Repo Title */}
+        {/* Left Side: Mobile Menu Button & Study Tracker Title */}
         <div className="flex items-center gap-3 min-w-0">
           {onToggleMobileSidebar && (
             <button
@@ -63,27 +63,14 @@ export default function Navbar({
           )}
 
           <div className="flex items-center gap-2 truncate">
-            <BookOpen className="w-4 h-4 text-[#8b949e] shrink-0 hidden sm:block" />
+            <BookOpen className="w-4 h-4 text-[#58a6ff] shrink-0" />
             <div className="flex items-center gap-1.5 text-xs sm:text-sm font-semibold truncate">
               <span 
                 onClick={() => onNavigate('dashboard')}
-                className="text-[#58a6ff] hover:underline cursor-pointer"
+                className="text-[#f0f6fc] hover:text-[#58a6ff] cursor-pointer truncate font-bold tracking-tight"
               >
-                Althafx17
+                Study Tracker
               </span>
-              <span className="text-[#8b949e]">/</span>
-              <span 
-                onClick={() => onNavigate('dashboard')}
-                className="text-[#f0f6fc] hover:text-[#58a6ff] cursor-pointer truncate font-bold"
-              >
-                study-buddy
-              </span>
-            </div>
-
-            {/* Branch pill badge */}
-            <div className="hidden md:flex items-center gap-1 text-[11px] font-mono px-2 py-0.5 rounded-full border border-[#30363d] bg-[#0d1117] text-[#8b949e]">
-              <GitBranch className="w-3 h-3 text-[#8b949e]" />
-              <span>main</span>
             </div>
 
             {/* Semester tag */}
@@ -133,15 +120,15 @@ export default function Navbar({
             <span className="hidden sm:inline">Focus</span>
           </button>
 
-          {/* Profile pill */}
+          {/* Profile / Study Tracker Badge */}
           <button 
             type="button"
             onClick={() => onNavigate('dashboard')}
-            className="w-7 h-7 rounded-full bg-[#21262d] border border-[#30363d] flex items-center justify-center text-xs font-mono font-bold text-[#f0f6fc] cursor-pointer hover:border-[#8b949e]"
-            title="Althaf k (@Althafx17)"
-            aria-label="View user profile and academic dashboard"
+            className="w-7 h-7 rounded-full bg-[#21262d] border border-[#30363d] flex items-center justify-center text-xs font-mono font-bold text-[#58a6ff] cursor-pointer hover:border-[#8b949e]"
+            title="Study Tracker Dashboard"
+            aria-label="View study tracker dashboard"
           >
-            Ak
+            ST
           </button>
         </div>
       </div>

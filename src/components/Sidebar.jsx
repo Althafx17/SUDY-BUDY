@@ -38,9 +38,9 @@ export default function Sidebar({
   onCloseMobile,
   currentTheme = 'monochrome-noir'
 }) {
-  // Navigation tabs (matching GitHub repository & profile tabs)
+  // Navigation tabs
   const mainNavItems = [
-    { id: 'dashboard', label: 'Repositories & Stats', icon: LayoutDashboard },
+    { id: 'dashboard', label: 'Dashboard & Stats', icon: LayoutDashboard },
     { id: 'timetable', label: 'Exam Schedule', icon: Calendar },
     { id: 'revision', label: 'Sprint Checklist', icon: CheckSquare },
     { id: 'notes', label: 'Notes Vault', icon: FileText },
@@ -197,7 +197,7 @@ export default function Sidebar({
         } lg:static lg:h-screen lg:shrink-0 overflow-hidden font-sans`}
       >
         <div className="flex flex-col h-full min-h-0">
-          {/* Top Profile Card (Directly from User Screenshot 2) */}
+          {/* Top Profile Card */}
           <div className="pb-3 border-b border-[#30363d]">
             <div className="flex items-start justify-between">
               <div 
@@ -207,26 +207,24 @@ export default function Sidebar({
                 }}
                 className="flex items-center gap-3 cursor-pointer group"
               >
-                <div className="w-10 h-10 rounded-full bg-[#161b22] border border-[#30363d] flex items-center justify-center font-bold text-sm text-[#f0f6fc] shrink-0 font-mono shadow-sm">
-                  Ak
+                <div className="w-10 h-10 rounded-full bg-[#161b22] border border-[#30363d] flex items-center justify-center font-bold text-sm text-[#58a6ff] shrink-0 font-mono shadow-sm">
+                  ST
                 </div>
                 <div>
                   <div className="flex items-center gap-1.5">
                     <span className="text-sm font-bold text-[#f0f6fc] tracking-tight group-hover:text-[#58a6ff] transition-colors">
-                      Althaf k
-                    </span>
-                    <span className="text-[10px] font-mono text-[#8b949e]">
-                      @Althafx17
+                      Study Tracker
                     </span>
                   </div>
                   <p className="text-[10px] text-[#8b949e] font-sans truncate max-w-42.5">
-                    SOFTWARE ENGINEER / MERN
+                    KTU Academic Ledger · B.Tech
                   </p>
                 </div>
               </div>
 
               {/* Close Mobile Button */}
               <button
+                type="button"
                 onClick={onCloseMobile}
                 className="p-1.5 rounded-md hover:bg-[#21262d] text-[#8b949e] hover:text-white lg:hidden"
                 aria-label="Close navigation sidebar"
@@ -235,21 +233,19 @@ export default function Sidebar({
               </button>
             </div>
 
-            {/* Teclif Infotech & Profile Info (Image 2) */}
+            {/* Academic Information */}
             <div className="mt-2.5 pt-2 border-t border-[#30363d]/60 space-y-1 text-[11px] text-[#8b949e]">
               <div className="flex items-center gap-1.5">
-                <Briefcase className="w-3 h-3 text-[#8b949e]" />
-                <span className="text-[#c9d1d9] font-medium">TECLIF INFOTECH</span>
+                <GraduationCap className="w-3 h-3 text-[#58a6ff]" />
+                <span className="text-[#c9d1d9] font-medium">Semester {currentSemester}</span>
+                <span className="text-[#30363d]">·</span>
+                <span className="text-[#8b949e]">KTU 2019 Scheme</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <LinkIcon className="w-3 h-3 text-[#8b949e]" />
-                <a href="https://teclif.com" target="_blank" rel="noreferrer" className="text-[#58a6ff] hover:underline">
-                  teclif.com
-                </a>
-                <span className="text-[#30363d]">·</span>
-                <a href="https://linkedin.com/in/althaf-k17" target="_blank" rel="noreferrer" className="text-[#58a6ff] hover:underline">
-                  in/althaf-k17
-                </a>
+                <BookOpen className="w-3 h-3 text-[#8b949e]" />
+                <span className="text-[#8b949e]">
+                  {s1Subjects.length + s2Subjects.length} Courses Enrolled
+                </span>
               </div>
             </div>
           </div>

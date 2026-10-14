@@ -7,7 +7,8 @@ import {
   BookOpen, 
   FileText,
   Flame,
-  Trophy
+  Trophy,
+  CheckCircle2
 } from 'lucide-react';
 import Modal from './Modal';
 import ContributionGraph from './ContributionGraph';
@@ -20,6 +21,15 @@ import {
   getNearestUpcomingExam, 
   formatTimeRemaining 
 } from '../utils/progress';
+import {
+  getStudyActivity,
+  toggleTodayStudy,
+  recordStudyEvent,
+  isStudiedToday,
+  calculateStreak,
+  calculateTotalDaysStudied,
+  calculateTotalSessions
+} from '../utils/studyActivity';
 
 export default function Dashboard({
   data,
@@ -38,6 +48,19 @@ export default function Dashboard({
   const [newSubColor, setNewSubColor] = useState('violet');
   const [newSubExamDate, setNewSubExamDate] = useState('');
   const [newSubVenue, setNewSubVenue] = useState('');
+
+  // Real Study Activity State
+  const [activityMap, setActivityMap] = useState(() => getStudyActivity());
+
+  const handleToggleTodayStudy = () => {
+    const updated = toggleTodayStudy();
+    setActivityMap(updated);
+  };
+
+  const handleAddStudySession = () => {
+    const updated = recordStudyEvent(null, 1);
+    setActivityMap(updated);
+  };
 
   // Ticking countdown state for nearest exam
   const [now, setNow] = useState(Date.now());
@@ -135,6 +158,12 @@ export default function Dashboard({
       (sub.instructor && sub.instructor.toLowerCase().includes(query));
   });
 
+  const studiedToday = isStudiedToday(activityMap);
+  const currentStreak = calculateStreak(activityMap);
+  const totalStudyDays = calculateTotalDaysStudied(activityMap);
+  const totalSessions = calculateTotalSessions(activityMap);
+  const todaySessionsCount = activityMap[new Date().toISOString().split('T')[0]] || 0;
+
   return (
     <div className="space-y-4 text-[#f0f6fc] font-sans">
       {/* Simple Clean Header: Overview Title & Semester Switcher */}
@@ -146,7 +175,7 @@ export default function Dashboard({
               Academic Overview
             </h1>
             <p className="text-xs text-[#8b949e] mt-1 font-mono">
-              Althafx17 / KTU {currentSemester} B.Tech Ledger
+              Study Tracker · KTU {currentSemester} B.Tech Ledger
             </p>
           </div>
         </div>
@@ -193,13 +222,13 @@ export default function Dashboard({
         </div>
       </div>
 
-      {/* GitHub Stats Row */}
+      {/* Study Tracker Stats & Today's Study Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-3.5">
-        {/* Card 1: Althaf k's Study Stats */}
+        {/* Card 1: Curriculum & Revision Stats */}
         <div className="bg-[#161b22] border border-[#30363d] rounded-md p-3.5 sm:p-4 flex flex-col justify-between">
           <div className="flex items-center justify-between border-b border-[#30363d] pb-2 mb-2.5">
             <h3 className="text-xs font-semibold uppercase tracking-wider text-[#f0f6fc]">
-              Althaf k's GitHub Stats
+              Study Tracker Stats
             </h3>
             <span className="text-[10px] font-mono text-[#8b949e]">
               KTU {currentSemester}
@@ -265,87 +294,113 @@ export default function Dashboard({
           </div>
         </div>
 
-        {/* Card 2: 3-Column Streak & Contribution Card */}
-        <div className="bg-[#161b22] border border-[#30363d] rounded-md p-3.5 sm:p-4 grid grid-cols-3 divide-x divide-[#30363d]">
-          {/* Col 1 */}
-          <div className="flex flex-col items-center justify-center text-center px-1">
-            <div className="text-2xl sm:text-3xl font-black font-mono text-[#f0f6fc]">
-              907
-            </div>
-            <div className="text-xs font-semibold text-[#c9d1d9] mt-1">
-              Total Contributions
-            </div>
-            <div className="text-[10px] text-[#8b949e] mt-1 font-mono">
-              Feb 1, 2026 - Present
-            </div>
+        {/* Card 2: Today's Study & Consistency Tracker */}
+        <div className="bg-[#161b22] border border-[#30363d] rounded-md p-3.5 sm:p-4 flex flex-col justify-between">
+          <div className="flex items-center justify-between border-b border-[#30363d] pb-2 mb-2.5">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-[#f0f6fc]">
+              Today&apos;s Study &amp; Streak
+            </h3>
+            <span className="text-[10px] font-mono text-[#8b949e]">
+              Daily Habit
+            </span>
           </div>
 
-          {/* Col 2: Center Flame Ring */}
-          <div className="flex flex-col items-center justify-center text-center px-1">
-            <div className="relative w-12 h-12 flex items-center justify-center mb-1">
-              <svg className="w-12 h-12 transform -rotate-90" viewBox="0 0 50 50" aria-hidden="true">
-                <circle
-                  cx="25"
-                  cy="25"
-                  r="20"
-                  stroke="#30363d"
-                  strokeWidth="4"
-                  fill="transparent"
-                />
-                <circle
-                  cx="25"
-                  cy="25"
-                  r="20"
-                  stroke="#f97316"
-                  strokeWidth="4"
-                  fill="transparent"
-                  strokeDasharray={2 * Math.PI * 20}
-                  strokeDashoffset={2 * Math.PI * 20 * 0.25}
-                  strokeLinecap="round"
-                />
-              </svg>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <Flame className="w-5 h-5 text-[#f97316]" />
+          {/* Interactive Checkbox for Today's Study */}
+          <div className="bg-[#0d1117] border border-[#30363d] rounded-md p-3 mb-3 flex items-center justify-between gap-3">
+            <label className="flex items-center gap-2.5 cursor-pointer select-none min-w-0">
+              <input
+                type="checkbox"
+                checked={studiedToday}
+                onChange={handleToggleTodayStudy}
+                className="w-4 h-4 rounded text-[#238636] bg-[#161b22] border-[#30363d] focus:ring-[#238636] cursor-pointer shrink-0"
+              />
+              <div className="truncate">
+                <div className="flex items-center gap-1.5">
+                  <span className="font-bold text-xs text-[#f0f6fc]">
+                    Today&apos;s Study
+                  </span>
+                  {studiedToday && (
+                    <span className="text-[9px] px-1.5 py-0.2 rounded-full font-mono bg-[#238636]/20 border border-[#238636]/40 text-[#3fb950]">
+                      Completed
+                    </span>
+                  )}
+                </div>
+                <p className="text-[10px] text-[#8b949e] truncate">
+                  {studiedToday
+                    ? `${todaySessionsCount} session${todaySessionsCount === 1 ? '' : 's'} logged today`
+                    : 'Check to record today’s study activity'}
+                </p>
+              </div>
+            </label>
+
+            <button
+              type="button"
+              onClick={handleAddStudySession}
+              className="btn-gh text-[11px] px-2.5 py-1 font-semibold flex items-center gap-1 shrink-0"
+              title="Add a study session to today"
+            >
+              + Log Session
+            </button>
+          </div>
+
+          {/* Real Metrics 3-Column Row */}
+          <div className="grid grid-cols-3 divide-x divide-[#30363d] pt-1">
+            {/* Col 1 */}
+            <div className="flex flex-col items-center justify-center text-center px-1">
+              <div className="text-xl sm:text-2xl font-black font-mono text-[#f0f6fc]">
+                {totalSessions}
+              </div>
+              <div className="text-[11px] font-semibold text-[#c9d1d9] mt-0.5">
+                Sessions Logged
+              </div>
+              <div className="text-[10px] text-[#8b949e] font-mono">
+                {totalStudyDays} days active
               </div>
             </div>
-            <div className="text-lg font-black font-mono text-[#f0f6fc]">
-              14
-            </div>
-            <div className="text-xs font-semibold text-[#f97316]">
-              Current Streak
-            </div>
-            <div className="text-[10px] text-[#8b949e] mt-0.5 font-mono">
-              Oct 8
-            </div>
-          </div>
 
-          {/* Col 3 */}
-          <div className="flex flex-col items-center justify-center text-center px-1">
-            <div className="text-2xl sm:text-3xl font-black font-mono text-[#f0f6fc]">
-              {nearestItem ? String(countdown.days).padStart(2, '0') : '7'}
+            {/* Col 2 */}
+            <div className="flex flex-col items-center justify-center text-center px-1">
+              <div className="flex items-center gap-1">
+                <Flame className={`w-4 h-4 ${currentStreak > 0 ? 'text-[#f97316]' : 'text-[#8b949e]'}`} />
+                <span className="text-xl sm:text-2xl font-black font-mono text-[#f0f6fc]">
+                  {currentStreak}
+                </span>
+              </div>
+              <div className="text-[11px] font-semibold text-[#f97316] mt-0.5">
+                Current Streak
+              </div>
+              <div className="text-[10px] text-[#8b949e] font-mono">
+                {currentStreak > 0 ? 'Consistent' : 'Start today'}
+              </div>
             </div>
-            <div className="text-xs font-semibold text-[#c9d1d9] mt-1">
-              {nearestItem ? 'Days to Exam' : 'Longest Streak'}
-            </div>
-            <div className="text-[10px] text-[#8b949e] mt-1 font-mono truncate max-w-22.5" title={nearestItem ? nearestItem.subject.name : 'Aug 17 - Aug 23'}>
-              {nearestItem ? nearestItem.subject.code : 'Aug 17 - Aug 23'}
+
+            {/* Col 3 */}
+            <div className="flex flex-col items-center justify-center text-center px-1">
+              <div className="text-xl sm:text-2xl font-black font-mono text-[#f0f6fc]">
+                {nearestItem ? String(countdown.days).padStart(2, '0') : '—'}
+              </div>
+              <div className="text-[11px] font-semibold text-[#c9d1d9] mt-0.5">
+                Days to Exam
+              </div>
+              <div className="text-[10px] text-[#8b949e] font-mono truncate max-w-22.5" title={nearestItem ? nearestItem.subject.name : 'No exam scheduled'}>
+                {nearestItem ? nearestItem.subject.code : 'No exam'}
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* GitHub-Style Study Activity Contribution Calendar */}
+      {/* Real Study Activity Contribution Calendar */}
       <ContributionGraph 
-        totalContributions={907}
-        currentStreak={14}
+        activityMap={activityMap}
         topicsCompleted={stats.completedTopics}
       />
 
-      {/* Card 3: Most Used Languages / Curriculum Module Progress Bar */}
+      {/* Card 3: Curriculum Module Progress Bar */}
       <div className="bg-[#161b22] border border-[#30363d] rounded-md p-3.5 sm:p-4">
         <div className="flex items-center justify-between border-b border-[#30363d] pb-2 mb-2.5">
           <h3 className="text-xs font-semibold uppercase tracking-wider text-[#f0f6fc]">
-            Most Used Languages & Curriculum Modules
+            Curriculum Module Progress &amp; Mastery
           </h3>
           <span className="text-[10px] font-mono text-[#8b949e]">
             Color-Coded Units
@@ -399,55 +454,55 @@ export default function Dashboard({
         </div>
       </div>
 
-      {/* Card 4: GitHub Trophies */}
+      {/* Card 4: Academic Study Milestones */}
       <div className="bg-[#161b22] border border-[#30363d] rounded-md p-3 sm:p-3.5">
         <div className="flex items-center gap-2 mb-2.5">
           <Trophy className="w-3.5 h-3.5 text-[#e3b341]" />
           <h3 className="text-xs font-semibold text-[#f0f6fc] uppercase tracking-wider">
-            GitHub Trophies
+            Academic Study Milestones
           </h3>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs">
           <div className="bg-[#0d1117] border border-[#30363d] hover:border-[#8b949e] transition-colors rounded p-2 flex items-center gap-2">
-            <span className="text-base">🦈</span>
+            <span className="text-base">📚</span>
             <div>
-              <div className="font-semibold text-[#f0f6fc] text-[11px]">Pull Shark</div>
-              <div className="text-[10px] text-[#8b949e] font-mono">{totalPYQs} PYQs</div>
+              <div className="font-semibold text-[#f0f6fc] text-[11px]">Curriculum Master</div>
+              <div className="text-[10px] text-[#8b949e] font-mono">{stats.completedTopics} Topics Done</div>
             </div>
           </div>
 
           <div className="bg-[#0d1117] border border-[#30363d] hover:border-[#8b949e] transition-colors rounded p-2 flex items-center gap-2">
             <span className="text-base">⚡</span>
             <div>
-              <div className="font-semibold text-[#f0f6fc] text-[11px]">Quickdraw</div>
-              <div className="text-[10px] text-[#8b949e] font-mono">14d Streak</div>
+              <div className="font-semibold text-[#f0f6fc] text-[11px]">Consistent Learner</div>
+              <div className="text-[10px] text-[#8b949e] font-mono">{currentStreak}d Streak</div>
             </div>
           </div>
 
           <div className="bg-[#0d1117] border border-[#30363d] hover:border-[#8b949e] transition-colors rounded p-2 flex items-center gap-2">
-            <span className="text-base">❄️</span>
+            <span className="text-base">📝</span>
             <div>
-              <div className="font-semibold text-[#f0f6fc] text-[11px]">Code Vault</div>
-              <div className="text-[10px] text-[#8b949e] font-mono">Notes Synced</div>
+              <div className="font-semibold text-[#f0f6fc] text-[11px]">PYQ Mastery</div>
+              <div className="text-[10px] text-[#8b949e] font-mono">{totalPYQs} Question Papers</div>
             </div>
           </div>
 
           <div className="bg-[#0d1117] border border-[#30363d] hover:border-[#8b949e] transition-colors rounded p-2 flex items-center gap-2">
             <span className="text-base">🎯</span>
             <div>
-              <div className="font-semibold text-[#f0f6fc] text-[11px]">Pair Pro</div>
-              <div className="text-[10px] text-[#8b949e] font-mono">Study Buddy</div>
+              <div className="font-semibold text-[#f0f6fc] text-[11px]">Exam Readiness</div>
+              <div className="text-[10px] text-[#8b949e] font-mono">{stats.overallProgress}% Completed</div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Pinned Academic Repositories */}
+      {/* Enrolled Courses & Subjects */}
       <div className="space-y-3 pt-1">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center gap-2">
             <h2 className="text-sm font-bold text-[#f0f6fc]">
-              Pinned Academic Repositories
+              Enrolled Courses &amp; Subjects
             </h2>
             <span className="text-xs font-mono px-2 py-0.2 rounded-full bg-[#21262d] border border-[#30363d] text-[#8b949e]">
               {filteredSubjects.length}
@@ -460,27 +515,26 @@ export default function Dashboard({
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Filter repositories..."
-              aria-label="Filter repositories"
+              placeholder="Filter courses..."
+              aria-label="Filter courses"
               className="w-full bg-[#0d1117] border border-[#30363d] rounded-md pl-8 pr-3 py-1 text-xs text-[#f0f6fc] placeholder-[#8b949e] focus:outline-none focus:border-[#58a6ff]"
             />
           </div>
         </div>
 
-        {/* Repositories Grid */}
+        {/* Courses Grid */}
         {filteredSubjects.length === 0 ? (
           <div className="bg-[#161b22] border border-dashed border-[#30363d] rounded-md p-8 text-center">
             <BookOpen className="w-8 h-8 text-[#8b949e] mx-auto mb-2 opacity-50" />
             <h3 className="text-xs font-semibold text-[#f0f6fc]">No courses found</h3>
             <p className="text-[11px] text-[#8b949e] mt-1">
-              Click "New Course" above to add a subject.
+              Click &quot;New Course&quot; above to add a subject.
             </p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {filteredSubjects.map((sub) => {
               const progress = Math.round(calculateSubjectProgress(sub) * 100);
-              const repoSlug = `Althafx17 / ${sub.code.toLowerCase()}`;
 
               return (
                 <div
@@ -489,16 +543,16 @@ export default function Dashboard({
                   className="bg-[#161b22] hover:bg-[#1c2128] border border-[#30363d] hover:border-[#58a6ff]/50 rounded-md p-3.5 cursor-pointer transition-all flex flex-col justify-between group shadow-sm"
                 >
                   <div>
-                    {/* Header: Book icon + repo slug + Public */}
+                    {/* Header: Book icon + Code + Instructor */}
                     <div className="flex items-center justify-between gap-2">
                       <div className="flex items-center gap-2 min-w-0">
                         <BookOpen className="w-4 h-4 text-[#8b949e] shrink-0" />
-                        <span className="font-semibold text-xs text-[#58a6ff] hover:underline truncate">
-                          {repoSlug}
+                        <span className="font-semibold text-xs text-[#58a6ff] hover:underline font-mono truncate">
+                          {sub.code || 'KTU'}
                         </span>
                       </div>
                       <span className="text-[10px] font-mono px-2 py-0.5 rounded-full border border-[#30363d] text-[#8b949e] shrink-0">
-                        Public
+                        {sub.instructor || 'Core KTU'}
                       </span>
                     </div>
 
@@ -571,7 +625,7 @@ export default function Dashboard({
       <Modal
         isOpen={isAddSubjectOpen}
         onClose={() => setIsAddSubjectOpen(false)}
-        title="Create a new academic repository"
+        title="Add a New Course"
         subtitle={`Add curriculum course to ${currentSemester}`}
       >
         <form onSubmit={handleCreateSubject} className="space-y-3 text-xs">
@@ -659,7 +713,7 @@ export default function Dashboard({
               disabled={!newSubName.trim()}
               className="btn-gh-primary px-3 py-1 text-xs disabled:opacity-40"
             >
-              Create repository
+              Add Course
             </button>
           </div>
         </form>

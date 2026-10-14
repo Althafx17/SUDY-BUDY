@@ -14,7 +14,7 @@
   }
 }
 
-/* Custom Webkit scrollbar matching GitHub Dark */
+/* Custom Webkit scrollbar matching Study Tracker Dark */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -30,7 +30,7 @@
   background: #8b949e;
 }
 
-/* GitHub Dark Minimalist Cards */
+/* Study Tracker Dark Minimalist Cards */
 .glass-panel,
 .glass-card,
 .glass-panel-elevated {
@@ -65,7 +65,7 @@
   border-color: #8b949e;
 }
 
-/* GitHub Style Button */
+/* Standard Button */
 .btn-gh {
   background-color: #21262d;
   border: 1px solid #30363d;
@@ -79,7 +79,7 @@
   color: #f0f6fc;
 }
 
-/* GitHub Style Primary Button */
+/* Primary Action Button */
 .btn-gh-primary {
   background-color: #238636;
   border: 1px solid #2ea043;

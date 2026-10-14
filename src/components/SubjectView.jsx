@@ -31,6 +31,7 @@ import {
   calculateSubjectProgress, 
   calculateSubjectRevisionProgress 
 } from '../utils/progress';
+import { recordStudyEvent } from '../utils/studyActivity';
 
 export default function SubjectView({ 
   subject, 
@@ -190,6 +191,15 @@ export default function SubjectView({
 
   const handleUpdateTopic = (updatedTopic) => {
     if (!currentModule) return;
+
+    if (updatedTopic.status === 'studied' || updatedTopic.status === 'revised') {
+      try {
+        recordStudyEvent();
+      } catch (e) {
+        console.warn('Could not record study event:', e);
+      }
+    }
+
     const updatedModules = (subject.modules || []).map(m => {
       if (m.id === currentModule.id) {
         return {
@@ -290,11 +300,12 @@ export default function SubjectView({
       {/* Top Back & Action Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <button
+          type="button"
           onClick={onBack}
           className="btn-gh inline-flex items-center gap-2 text-xs px-3 py-1.5 w-fit"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
-          <span>Back to Repositories</span>
+          <span>Back to Courses</span>
         </button>
 
         <div className="flex items-center gap-2">
