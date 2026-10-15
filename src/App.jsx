@@ -3,6 +3,7 @@ import Sidebar from './components/Sidebar';
 import Navbar from './components/Navbar';
 import RightPanel from './components/RightPanel';
 import Dashboard from './components/Dashboard';
+import DosageDashboard from './components/DosageDashboard';
 import SubjectView from './components/SubjectView';
 import ExamTimetable from './components/ExamTimetable';
 import RevisionMode from './components/RevisionMode';
@@ -10,6 +11,20 @@ import NotesVault from './components/NotesVault';
 import Settings from './components/Settings';
 import FocusModal from './components/FocusModal';
 import ThemeModal from './components/ThemeModal';
+import { 
+  Bell, 
+  Home, 
+  FileText, 
+  BarChart3, 
+  MessageCircle, 
+  Play, 
+  LogOut, 
+  Settings as SettingsIcon, 
+  Palette, 
+  Maximize2, 
+  Minimize2, 
+  ArrowLeft 
+} from 'lucide-react';
 import { INITIAL_DATA } from './constants/initialData';
 import { THEMES, COLOR_ACCENTS, THEME_STORAGE_KEY, COLOR_ACCENT_KEY } from './constants/themes';
 import { recordStudyEvent } from './utils/studyActivity';
@@ -43,14 +58,15 @@ export default function App() {
     return INITIAL_DATA;
   });
 
-  // UI Theme & Layout state (Black & White is default)
+  // UI Theme & Layout state (Dosage Clay Frame is default matching requested mockup)
   const [currentTheme, setCurrentTheme] = useState(() => {
     try {
       const saved = localStorage.getItem(THEME_STORAGE_KEY);
-      if (saved && saved !== 'rainbow-sidebar' && THEMES.some(t => t.id === saved)) return saved;
+      if (saved && saved !== 'rainbow-sidebar' && saved !== 'monochrome-noir' && THEMES.some(t => t.id === saved)) return saved;
     } catch (e) {}
-    return 'monochrome-noir';
+    return 'dosage-frame';
   });
+  const [isFrameExpanded, setIsFrameExpanded] = useState(false);
 
   // Color Accent state
   const [currentColorAccent, setCurrentColorAccent] = useState(() => {
@@ -198,12 +214,319 @@ export default function App() {
 
   // Active theme object
   const activeThemeObj = THEMES.find(t => t.id === currentTheme) || THEMES[0];
+  const isDosageTheme = currentTheme === 'dosage-frame';
   const isAppleTheme = currentTheme === 'apple-minimal';
   const isEcoursieTheme = currentTheme === 'ecoursie-studio';
   const isCyberDark = currentTheme === 'cyber-dark';
   const isZenNotion = currentTheme === 'zen-notion';
-
   const isMonochromeLight = currentTheme === 'monochrome-light';
+
+  // Flagship Dosage Clay Tablet Frame Experience (Matching the uploaded design)
+  if (isDosageTheme) {
+    return (
+      <div className="min-h-screen bg-[#c8cbe2] text-[#1a1b32] font-sans flex flex-col items-center justify-center p-2 sm:p-4 lg:p-6 py-4 relative selection:bg-[#5f51bd] selection:text-white">
+        
+        {/* Top Floating Control Bar */}
+        <header className="w-full max-w-[1360px] flex items-center justify-between pb-3 px-2 text-xs font-semibold select-none">
+          {/* Left: Semester Switcher Pill */}
+          <div className="flex items-center gap-2">
+            <span className="text-[#686c85] font-bold text-xs uppercase tracking-wider hidden sm:inline">
+              KTU Semester:
+            </span>
+            <div className="bg-white/70 backdrop-blur-md p-1 rounded-full border border-white/60 shadow-xs flex items-center gap-1">
+              {['S1', 'S2'].map((sem) => (
+                <button
+                  key={sem}
+                  type="button"
+                  onClick={() => setCurrentSemester(sem)}
+                  className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${
+                    safeSemester === sem
+                      ? 'bg-[#5f51bd] text-white shadow-xs'
+                      : 'text-[#686c85] hover:text-[#1a1b32]'
+                  }`}
+                >
+                  {sem}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Right: Quick Tools (Expand frame, Theme Studio) */}
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setIsFrameExpanded(prev => !prev)}
+              className="bg-white/70 hover:bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/60 text-[#494c65] shadow-xs flex items-center gap-1.5 transition-all cursor-pointer"
+              title={isFrameExpanded ? "Standard Tablet Frame" : "Expand to Full Width"}
+            >
+              {isFrameExpanded ? (
+                <>
+                  <Minimize2 className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">Standard Frame</span>
+                </>
+              ) : (
+                <>
+                  <Maximize2 className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">Expand Frame</span>
+                </>
+              )}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setIsThemeModalOpen(true)}
+              className="bg-white/70 hover:bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/60 text-[#494c65] shadow-xs flex items-center gap-1.5 transition-all cursor-pointer"
+              title="Theme Studio"
+            >
+              <Palette className="w-3.5 h-3.5 text-[#5f51bd]" />
+              <span className="hidden sm:inline">Themes</span>
+            </button>
+          </div>
+        </header>
+
+        {/* Floating Device / Tablet Frame Bezel */}
+        <div className={`w-full transition-all duration-300 relative ${isFrameExpanded ? 'max-w-none' : 'max-w-[1360px]'}`}>
+          <div className="tablet-frame-bezel p-3 sm:p-5 relative transition-all">
+            
+            {/* Dashboard Inner Canvas */}
+            <div className="bg-[#f5f6fc] rounded-[36px] p-4 sm:p-6 lg:p-7 relative overflow-hidden flex flex-col md:flex-row gap-5 items-stretch min-h-[760px] shadow-inner">
+              
+              {/* ====================================================== */}
+              {/* VERTICAL PURPLE PILL NAVIGATION (Matches uploaded mockup) */}
+              {/* ====================================================== */}
+              <aside className="bg-[#5f51bd] rounded-[32px] py-6 px-3 flex md:flex-col flex-row items-center justify-between shrink-0 shadow-lg shadow-[#5f51bd]/25 md:w-16 sm:md:w-18 w-full select-none z-20">
+                {/* Top Notification Bell Button */}
+                <button
+                  type="button"
+                  onClick={() => setIsThemeModalOpen(true)}
+                  className="w-10 h-10 rounded-full flex items-center justify-center text-white/75 hover:text-white hover:bg-white/10 transition-colors"
+                  title="Notifications & Theme"
+                >
+                  <Bell className="w-5 h-5" />
+                </button>
+
+                {/* Middle Icon Group */}
+                <nav className="flex md:flex-col flex-row items-center gap-2 sm:gap-3">
+                  {/* 1. Home / Dashboard */}
+                  <button
+                    type="button"
+                    onClick={() => handleNavigation('dashboard')}
+                    className={`transition-all ${
+                      currentView === 'dashboard'
+                        ? 'bg-white text-[#5f51bd] rounded-2xl w-11 h-11 flex items-center justify-center shadow-md font-bold'
+                        : 'text-white/70 hover:text-white hover:bg-white/10 rounded-2xl w-11 h-11 flex items-center justify-center'
+                    }`}
+                    title="Dashboard"
+                  >
+                    <Home className="w-5 h-5" />
+                  </button>
+
+                  {/* 2. Notes Vault */}
+                  <button
+                    type="button"
+                    onClick={() => handleNavigation('notes')}
+                    className={`transition-all ${
+                      currentView === 'notes'
+                        ? 'bg-white text-[#5f51bd] rounded-2xl w-11 h-11 flex items-center justify-center shadow-md font-bold'
+                        : 'text-white/70 hover:text-white hover:bg-white/10 rounded-2xl w-11 h-11 flex items-center justify-center'
+                    }`}
+                    title="Notes Vault"
+                  >
+                    <FileText className="w-5 h-5" />
+                  </button>
+
+                  {/* 3. Exam Schedule / Stats */}
+                  <button
+                    type="button"
+                    onClick={() => handleNavigation('timetable')}
+                    className={`transition-all ${
+                      currentView === 'timetable'
+                        ? 'bg-white text-[#5f51bd] rounded-2xl w-11 h-11 flex items-center justify-center shadow-md font-bold'
+                        : 'text-white/70 hover:text-white hover:bg-white/10 rounded-2xl w-11 h-11 flex items-center justify-center'
+                    }`}
+                    title="Exam Timetable & Analytics"
+                  >
+                    <BarChart3 className="w-5 h-5" />
+                  </button>
+
+                  {/* 4. Revision Sprint */}
+                  <button
+                    type="button"
+                    onClick={() => handleNavigation('revision')}
+                    className={`transition-all ${
+                      currentView === 'revision'
+                        ? 'bg-white text-[#5f51bd] rounded-2xl w-11 h-11 flex items-center justify-center shadow-md font-bold'
+                        : 'text-white/70 hover:text-white hover:bg-white/10 rounded-2xl w-11 h-11 flex items-center justify-center'
+                    }`}
+                    title="Revision Sprint"
+                  >
+                    <MessageCircle className="w-5 h-5" />
+                  </button>
+
+                  {/* 5. Focus Pomodoro / Play */}
+                  <button
+                    type="button"
+                    onClick={() => setIsFocusModalOpen(true)}
+                    className="text-white/70 hover:text-white hover:bg-white/10 rounded-2xl w-11 h-11 flex items-center justify-center transition-colors"
+                    title="Focus Pomodoro Room"
+                  >
+                    <Play className="w-5 h-5" />
+                  </button>
+                </nav>
+
+                {/* Bottom Logout / Settings / Exit */}
+                <button
+                  type="button"
+                  onClick={() => handleNavigation('settings')}
+                  className={`transition-all ${
+                    currentView === 'settings'
+                      ? 'bg-white text-[#5f51bd] rounded-2xl w-11 h-11 flex items-center justify-center shadow-md font-bold'
+                      : 'text-white/80 hover:text-white bg-white/10 hover:bg-white/20 rounded-2xl w-11 h-11 flex items-center justify-center'
+                  }`}
+                  title="Settings & Reset"
+                >
+                  <LogOut className="w-5 h-5" />
+                </button>
+              </aside>
+
+              {/* ====================================================== */}
+              {/* MAIN CONTENT AREA */}
+              {/* ====================================================== */}
+              <div className="flex-1 min-w-0 flex flex-col justify-between">
+                
+                {/* Views */}
+                <div className="flex-1">
+                  {currentView === 'dashboard' && (
+                    <DosageDashboard
+                      data={safeData}
+                      currentSemester={safeSemester}
+                      onSelectSemester={setCurrentSemester}
+                      onOpenSubject={(subId, modId) => handleOpenSubject(subId, safeSemester, modId)}
+                      onNavigate={handleNavigation}
+                      onOpenFocusModal={() => setIsFocusModalOpen(true)}
+                    />
+                  )}
+
+                  {currentView !== 'dashboard' && (
+                    <div className="space-y-4 animate-in fade-in">
+                      <div className="flex items-center justify-between pb-2 border-b border-gray-200">
+                        <button
+                          type="button"
+                          onClick={() => handleNavigation('dashboard')}
+                          className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white text-[#1f2137] border border-gray-200 shadow-xs hover:bg-gray-50 text-xs font-bold transition-all cursor-pointer"
+                        >
+                          <ArrowLeft className="w-4 h-4 text-[#5f51bd]" />
+                          <span>Back to Dashboard</span>
+                        </button>
+
+                        <span className="text-xs font-semibold text-[#8b8fa8] uppercase tracking-wider">
+                          {currentView.toUpperCase()} VIEW
+                        </span>
+                      </div>
+
+                      {currentView === 'subject' && (
+                        activeSubject ? (
+                          <div className="bg-white rounded-3xl p-4 sm:p-6 shadow-sm border border-gray-100">
+                            <SubjectView
+                              subject={activeSubject}
+                              semesterKey={safeSemester}
+                              onBack={() => {
+                                handleNavigation('dashboard');
+                                setActiveModuleId(null);
+                              }}
+                              onUpdateSubject={handleUpdateSubject}
+                              initialModuleId={activeModuleId}
+                            />
+                          </div>
+                        ) : (
+                          <div className="p-8 text-center bg-white rounded-2xl border border-gray-200">
+                            <h3 className="font-bold text-gray-800">No subject selected</h3>
+                            <button
+                              onClick={() => handleNavigation('dashboard')}
+                              className="mt-3 px-4 py-2 bg-[#5f51bd] text-white rounded-xl text-xs font-bold"
+                            >
+                              Return to Dashboard
+                            </button>
+                          </div>
+                        )
+                      )}
+
+                      {currentView === 'timetable' && (
+                        <div className="bg-white rounded-3xl p-4 sm:p-6 shadow-sm border border-gray-100">
+                          <ExamTimetable
+                            data={safeData}
+                            onOpenSubject={(subId) => handleOpenSubject(subId, safeSemester)}
+                          />
+                        </div>
+                      )}
+
+                      {currentView === 'revision' && (
+                        <div className="bg-white rounded-3xl p-4 sm:p-6 shadow-sm border border-gray-100">
+                          <RevisionMode
+                            data={safeData}
+                            onMarkRevised={handleMarkTopicRevised}
+                            onOpenSubject={(subId) => handleOpenSubject(subId, safeSemester)}
+                          />
+                        </div>
+                      )}
+
+                      {currentView === 'notes' && (
+                        <div className="bg-white rounded-3xl p-4 sm:p-6 shadow-sm border border-gray-100">
+                          <NotesVault
+                            data={safeData}
+                            onOpenSubject={(subId) => handleOpenSubject(subId, safeSemester)}
+                          />
+                        </div>
+                      )}
+
+                      {currentView === 'settings' && (
+                        <div className="bg-white rounded-3xl p-4 sm:p-6 shadow-sm border border-gray-100">
+                          <Settings
+                            data={safeData}
+                            onUpdateData={setData}
+                            onResetData={handleResetData}
+                            currentTheme={currentTheme}
+                            onSelectTheme={setCurrentTheme}
+                            currentColorAccent={currentColorAccent}
+                            onSelectColorAccent={setCurrentColorAccent}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                {/* Bottom Right "dosage" Watermark Matching Mockup */}
+                <div className="flex justify-end pt-4 pr-1 select-none pointer-events-none">
+                  <span className="font-serif text-lg sm:text-xl font-bold text-[#1b1c31]/85 tracking-normal">
+                    dosage
+                  </span>
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+
+        {/* Modals */}
+        <FocusModal
+          isOpen={isFocusModalOpen}
+          onClose={() => setIsFocusModalOpen(false)}
+          data={safeData}
+        />
+        <ThemeModal
+          isOpen={isThemeModalOpen}
+          onClose={() => setIsThemeModalOpen(false)}
+          currentTheme={currentTheme}
+          onSelectTheme={setCurrentTheme}
+          currentColorAccent={currentColorAccent}
+          onSelectColorAccent={setCurrentColorAccent}
+        />
+      </div>
+    );
+  }
 
   // Base layout class matching clean dark theme
   const getContainerClass = () => {

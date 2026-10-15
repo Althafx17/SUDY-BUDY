@@ -1,5 +1,18 @@
-// Complete Black & White UI & Layout Themes with Vibrant Color-Coded Modules
+// Theme Definitions with Dosage Claymorphic Frame Theme as Flagship Default
 export const THEMES = [
+  {
+    id: 'dosage-frame',
+    name: 'Dosage Clay Frame',
+    shortName: 'Dosage Frame',
+    icon: '🔮',
+    layoutType: 'tablet-frame',
+    description: 'Claymorphic tablet frame with soft periwinkle matte backdrop, royal purple vertical navigation pill, smooth wave curve graph, and dosage aesthetic.',
+    bgClass: 'bg-[#c8cbe2] text-[#1b1c31]',
+    cardClass: 'bg-white rounded-[26px] border border-[#eef0f8] shadow-sm',
+    headerClass: 'bg-transparent border-none',
+    sidebarClass: 'bg-[#5f51bd] text-white',
+    badge: 'Uploaded Mockup'
+  },
   {
     id: 'monochrome-noir',
     name: 'Monochrome Noir',
@@ -11,7 +24,7 @@ export const THEMES = [
     cardClass: 'bg-[#121214] border border-[#27272a] shadow-sm',
     headerClass: 'bg-[#09090b]/90 border-b border-[#27272a] backdrop-blur-xl',
     sidebarClass: 'bg-[#09090b] text-[#f4f4f5] border-r border-[#27272a]',
-    badge: 'Default B&W'
+    badge: 'Classic B&W'
   },
   {
     id: 'monochrome-light',
