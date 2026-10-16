@@ -397,13 +397,14 @@ export default function App() {
                 {/* Views */}
                 <div className="flex-1">
                   {currentView === 'dashboard' && (
-                    <DosageDashboard
+                    <Dashboard
                       data={safeData}
                       currentSemester={safeSemester}
                       onSelectSemester={setCurrentSemester}
                       onOpenSubject={(subId, modId) => handleOpenSubject(subId, safeSemester, modId)}
-                      onNavigate={handleNavigation}
-                      onOpenFocusModal={() => setIsFocusModalOpen(true)}
+                      onAddSubject={handleAddSubject}
+                      onNavigateToTimetable={() => handleNavigation('timetable')}
+                      currentTheme={currentTheme}
                     />
                   )}
 

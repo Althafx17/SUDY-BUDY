@@ -11,14 +11,29 @@ const LEVEL_COLORS = {
 
 export default function ContributionGraph({ 
   activityMap = {},
-  topicsCompleted = 0 
+  topicsCompleted = 0,
+  currentTheme = 'dosage-frame'
 }) {
+  const isDosage = currentTheme === 'dosage-frame';
   const [hoveredDay, setHoveredDay] = useState(null);
   const currentYearStr = String(new Date().getFullYear());
   const [selectedYear, setSelectedYear] = useState(currentYearStr);
 
   const realStreak = useMemo(() => calculateStreak(activityMap), [activityMap]);
   const totalRealSessions = useMemo(() => calculateTotalSessions(activityMap), [activityMap]);
+
+  const levelColors = useMemo(() => {
+    if (isDosage) {
+      return {
+        0: 'bg-[#f0f2fa] border-[#e2e5f1]',
+        1: 'bg-[#dcd7ff] border-[#dcd7ff]',
+        2: 'bg-[#aba1f7] border-[#aba1f7]',
+        3: 'bg-[#7d6ef0] border-[#7d6ef0]',
+        4: 'bg-[#5f51bd] border-[#5f51bd]'
+      };
+    }
+    return LEVEL_COLORS;
+  }, [isDosage]);
 
   // Generate 52 weeks of real study tracking calendar ending at current week
   const { weeks, monthLabels, yearSessionCount } = useMemo(() => {
@@ -101,27 +116,29 @@ export default function ContributionGraph({
   }, [activityMap, selectedYear]);
 
   return (
-    <div className="bg-[#161b22] border border-[#30363d] rounded-md p-4 sm:p-5 text-xs text-[#c9d1d9] font-sans">
+    <div className={isDosage 
+      ? "bg-white border border-[#eceef6] rounded-2xl p-4 sm:p-5 text-xs text-[#1c1d29] shadow-[0_4px_16px_rgba(95,81,189,0.06)]" 
+      : "bg-[#161b22] border border-[#30363d] rounded-md p-4 sm:p-5 text-xs text-[#c9d1d9] font-sans"}>
       {/* Calendar Header with Real Tracker Data */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#30363d] pb-2.5 mb-3">
+      <div className={`flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b pb-2.5 mb-3 ${isDosage ? 'border-[#eceef6]' : 'border-[#30363d]'}`}>
         <div className="flex items-center gap-2 flex-wrap">
-          <span className="font-semibold text-sm text-[#f0f6fc]">
+          <span className={`font-semibold text-sm ${isDosage ? 'text-[#1c1d29]' : 'text-[#f0f6fc]'}`}>
             {yearSessionCount} study session{yearSessionCount === 1 ? '' : 's'} logged in {selectedYear}
           </span>
           <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full border ${
             realStreak > 0 
-              ? 'border-[#238636]/40 bg-[#238636]/10 text-[#3fb950]' 
-              : 'border-[#30363d] bg-[#0d1117] text-[#8b949e]'
+              ? isDosage ? 'border-[#5f51bd]/20 bg-[#f4f2ff] text-[#5f51bd] font-bold' : 'border-[#238636]/40 bg-[#238636]/10 text-[#3fb950]' 
+              : isDosage ? 'border-[#e2e5f1] bg-[#f8f9fd] text-[#8c91a4]' : 'border-[#30363d] bg-[#0d1117] text-[#8b949e]'
           }`}>
             {realStreak > 0 ? `${realStreak}d streak active` : '0d streak'}
           </span>
-          <span className="text-[10px] font-mono text-[#8b949e]">
+          <span className={`text-[10px] font-mono ${isDosage ? 'text-[#8c91a4]' : 'text-[#8b949e]'}`}>
             ({totalRealSessions} all-time sessions)
           </span>
         </div>
 
         <div className="flex items-center gap-1.5 self-start sm:self-auto font-mono text-[11px]">
-          <span className="text-[#8b949e] mr-1 hidden sm:inline">Year:</span>
+          <span className={`${isDosage ? 'text-[#8c91a4]' : 'text-[#8b949e]'} mr-1 hidden sm:inline`}>Year:</span>
           {[currentYearStr, String(Number(currentYearStr) - 1)].map((year) => (
             <button
               key={year}
@@ -130,8 +147,12 @@ export default function ContributionGraph({
               aria-label={`View study contributions for year ${year}`}
               className={`px-2 py-0.5 rounded transition-colors ${
                 selectedYear === year
-                  ? 'bg-[#21262d] text-[#f0f6fc] font-semibold border border-[#30363d]'
-                  : 'text-[#8b949e] hover:text-[#f0f6fc]'
+                  ? isDosage
+                    ? 'bg-[#5f51bd] text-white font-semibold'
+                    : 'bg-[#21262d] text-[#f0f6fc] font-semibold border border-[#30363d]'
+                  : isDosage
+                    ? 'text-[#8c91a4] hover:text-[#1c1d29]'
+                    : 'text-[#8b949e] hover:text-[#f0f6fc]'
               }`}
             >
               {year}
@@ -148,7 +169,7 @@ export default function ContributionGraph({
       >
         <div className="inline-block min-w-180">
           {/* Month Labels Row */}
-          <div className="flex mb-1.5 pl-7 text-[10px] font-mono text-[#8b949e] relative h-4" aria-hidden="true">
+          <div className={`flex mb-1.5 pl-7 text-[10px] font-mono relative h-4 ${isDosage ? 'text-[#8c91a4]' : 'text-[#8b949e]'}`} aria-hidden="true">
             {monthLabels.map((m, idx) => (
               <span
                 key={`${m.name}-${idx}`}
@@ -163,7 +184,7 @@ export default function ContributionGraph({
           {/* Days Grid with Weekday Labels on Left */}
           <div className="flex gap-1 items-start">
             {/* Weekday indicators (Mon, Wed, Fri) */}
-            <div className="flex flex-col gap-1 pr-1.5 text-[9px] font-mono text-[#8b949e] leading-none shrink-0 w-6" aria-hidden="true">
+            <div className={`flex flex-col gap-1 pr-1.5 text-[9px] font-mono leading-none shrink-0 w-6 ${isDosage ? 'text-[#8c91a4]' : 'text-[#8b949e]'}`} aria-hidden="true">
               <span className="h-2.5"></span>
               <span className="h-2.5 flex items-center">Mon</span>
               <span className="h-2.5"></span>
@@ -178,8 +199,8 @@ export default function ContributionGraph({
               {weeks.map((week, wIdx) => (
                 <div key={wIdx} className="flex flex-col gap-0.75">
                   {week.map((day, dIdx) => {
-                    const colorClass = LEVEL_COLORS[day.level] || LEVEL_COLORS[0];
-                    const ringClass = day.isToday ? 'ring-1 ring-[#58a6ff]' : '';
+                    const colorClass = levelColors[day.level] || levelColors[0];
+                    const ringClass = day.isToday ? (isDosage ? 'ring-1 ring-[#5f51bd]' : 'ring-1 ring-[#58a6ff]') : '';
                     return (
                       <div
                         key={dIdx}
@@ -203,20 +224,20 @@ export default function ContributionGraph({
       </div>
 
       {/* Status Indicator Info & Legend */}
-      <div className="mt-3 pt-2.5 border-t border-[#30363d] flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[11px] font-mono text-[#8b949e]">
+      <div className={`mt-3 pt-2.5 border-t flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[11px] font-mono ${isDosage ? 'border-[#eceef6] text-[#8c91a4]' : 'border-[#30363d] text-[#8b949e]'}`}>
         {/* Tooltip / Status Display */}
         <div className="min-h-4.5 flex items-center">
           {hoveredDay ? (
-            <span className="text-[#f0f6fc]">
-              <strong className="text-[#3fb950] font-semibold">
+            <span className={isDosage ? "text-[#1c1d29]" : "text-[#f0f6fc]"}>
+              <strong className={`${isDosage ? "text-[#5f51bd]" : "text-[#3fb950]"} font-semibold`}>
                 {hoveredDay.count === 0 ? 'No' : hoveredDay.count}
               </strong>{' '}
               study session{hoveredDay.count === 1 ? '' : 's'} on{' '}
-              <span className="text-[#58a6ff]">{hoveredDay.dateString}</span>
+              <span className={isDosage ? "text-[#ff6584] font-medium" : "text-[#58a6ff]"}>{hoveredDay.dateString}</span>
               {hoveredDay.isToday && <span className="ml-1 text-[#e3b341] font-semibold">(Today)</span>}
             </span>
           ) : (
-            <span className="text-[#8b949e]">
+            <span className={isDosage ? "text-[#8c91a4]" : "text-[#8b949e]"}>
               Hover over a square to view daily study sessions
             </span>
           )}
@@ -226,11 +247,11 @@ export default function ContributionGraph({
         <div className="flex items-center gap-1.5 self-end sm:self-auto">
           <span>Less</span>
           <div className="flex gap-0.75 items-center" title="Activity Levels (0 to 4+ sessions)">
-            <span className="w-2.5 h-2.5 rounded-xs border bg-[#161b22] border-[#30363d]/60" />
-            <span className="w-2.5 h-2.5 rounded-xs border bg-[#0e4429] border-[#0e4429]" />
-            <span className="w-2.5 h-2.5 rounded-xs border bg-[#006d32] border-[#006d32]" />
-            <span className="w-2.5 h-2.5 rounded-xs border bg-[#26a641] border-[#26a641]" />
-            <span className="w-2.5 h-2.5 rounded-xs border bg-[#39d353] border-[#39d353]" />
+            <span className={`w-2.5 h-2.5 rounded-xs border ${levelColors[0]}`} />
+            <span className={`w-2.5 h-2.5 rounded-xs border ${levelColors[1]}`} />
+            <span className={`w-2.5 h-2.5 rounded-xs border ${levelColors[2]}`} />
+            <span className={`w-2.5 h-2.5 rounded-xs border ${levelColors[3]}`} />
+            <span className={`w-2.5 h-2.5 rounded-xs border ${levelColors[4]}`} />
           </div>
           <span>More</span>
         </div>

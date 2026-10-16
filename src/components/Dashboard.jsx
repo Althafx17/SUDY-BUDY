@@ -37,7 +37,8 @@ export default function Dashboard({
   onSelectSemester,
   onOpenSubject,
   onAddSubject,
-  onNavigateToTimetable
+  onNavigateToTimetable,
+  currentTheme = 'dosage-frame'
 }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [isAddSubjectOpen, setIsAddSubjectOpen] = useState(false);
@@ -164,17 +165,30 @@ export default function Dashboard({
   const totalSessions = calculateTotalSessions(activityMap);
   const todaySessionsCount = activityMap[new Date().toISOString().split('T')[0]] || 0;
 
+  const isDosage = currentTheme === 'dosage-frame';
+
+  // Dynamic theme styling
+  const cardClass = isDosage
+    ? 'bg-white border border-[#eef0f8] rounded-3xl p-5 shadow-sm text-[#1b1c31]'
+    : 'bg-[#161b22] border border-[#30363d] rounded-md p-3.5 sm:p-4 text-[#f0f6fc]';
+  const innerCardClass = isDosage
+    ? 'bg-[#f8f9fe] border border-[#eef0f8] rounded-2xl'
+    : 'bg-[#0d1117] border border-[#30363d] rounded-md';
+  const dividerClass = isDosage ? 'border-[#f1f3fa]' : 'border-[#30363d]';
+  const textTitle = isDosage ? 'text-[#1b1c31]' : 'text-[#f0f6fc]';
+  const textMuted = isDosage ? 'text-[#7d8299]' : 'text-[#8b949e]';
+
   return (
-    <div className="space-y-4 text-[#f0f6fc] font-sans">
+    <div className={`space-y-4 font-sans ${isDosage ? 'text-[#1b1c31]' : 'text-[#f0f6fc]'}`}>
       {/* Simple Clean Header: Overview Title & Semester Switcher */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2.5 border-b border-[#30363d]">
+      <div className={`flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2.5 border-b ${isDosage ? 'border-[#eef0f8]' : 'border-[#30363d]'}`}>
         <div className="flex items-center gap-2.5">
-          <BookOpen className="w-5 h-5 text-[#8b949e]" />
+          <BookOpen className={`w-5 h-5 ${isDosage ? 'text-[#5f51bd]' : 'text-[#8b949e]'}`} />
           <div>
-            <h1 className="text-base sm:text-lg font-bold text-[#f0f6fc] tracking-tight leading-none">
+            <h1 className={`text-base sm:text-lg font-bold tracking-tight leading-none ${textTitle}`}>
               Academic Overview
             </h1>
-            <p className="text-xs text-[#8b949e] mt-1 font-mono">
+            <p className={`text-xs mt-1 font-mono ${textMuted}`}>
               Study Tracker · KTU {currentSemester} B.Tech Ledger
             </p>
           </div>
@@ -182,31 +196,31 @@ export default function Dashboard({
 
         {/* Right Controls: Semester Switcher & New Course */}
         <div className="flex items-center gap-2 self-start sm:self-auto">
-          <div className="inline-flex p-0.5 bg-[#0d1117] rounded-md border border-[#30363d]">
+          <div className={`inline-flex p-0.5 rounded-full border ${isDosage ? 'bg-[#f0f2fa] border-[#e4e6f2]' : 'bg-[#0d1117] border-[#30363d]'}`}>
             <button
               onClick={() => onSelectSemester('S1')}
-              className={`px-3 py-1 rounded text-xs font-semibold transition-all flex items-center gap-1.5 ${
+              className={`px-3 py-1 rounded-full text-xs font-semibold transition-all flex items-center gap-1.5 ${
                 currentSemester === 'S1'
-                  ? 'bg-[#21262d] text-[#f0f6fc] border border-[#30363d]'
-                  : 'text-[#8b949e] hover:text-[#f0f6fc]'
+                  ? isDosage ? 'bg-[#5f51bd] text-white shadow-xs font-bold' : 'bg-[#21262d] text-[#f0f6fc] border border-[#30363d]'
+                  : isDosage ? 'text-[#7d8299] hover:text-[#1b1c31]' : 'text-[#8b949e] hover:text-[#f0f6fc]'
               }`}
             >
               <span>Semester 1</span>
-              <span className="text-[10px] font-mono text-[#8b949e]">
+              <span className={`text-[10px] font-mono ${isDosage && currentSemester === 'S1' ? 'text-white/80' : 'text-[#8b949e]'}`}>
                 ({data.S1?.subjects?.length || 0})
               </span>
             </button>
 
             <button
               onClick={() => onSelectSemester('S2')}
-              className={`px-3 py-1 rounded text-xs font-semibold transition-all flex items-center gap-1.5 ${
+              className={`px-3 py-1 rounded-full text-xs font-semibold transition-all flex items-center gap-1.5 ${
                 currentSemester === 'S2'
-                  ? 'bg-[#21262d] text-[#f0f6fc] border border-[#30363d]'
-                  : 'text-[#8b949e] hover:text-[#f0f6fc]'
+                  ? isDosage ? 'bg-[#5f51bd] text-white shadow-xs font-bold' : 'bg-[#21262d] text-[#f0f6fc] border border-[#30363d]'
+                  : isDosage ? 'text-[#7d8299] hover:text-[#1b1c31]' : 'text-[#8b949e] hover:text-[#f0f6fc]'
               }`}
             >
               <span>Semester 2</span>
-              <span className="text-[10px] font-mono text-[#8b949e]">
+              <span className={`text-[10px] font-mono ${isDosage && currentSemester === 'S2' ? 'text-white/80' : 'text-[#8b949e]'}`}>
                 ({data.S2?.subjects?.length || 0})
               </span>
             </button>
@@ -214,7 +228,7 @@ export default function Dashboard({
 
           <button
             onClick={() => setIsAddSubjectOpen(true)}
-            className="btn-gh-primary px-3 py-1 text-xs font-semibold flex items-center gap-1.5 shadow-sm"
+            className={`${isDosage ? 'bg-[#5f51bd] hover:bg-[#5244ad] text-white rounded-full px-4 py-1.5 text-xs font-bold shadow-xs' : 'btn-gh-primary px-3 py-1 text-xs font-semibold rounded-md shadow-sm'} flex items-center gap-1.5 transition-colors`}
           >
             <Plus className="w-3.5 h-3.5" />
             <span>New Course</span>
@@ -225,12 +239,12 @@ export default function Dashboard({
       {/* Study Tracker Stats & Today's Study Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-3.5">
         {/* Card 1: Curriculum & Revision Stats */}
-        <div className="bg-[#161b22] border border-[#30363d] rounded-md p-3.5 sm:p-4 flex flex-col justify-between">
-          <div className="flex items-center justify-between border-b border-[#30363d] pb-2 mb-2.5">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-[#f0f6fc]">
+        <div className={`${cardClass} flex flex-col justify-between`}>
+          <div className={`flex items-center justify-between border-b pb-2 mb-2.5 ${dividerClass}`}>
+            <h3 className={`text-xs font-semibold uppercase tracking-wider ${textTitle}`}>
               Study Tracker Stats
             </h3>
-            <span className="text-[10px] font-mono text-[#8b949e]">
+            <span className={`text-[10px] font-mono ${textMuted}`}>
               KTU {currentSemester}
             </span>
           </div>
@@ -238,24 +252,24 @@ export default function Dashboard({
           <div className="flex items-center justify-between gap-4">
             <div className="space-y-1.5 text-xs font-mono">
               <div className="flex items-center gap-2">
-                <span className="text-[#8b949e]">Total Topics:</span>
-                <span className="font-bold text-[#f0f6fc]">{stats.totalTopics}</span>
+                <span className={textMuted}>Total Topics:</span>
+                <span className={`font-bold ${textTitle}`}>{stats.totalTopics}</span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-[#8b949e]">Topics Mastered:</span>
-                <span className="font-bold text-[#f0f6fc]">{stats.completedTopics}</span>
+                <span className={textMuted}>Topics Mastered:</span>
+                <span className={`font-bold ${textTitle}`}>{stats.completedTopics}</span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-[#8b949e]">Total PYQs:</span>
-                <span className="font-bold text-[#f0f6fc]">{totalPYQs}</span>
+                <span className={textMuted}>Total PYQs:</span>
+                <span className={`font-bold ${textTitle}`}>{totalPYQs}</span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-[#8b949e]">Revision Ready:</span>
-                <span className="font-bold text-[#f0f6fc]">{stats.revisionProgress}%</span>
+                <span className={textMuted}>Revision Ready:</span>
+                <span className={`font-bold ${textTitle}`}>{stats.revisionProgress}%</span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-[#8b949e]">Completion:</span>
-                <span className="font-bold text-[#58a6ff]">{stats.overallProgress}%</span>
+                <span className={textMuted}>Completion:</span>
+                <span className={`font-bold ${isDosage ? 'text-[#5f51bd]' : 'text-[#58a6ff]'}`}>{stats.overallProgress}%</span>
               </div>
             </div>
 
@@ -295,37 +309,37 @@ export default function Dashboard({
         </div>
 
         {/* Card 2: Today's Study & Consistency Tracker */}
-        <div className="bg-[#161b22] border border-[#30363d] rounded-md p-3.5 sm:p-4 flex flex-col justify-between">
-          <div className="flex items-center justify-between border-b border-[#30363d] pb-2 mb-2.5">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-[#f0f6fc]">
+        <div className={`${cardClass} flex flex-col justify-between`}>
+          <div className={`flex items-center justify-between border-b pb-2 mb-2.5 ${dividerClass}`}>
+            <h3 className={`text-xs font-semibold uppercase tracking-wider ${textTitle}`}>
               Today&apos;s Study &amp; Streak
             </h3>
-            <span className="text-[10px] font-mono text-[#8b949e]">
+            <span className={`text-[10px] font-mono ${textMuted}`}>
               Daily Habit
             </span>
           </div>
 
           {/* Interactive Checkbox for Today's Study */}
-          <div className="bg-[#0d1117] border border-[#30363d] rounded-md p-3 mb-3 flex items-center justify-between gap-3">
+          <div className={`${innerCardClass} p-3 mb-3 flex items-center justify-between gap-3`}>
             <label className="flex items-center gap-2.5 cursor-pointer select-none min-w-0">
               <input
                 type="checkbox"
                 checked={studiedToday}
                 onChange={handleToggleTodayStudy}
-                className="w-4 h-4 rounded text-[#238636] bg-[#161b22] border-[#30363d] focus:ring-[#238636] cursor-pointer shrink-0"
+                className={`w-4 h-4 rounded text-[#5f51bd] ${isDosage ? 'bg-white border-[#e4e6f2]' : 'bg-[#161b22] border-[#30363d]'} focus:ring-[#5f51bd] cursor-pointer shrink-0`}
               />
               <div className="truncate">
                 <div className="flex items-center gap-1.5">
-                  <span className="font-bold text-xs text-[#f0f6fc]">
+                  <span className={`font-bold text-xs ${textTitle}`}>
                     Today&apos;s Study
                   </span>
                   {studiedToday && (
-                    <span className="text-[9px] px-1.5 py-0.2 rounded-full font-mono bg-[#238636]/20 border border-[#238636]/40 text-[#3fb950]">
+                    <span className="text-[9px] px-1.5 py-0.2 rounded-full font-mono bg-emerald-500/15 border border-emerald-500/30 text-emerald-600 font-bold">
                       Completed
                     </span>
                   )}
                 </div>
-                <p className="text-[10px] text-[#8b949e] truncate">
+                <p className={`text-[10px] truncate ${textMuted}`}>
                   {studiedToday
                     ? `${todaySessionsCount} session${todaySessionsCount === 1 ? '' : 's'} logged today`
                     : 'Check to record today’s study activity'}
@@ -336,7 +350,7 @@ export default function Dashboard({
             <button
               type="button"
               onClick={handleAddStudySession}
-              className="btn-gh text-[11px] px-2.5 py-1 font-semibold flex items-center gap-1 shrink-0"
+              className={`${isDosage ? 'bg-[#5f51bd] hover:bg-[#5244ad] text-white rounded-full' : 'btn-gh'} text-[11px] px-2.5 py-1 font-semibold flex items-center gap-1 shrink-0 transition-colors`}
               title="Add a study session to today"
             >
               + Log Session
@@ -344,16 +358,16 @@ export default function Dashboard({
           </div>
 
           {/* Real Metrics 3-Column Row */}
-          <div className="grid grid-cols-3 divide-x divide-[#30363d] pt-1">
+          <div className={`grid grid-cols-3 divide-x ${dividerClass} pt-1`}>
             {/* Col 1 */}
             <div className="flex flex-col items-center justify-center text-center px-1">
-              <div className="text-xl sm:text-2xl font-black font-mono text-[#f0f6fc]">
+              <div className={`text-xl sm:text-2xl font-black font-mono ${textTitle}`}>
                 {totalSessions}
               </div>
-              <div className="text-[11px] font-semibold text-[#c9d1d9] mt-0.5">
+              <div className={`text-[11px] font-semibold mt-0.5 ${textTitle}`}>
                 Sessions Logged
               </div>
-              <div className="text-[10px] text-[#8b949e] font-mono">
+              <div className={`text-[10px] font-mono ${textMuted}`}>
                 {totalStudyDays} days active
               </div>
             </div>
@@ -362,27 +376,27 @@ export default function Dashboard({
             <div className="flex flex-col items-center justify-center text-center px-1">
               <div className="flex items-center gap-1">
                 <Flame className={`w-4 h-4 ${currentStreak > 0 ? 'text-[#f97316]' : 'text-[#8b949e]'}`} />
-                <span className="text-xl sm:text-2xl font-black font-mono text-[#f0f6fc]">
+                <span className={`text-xl sm:text-2xl font-black font-mono ${textTitle}`}>
                   {currentStreak}
                 </span>
               </div>
               <div className="text-[11px] font-semibold text-[#f97316] mt-0.5">
                 Current Streak
               </div>
-              <div className="text-[10px] text-[#8b949e] font-mono">
+              <div className={`text-[10px] font-mono ${textMuted}`}>
                 {currentStreak > 0 ? 'Consistent' : 'Start today'}
               </div>
             </div>
 
             {/* Col 3 */}
             <div className="flex flex-col items-center justify-center text-center px-1">
-              <div className="text-xl sm:text-2xl font-black font-mono text-[#f0f6fc]">
+              <div className={`text-xl sm:text-2xl font-black font-mono ${textTitle}`}>
                 {nearestItem ? String(countdown.days).padStart(2, '0') : '—'}
               </div>
-              <div className="text-[11px] font-semibold text-[#c9d1d9] mt-0.5">
+              <div className={`text-[11px] font-semibold mt-0.5 ${textTitle}`}>
                 Days to Exam
               </div>
-              <div className="text-[10px] text-[#8b949e] font-mono truncate max-w-22.5" title={nearestItem ? nearestItem.subject.name : 'No exam scheduled'}>
+              <div className={`text-[10px] font-mono truncate max-w-22.5 ${textMuted}`} title={nearestItem ? nearestItem.subject.name : 'No exam scheduled'}>
                 {nearestItem ? nearestItem.subject.code : 'No exam'}
               </div>
             </div>
@@ -394,21 +408,22 @@ export default function Dashboard({
       <ContributionGraph 
         activityMap={activityMap}
         topicsCompleted={stats.completedTopics}
+        currentTheme={currentTheme}
       />
 
       {/* Card 3: Curriculum Module Progress Bar */}
-      <div className="bg-[#161b22] border border-[#30363d] rounded-md p-3.5 sm:p-4">
-        <div className="flex items-center justify-between border-b border-[#30363d] pb-2 mb-2.5">
-          <h3 className="text-xs font-semibold uppercase tracking-wider text-[#f0f6fc]">
+      <div className={cardClass}>
+        <div className={`flex items-center justify-between border-b pb-2 mb-2.5 ${dividerClass}`}>
+          <h3 className={`text-xs font-semibold uppercase tracking-wider ${textTitle}`}>
             Curriculum Module Progress &amp; Mastery
           </h3>
-          <span className="text-[10px] font-mono text-[#8b949e]">
+          <span className={`text-[10px] font-mono ${textMuted}`}>
             Color-Coded Units
           </span>
         </div>
 
         {/* Horizontal Segmented Bar */}
-        <div className="w-full h-2.5 rounded-full overflow-hidden flex bg-[#0d1117] border border-[#30363d]">
+        <div className={`w-full h-2.5 rounded-full overflow-hidden flex ${isDosage ? 'bg-[#f0f2fa] border border-[#e4e6f2]' : 'bg-[#0d1117] border border-[#30363d]'}`}>
           {moduleMasteryStats.map((mod) => {
             const widthPct = ((mod.barWeight / totalBarWeight) * 100).toFixed(1);
             return (
@@ -432,11 +447,11 @@ export default function Dashboard({
                   className="w-2.5 h-2.5 rounded-full shrink-0" 
                   style={{ backgroundColor: mod.hex }} 
                 />
-                <span className="text-[#c9d1d9] font-sans truncate text-[11px]">
+                <span className={`${textTitle} font-sans truncate text-[11px]`}>
                   Module {mod.moduleNumber}
                 </span>
                 <span 
-                  className="text-[9px] px-1 py-0.2 rounded border shrink-0"
+                  className="text-[9px] px-1 py-0.2 rounded border shrink-0 font-bold"
                   style={{
                     color: mod.hex,
                     borderColor: `${mod.hex}50`,
@@ -445,7 +460,7 @@ export default function Dashboard({
                 >
                   {mod.colorCode}
                 </span>
-                <span className="text-[#8b949e] ml-auto text-[11px]">
+                <span className={`${textMuted} ml-auto text-[11px]`}>
                   {widthPct}%
                 </span>
               </div>
@@ -455,43 +470,43 @@ export default function Dashboard({
       </div>
 
       {/* Card 4: Academic Study Milestones */}
-      <div className="bg-[#161b22] border border-[#30363d] rounded-md p-3 sm:p-3.5">
+      <div className={`${cardClass} p-4 sm:p-5`}>
         <div className="flex items-center gap-2 mb-2.5">
-          <Trophy className="w-3.5 h-3.5 text-[#e3b341]" />
-          <h3 className="text-xs font-semibold text-[#f0f6fc] uppercase tracking-wider">
+          <Trophy className="w-4 h-4 text-[#e3b341]" />
+          <h3 className={`text-xs font-semibold uppercase tracking-wider ${textTitle}`}>
             Academic Study Milestones
           </h3>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs">
-          <div className="bg-[#0d1117] border border-[#30363d] hover:border-[#8b949e] transition-colors rounded p-2 flex items-center gap-2">
-            <span className="text-base">📚</span>
+          <div className={`${innerCardClass} p-2.5 flex items-center gap-2.5 transition-all`}>
+            <span className="text-lg">📚</span>
             <div>
-              <div className="font-semibold text-[#f0f6fc] text-[11px]">Curriculum Master</div>
-              <div className="text-[10px] text-[#8b949e] font-mono">{stats.completedTopics} Topics Done</div>
+              <div className={`font-bold text-[11px] ${textTitle}`}>Curriculum Master</div>
+              <div className={`text-[10px] font-mono ${textMuted}`}>{stats.completedTopics} Topics Done</div>
             </div>
           </div>
 
-          <div className="bg-[#0d1117] border border-[#30363d] hover:border-[#8b949e] transition-colors rounded p-2 flex items-center gap-2">
-            <span className="text-base">⚡</span>
+          <div className={`${innerCardClass} p-2.5 flex items-center gap-2.5 transition-all`}>
+            <span className="text-lg">⚡</span>
             <div>
-              <div className="font-semibold text-[#f0f6fc] text-[11px]">Consistent Learner</div>
-              <div className="text-[10px] text-[#8b949e] font-mono">{currentStreak}d Streak</div>
+              <div className={`font-bold text-[11px] ${textTitle}`}>Consistent Learner</div>
+              <div className={`text-[10px] font-mono ${textMuted}`}>{currentStreak}d Streak</div>
             </div>
           </div>
 
-          <div className="bg-[#0d1117] border border-[#30363d] hover:border-[#8b949e] transition-colors rounded p-2 flex items-center gap-2">
-            <span className="text-base">📝</span>
+          <div className={`${innerCardClass} p-2.5 flex items-center gap-2.5 transition-all`}>
+            <span className="text-lg">📝</span>
             <div>
-              <div className="font-semibold text-[#f0f6fc] text-[11px]">PYQ Mastery</div>
-              <div className="text-[10px] text-[#8b949e] font-mono">{totalPYQs} Question Papers</div>
+              <div className={`font-bold text-[11px] ${textTitle}`}>PYQ Mastery</div>
+              <div className={`text-[10px] font-mono ${textMuted}`}>{totalPYQs} Question Papers</div>
             </div>
           </div>
 
-          <div className="bg-[#0d1117] border border-[#30363d] hover:border-[#8b949e] transition-colors rounded p-2 flex items-center gap-2">
-            <span className="text-base">🎯</span>
+          <div className={`${innerCardClass} p-2.5 flex items-center gap-2.5 transition-all`}>
+            <span className="text-lg">🎯</span>
             <div>
-              <div className="font-semibold text-[#f0f6fc] text-[11px]">Exam Readiness</div>
-              <div className="text-[10px] text-[#8b949e] font-mono">{stats.overallProgress}% Completed</div>
+              <div className={`font-bold text-[11px] ${textTitle}`}>Exam Readiness</div>
+              <div className={`text-[10px] font-mono ${textMuted}`}>{stats.overallProgress}% Completed</div>
             </div>
           </div>
         </div>
@@ -501,33 +516,39 @@ export default function Dashboard({
       <div className="space-y-3 pt-1">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <h2 className="text-sm font-bold text-[#f0f6fc]">
+            <h2 className={`text-sm font-bold ${textTitle}`}>
               Enrolled Courses &amp; Subjects
             </h2>
-            <span className="text-xs font-mono px-2 py-0.2 rounded-full bg-[#21262d] border border-[#30363d] text-[#8b949e]">
+            <span className={isDosage 
+              ? "text-xs font-mono px-2.5 py-0.5 rounded-full bg-white border border-[#e2e5f1] text-[#5f51bd] font-bold shadow-xs"
+              : "text-xs font-mono px-2 py-0.2 rounded-full bg-[#21262d] border border-[#30363d] text-[#8b949e]"}>
               {filteredSubjects.length}
             </span>
           </div>
 
           <div className="relative w-full sm:w-64">
-            <Search className="w-3.5 h-3.5 text-[#8b949e] absolute left-2.5 top-1/2 -translate-y-1/2" aria-hidden="true" />
+            <Search className={`w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 ${isDosage ? 'text-[#8c91a4]' : 'text-[#8b949e]'}`} aria-hidden="true" />
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Filter courses..."
               aria-label="Filter courses"
-              className="w-full bg-[#0d1117] border border-[#30363d] rounded-md pl-8 pr-3 py-1 text-xs text-[#f0f6fc] placeholder-[#8b949e] focus:outline-none focus:border-[#58a6ff]"
+              className={isDosage
+                ? "w-full bg-white border border-[#e2e5f1] rounded-xl pl-8 pr-3 py-1.5 text-xs text-[#1c1d29] placeholder-[#8c91a4] focus:outline-none focus:border-[#5f51bd] shadow-xs"
+                : "w-full bg-[#0d1117] border border-[#30363d] rounded-md pl-8 pr-3 py-1 text-xs text-[#f0f6fc] placeholder-[#8b949e] focus:outline-none focus:border-[#58a6ff]"}
             />
           </div>
         </div>
 
         {/* Courses Grid */}
         {filteredSubjects.length === 0 ? (
-          <div className="bg-[#161b22] border border-dashed border-[#30363d] rounded-md p-8 text-center">
-            <BookOpen className="w-8 h-8 text-[#8b949e] mx-auto mb-2 opacity-50" />
-            <h3 className="text-xs font-semibold text-[#f0f6fc]">No courses found</h3>
-            <p className="text-[11px] text-[#8b949e] mt-1">
+          <div className={isDosage 
+            ? "bg-white border border-dashed border-[#d8dceb] rounded-2xl p-8 text-center" 
+            : "bg-[#161b22] border border-dashed border-[#30363d] rounded-md p-8 text-center"}>
+            <BookOpen className={`w-8 h-8 mx-auto mb-2 opacity-50 ${isDosage ? 'text-[#5f51bd]' : 'text-[#8b949e]'}`} />
+            <h3 className={`text-xs font-semibold ${textTitle}`}>No courses found</h3>
+            <p className={`text-[11px] mt-1 ${textMuted}`}>
               Click &quot;New Course&quot; above to add a subject.
             </p>
           </div>
@@ -540,26 +561,30 @@ export default function Dashboard({
                 <div
                   key={sub.id}
                   onClick={() => onOpenSubject(sub.id)}
-                  className="bg-[#161b22] hover:bg-[#1c2128] border border-[#30363d] hover:border-[#58a6ff]/50 rounded-md p-3.5 cursor-pointer transition-all flex flex-col justify-between group shadow-sm"
+                  className={isDosage
+                    ? "bg-white hover:bg-[#fafbff] border border-[#eceef6] rounded-2xl p-4 cursor-pointer transition-all flex flex-col justify-between group shadow-[0_4px_16px_rgba(95,81,189,0.06)] hover:shadow-[0_8px_24px_rgba(95,81,189,0.12)] hover:-translate-y-0.5"
+                    : "bg-[#161b22] hover:bg-[#1c2128] border border-[#30363d] hover:border-[#58a6ff]/50 rounded-md p-3.5 cursor-pointer transition-all flex flex-col justify-between group shadow-sm"}
                 >
                   <div>
                     {/* Header: Book icon + Code + Instructor */}
                     <div className="flex items-center justify-between gap-2">
                       <div className="flex items-center gap-2 min-w-0">
-                        <BookOpen className="w-4 h-4 text-[#8b949e] shrink-0" />
-                        <span className="font-semibold text-xs text-[#58a6ff] hover:underline font-mono truncate">
+                        <BookOpen className={`w-4 h-4 shrink-0 ${isDosage ? 'text-[#5f51bd]' : 'text-[#8b949e]'}`} />
+                        <span className={`font-semibold text-xs hover:underline font-mono truncate ${isDosage ? 'text-[#5f51bd]' : 'text-[#58a6ff]'}`}>
                           {sub.code || 'KTU'}
                         </span>
                       </div>
-                      <span className="text-[10px] font-mono px-2 py-0.5 rounded-full border border-[#30363d] text-[#8b949e] shrink-0">
+                      <span className={isDosage 
+                        ? "text-[10px] font-mono px-2 py-0.5 rounded-full border border-[#eceef6] bg-[#f8f9fd] text-[#5f51bd] shrink-0 font-medium"
+                        : "text-[10px] font-mono px-2 py-0.5 rounded-full border border-[#30363d] text-[#8b949e] shrink-0"}>
                         {sub.instructor || 'Core KTU'}
                       </span>
                     </div>
 
-                    <p className="text-xs font-semibold text-[#f0f6fc] mt-1.5 truncate">
+                    <p className={`text-xs font-bold mt-1.5 truncate ${textTitle}`}>
                       {sub.name}
                     </p>
-                    <p className="text-[11px] text-[#8b949e] mt-0.5 line-clamp-1">
+                    <p className={`text-[11px] mt-0.5 line-clamp-1 ${textMuted}`}>
                       {sub.description || 'Comprehensive syllabus tracking, PYQs, and revision sprint.'}
                     </p>
 
@@ -592,27 +617,27 @@ export default function Dashboard({
                   </div>
 
                   {/* Footer Meta */}
-                  <div className="mt-3 pt-2.5 border-t border-[#30363d] flex items-center justify-between text-xs text-[#8b949e] font-mono">
+                  <div className={`mt-3 pt-2.5 border-t ${dividerClass} flex items-center justify-between text-xs font-mono ${textMuted}`}>
                     <div className="flex items-center gap-3">
                       <div className="flex items-center gap-1">
-                        <span className="w-2 h-2 rounded-full bg-[#238636]" />
-                        <span className="text-[#f0f6fc] font-bold text-[11px]">{progress}%</span>
+                        <span className={`w-2 h-2 rounded-full ${isDosage ? 'bg-[#5f51bd]' : 'bg-[#238636]'}`} />
+                        <span className={`font-bold text-[11px] ${textTitle}`}>{progress}%</span>
                       </div>
                       
                       {sub.examDate && (
                         <div className="flex items-center gap-1 text-[11px]">
-                          <Calendar className="w-3 h-3 text-[#8b949e]" />
+                          <Calendar className={`w-3 h-3 ${isDosage ? 'text-[#ff6584]' : 'text-[#8b949e]'}`} />
                           <span>{new Date(sub.examDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</span>
                         </div>
                       )}
 
                       <div className="flex items-center gap-1 text-[11px]">
-                        <FileText className="w-3 h-3 text-[#8b949e]" />
+                        <FileText className={`w-3 h-3 ${textMuted}`} />
                         <span>{sub.pastPapers?.length || 0} PYQs</span>
                       </div>
                     </div>
 
-                    <ArrowRight className="w-3 h-3 text-[#58a6ff] group-hover:translate-x-0.5 transition-transform" />
+                    <ArrowRight className={`w-3 h-3 group-hover:translate-x-0.5 transition-transform ${isDosage ? 'text-[#5f51bd]' : 'text-[#58a6ff]'}`} />
                   </div>
                 </div>
               );
