@@ -1,5 +1,18 @@
-// Theme Definitions with Dosage Claymorphic Frame Theme as Flagship Default
+// Theme Definitions with Expensio Uizard Dark Theme as Flagship Default
 export const THEMES = [
+  {
+    id: 'expensio-dark',
+    name: 'Expensio Dark Uizard',
+    shortName: 'Expensio Dark',
+    icon: '✨',
+    layoutType: 'expensio-frame',
+    description: 'Sleek dark obsidian dashboard inside a lavender presentation frame with teal accents, pending tasks, recent expenses table, and spending analytics.',
+    bgClass: 'bg-[#988cee] text-[#f3f4f6]',
+    cardClass: 'bg-[#181a20] rounded-[22px] border border-[#272a34] shadow-md',
+    headerClass: 'bg-transparent border-none',
+    sidebarClass: 'bg-[#121316] text-[#f3f4f6]',
+    badge: 'Uizard Reference'
+  },
   {
     id: 'dosage-frame',
     name: 'Dosage Clay Frame',
@@ -11,7 +24,7 @@ export const THEMES = [
     cardClass: 'bg-white rounded-[26px] border border-[#eef0f8] shadow-sm',
     headerClass: 'bg-transparent border-none',
     sidebarClass: 'bg-[#5f51bd] text-white',
-    badge: 'Uploaded Mockup'
+    badge: 'Claymorphic'
   },
   {
     id: 'monochrome-noir',
