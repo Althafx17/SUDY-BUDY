@@ -4,6 +4,7 @@ import Navbar from './components/Navbar';
 import RightPanel from './components/RightPanel';
 import Dashboard from './components/Dashboard';
 import DosageDashboard from './components/DosageDashboard';
+import ExpensioDashboard from './components/ExpensioDashboard';
 import SubjectView from './components/SubjectView';
 import ExamTimetable from './components/ExamTimetable';
 import RevisionMode from './components/RevisionMode';
@@ -58,13 +59,13 @@ export default function App() {
     return INITIAL_DATA;
   });
 
-  // UI Theme & Layout state (Dosage Clay Frame is default matching requested mockup)
+  // UI Theme & Layout state (Expensio Dark Uizard Frame is default matching requested mockup)
   const [currentTheme, setCurrentTheme] = useState(() => {
     try {
       const saved = localStorage.getItem(THEME_STORAGE_KEY);
-      if (saved && saved !== 'rainbow-sidebar' && saved !== 'monochrome-noir' && THEMES.some(t => t.id === saved)) return saved;
+      if (saved && saved !== 'dosage-frame' && saved !== 'rainbow-sidebar' && saved !== 'monochrome-noir' && THEMES.some(t => t.id === saved)) return saved;
     } catch (e) {}
-    return 'dosage-frame';
+    return 'expensio-dark';
   });
   const [isFrameExpanded, setIsFrameExpanded] = useState(false);
 
@@ -214,12 +215,208 @@ export default function App() {
 
   // Active theme object
   const activeThemeObj = THEMES.find(t => t.id === currentTheme) || THEMES[0];
+  const isExpensioTheme = currentTheme === 'expensio-dark';
   const isDosageTheme = currentTheme === 'dosage-frame';
   const isAppleTheme = currentTheme === 'apple-minimal';
   const isEcoursieTheme = currentTheme === 'ecoursie-studio';
   const isCyberDark = currentTheme === 'cyber-dark';
   const isZenNotion = currentTheme === 'zen-notion';
   const isMonochromeLight = currentTheme === 'monochrome-light';
+
+  // Flagship Expensio Uizard Dark Frame Experience (Matching the uploaded design)
+  if (isExpensioTheme) {
+    return (
+      <div className="min-h-screen expensio-outer-canvas text-[#f3f4f6] font-sans flex flex-col items-center justify-center p-2 sm:p-4 lg:p-6 py-6 relative selection:bg-[#00d49f] selection:text-black">
+        
+        {/* Top Floating Control Bar */}
+        <header className="w-full max-w-[1360px] flex items-center justify-between pb-3 px-2 text-xs font-semibold select-none">
+          {/* Left: Semester Switcher Pill */}
+          <div className="flex items-center gap-2">
+            <span className="text-white/80 font-bold text-xs uppercase tracking-wider hidden sm:inline">
+              KTU Semester:
+            </span>
+            <div className="bg-[#121316]/80 backdrop-blur-md p-1 rounded-full border border-white/10 shadow-xs flex items-center gap-1">
+              {['S1', 'S2'].map((sem) => (
+                <button
+                  key={sem}
+                  type="button"
+                  onClick={() => setCurrentSemester(sem)}
+                  className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${
+                    safeSemester === sem
+                      ? 'bg-[#00d49f] text-[#121316] shadow-xs'
+                      : 'text-[#8e95a5] hover:text-white'
+                  }`}
+                >
+                  {sem}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Right: Pro Badge (Matching Reference Mockup) + Quick Tools */}
+          <div className="flex items-center gap-2.5">
+            {/* Blue 'Pro' badge as in image */}
+            <div className="bg-[#0091ff] text-white px-3 py-1 rounded-xl text-xs font-extrabold shadow-lg shadow-blue-500/25 flex items-center gap-1">
+              <span>Pro</span>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setIsFrameExpanded(prev => !prev)}
+              className="bg-[#121316]/80 hover:bg-[#121316] backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10 text-[#c8cdd9] shadow-xs flex items-center gap-1.5 transition-all cursor-pointer"
+              title={isFrameExpanded ? "Standard Frame" : "Expand to Full Width"}
+            >
+              {isFrameExpanded ? (
+                <>
+                  <Minimize2 className="w-3.5 h-3.5 text-[#00d49f]" />
+                  <span className="hidden sm:inline">Standard</span>
+                </>
+              ) : (
+                <>
+                  <Maximize2 className="w-3.5 h-3.5 text-[#00d49f]" />
+                  <span className="hidden sm:inline">Expand</span>
+                </>
+              )}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setIsThemeModalOpen(true)}
+              className="bg-[#121316]/80 hover:bg-[#121316] backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10 text-[#c8cdd9] shadow-xs flex items-center gap-1.5 transition-all cursor-pointer"
+              title="Theme Studio"
+            >
+              <Palette className="w-3.5 h-3.5 text-[#00d49f]" />
+              <span className="hidden sm:inline">Themes</span>
+            </button>
+          </div>
+        </header>
+
+        {/* Central Expensio Dark Device Container */}
+        <div className={`w-full transition-all duration-300 relative ${isFrameExpanded ? 'max-w-none' : 'max-w-[1360px]'}`}>
+          <div className="expensio-device-container p-2 sm:p-4 lg:p-5 relative overflow-hidden">
+            
+            {/* Views */}
+            {currentView === 'dashboard' && (
+              <ExpensioDashboard
+                data={safeData}
+                currentSemester={safeSemester}
+                onSelectSemester={setCurrentSemester}
+                onOpenSubject={(subId, modId) => handleOpenSubject(subId, safeSemester, modId)}
+                onNavigate={handleNavigation}
+                onOpenFocusModal={() => setIsFocusModalOpen(true)}
+                onOpenThemeModal={() => setIsThemeModalOpen(true)}
+                onAddSubject={handleAddSubject}
+              />
+            )}
+
+            {currentView !== 'dashboard' && (
+              <div className="space-y-4 animate-in fade-in p-2 sm:p-4">
+                <div className="flex items-center justify-between pb-3 border-b border-[#262934]">
+                  <button
+                    type="button"
+                    onClick={() => handleNavigation('dashboard')}
+                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#181a20] text-white border border-[#262934] shadow-xs hover:border-[#00d49f]/50 text-xs font-bold transition-all cursor-pointer"
+                  >
+                    <ArrowLeft className="w-4 h-4 text-[#00d49f]" />
+                    <span>Back to Dashboard</span>
+                  </button>
+
+                  <span className="text-xs font-semibold text-[#8b8fa8] uppercase tracking-wider">
+                    {currentView.toUpperCase()} VIEW
+                  </span>
+                </div>
+
+                {currentView === 'subject' && (
+                  activeSubject ? (
+                    <div className="bg-[#181a20] rounded-3xl p-4 sm:p-6 shadow-sm border border-[#262934] text-[#f3f4f6]">
+                      <SubjectView
+                        subject={activeSubject}
+                        semesterKey={safeSemester}
+                        onBack={() => {
+                          handleNavigation('dashboard');
+                          setActiveModuleId(null);
+                        }}
+                        onUpdateSubject={handleUpdateSubject}
+                        initialModuleId={activeModuleId}
+                      />
+                    </div>
+                  ) : (
+                    <div className="p-8 text-center bg-[#181a20] rounded-2xl border border-[#262934]">
+                      <h3 className="font-bold text-white">No subject selected</h3>
+                      <button
+                        onClick={() => handleNavigation('dashboard')}
+                        className="mt-3 px-4 py-2 bg-[#00d49f] text-[#121316] rounded-xl text-xs font-bold"
+                      >
+                        Return to Dashboard
+                      </button>
+                    </div>
+                  )
+                )}
+
+                {currentView === 'timetable' && (
+                  <div className="bg-[#181a20] rounded-3xl p-4 sm:p-6 shadow-sm border border-[#262934] text-[#f3f4f6]">
+                    <ExamTimetable
+                      data={safeData}
+                      onOpenSubject={(subId) => handleOpenSubject(subId, safeSemester)}
+                    />
+                  </div>
+                )}
+
+                {currentView === 'revision' && (
+                  <div className="bg-[#181a20] rounded-3xl p-4 sm:p-6 shadow-sm border border-[#262934] text-[#f3f4f6]">
+                    <RevisionMode
+                      data={safeData}
+                      onMarkRevised={handleMarkTopicRevised}
+                      onOpenSubject={(subId) => handleOpenSubject(subId, safeSemester)}
+                    />
+                  </div>
+                )}
+
+                {currentView === 'notes' && (
+                  <div className="bg-[#181a20] rounded-3xl p-4 sm:p-6 shadow-sm border border-[#262934] text-[#f3f4f6]">
+                    <NotesVault
+                      data={safeData}
+                      onOpenSubject={(subId) => handleOpenSubject(subId, safeSemester)}
+                    />
+                  </div>
+                )}
+
+                {currentView === 'settings' && (
+                  <div className="bg-[#181a20] rounded-3xl p-4 sm:p-6 shadow-sm border border-[#262934] text-[#f3f4f6]">
+                    <Settings
+                      data={safeData}
+                      onUpdateData={setData}
+                      onResetData={handleResetData}
+                      currentTheme={currentTheme}
+                      onSelectTheme={setCurrentTheme}
+                      currentColorAccent={currentColorAccent}
+                      onSelectColorAccent={setCurrentColorAccent}
+                    />
+                  </div>
+                )}
+              </div>
+            )}
+
+          </div>
+        </div>
+
+        {/* Modals */}
+        <FocusModal
+          isOpen={isFocusModalOpen}
+          onClose={() => setIsFocusModalOpen(false)}
+          data={safeData}
+        />
+        <ThemeModal
+          isOpen={isThemeModalOpen}
+          onClose={() => setIsThemeModalOpen(false)}
+          currentTheme={currentTheme}
+          onSelectTheme={setCurrentTheme}
+          currentColorAccent={currentColorAccent}
+          onSelectColorAccent={setCurrentColorAccent}
+        />
+      </div>
+    );
+  }
 
   // Flagship Dosage Clay Tablet Frame Experience (Matching the uploaded design)
   if (isDosageTheme) {
