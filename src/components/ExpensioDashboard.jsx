@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { 
   Home, 
   CreditCard, 
@@ -19,7 +19,8 @@ import {
   ChevronRight,
   CheckCircle2,
   DollarSign,
-  PieChart
+  PieChart,
+  GraduationCap
 } from 'lucide-react';
 
 export default function ExpensioDashboard({
@@ -32,9 +33,6 @@ export default function ExpensioDashboard({
   onOpenThemeModal,
   onAddSubject
 }) {
-  // Mode toggle: 1:1 Reference Mockup vs Real KTU Study Buddy Sync
-  const [viewMode, setViewMode] = useState('mockup'); // 'mockup' | 'study'
-
   const semesterData = data?.[currentSemester] || { subjects: [] };
   const subjects = semesterData?.subjects || [];
 
@@ -44,77 +42,46 @@ export default function ExpensioDashboard({
   const completedTopics = subjects.reduce((acc, sub) => 
     acc + (sub.modules || []).reduce((mAcc, mod) => 
       mAcc + (mod.topics || []).filter(t => t.status === 'studied' || t.status === 'revised').length, 0), 0);
+  const revisedTopics = subjects.reduce((acc, sub) => 
+    acc + (sub.modules || []).reduce((mAcc, mod) => 
+      mAcc + (mod.topics || []).filter(t => t.status === 'revised').length, 0), 0);
   const totalPYQs = subjects.reduce((acc, sub) => acc + (sub.pastPapers?.length || 0), 0);
   const studyProgressPct = totalTopics > 0 ? Math.round((completedTopics / totalTopics) * 100) : 0;
+  const upcomingExams = subjects.filter(s => s.examDate && new Date(s.examDate) > new Date()).length;
 
-  // 1:1 Reference Table Data (Mockup Mode)
-  const mockExpenses = [
-    {
-      id: 1,
-      subject: 'Office Supplies',
-      employee: 'John Smith',
-      team: 'Marketing',
-      teamColor: 'bg-purple-950/70 text-purple-300 border-purple-800/60',
-      amount: '€150.00'
-    },
-    {
-      id: 2,
-      subject: 'Business Lunch',
-      employee: 'Sarah Jade',
-      team: 'Marketing',
-      teamColor: 'bg-pink-950/70 text-pink-300 border-pink-800/60',
-      amount: '€75.50'
-    },
-    {
-      id: 3,
-      subject: 'Travel Expenses',
-      employee: 'Mike Brown',
-      team: 'Operations',
-      teamColor: 'bg-indigo-950/70 text-indigo-300 border-indigo-800/60',
-      amount: '€450.25'
-    },
-    {
-      id: 4,
-      subject: 'Client Dinner',
-      employee: 'Jennifer Lee',
-      team: 'Marketing',
-      teamColor: 'bg-fuchsia-950/70 text-fuchsia-300 border-fuchsia-800/60',
-      amount: '€120.00'
-    },
-    {
-      id: 5,
-      subject: 'Hotel',
-      employee: 'David Wilson',
-      team: 'Finance',
-      teamColor: 'bg-teal-950/70 text-teal-300 border-teal-800/60',
-      amount: '€275.75'
-    }
-  ];
+  // Real Subject Mastery Trend Bars
+  const subjectBars = subjects.map((sub) => {
+    const sTotal = (sub.modules || []).reduce((acc, m) => acc + (m.topics?.length || 0), 0);
+    const sDone = (sub.modules || []).reduce((acc, m) => 
+      acc + (m.topics || []).filter(t => t.status === 'studied' || t.status === 'revised').length, 0);
+    const pct = sTotal > 0 ? Math.round((sDone / sTotal) * 100) : 0;
+    return {
+      label: sub.code || sub.name.slice(0, 6),
+      height: Math.max(15, pct),
+      amount: `${pct}%`,
+      fullName: sub.name,
+      id: sub.id
+    };
+  });
 
-  // Team Spending Trend Bars data (Teal bars matching image)
-  const spendingTrendData = [
-    { label: 'S1', height: 75, amount: '€75K' },
-    { label: 'S2', height: 42, amount: '€42K' },
-    { label: 'M1', height: 88, amount: '€88K' },
-    { label: 'S3', height: 50, amount: '€50K' },
-    { label: 'M2', height: 68, amount: '€68K' },
-    { label: 'M3', height: 82, amount: '€82K' },
-  ];
+  // Topic Distribution Breakdown Data
+  const studiedPct = totalTopics > 0 ? Math.round((completedTopics / totalTopics) * 100) : 0;
+  const revisedPct = totalTopics > 0 ? Math.round((revisedTopics / totalTopics) * 100) : 0;
+  const pendingPct = Math.max(0, 100 - studiedPct);
 
-  // Day-to-Day Expenses Bars data (Purple bars matching image)
-  const dayToDayData = [
-    { label: 'Accommodation', height: 45, pct: '45%' },
-    { label: 'Commute', height: 28, pct: '28%' },
-    { label: 'Services', height: 95, pct: '95%' },
-    { label: 'Food', height: 62, pct: '62%' },
-    { label: 'Fuel', height: 78, pct: '78%' },
+  const topicDistribution = [
+    { label: 'Studied', height: Math.max(15, studiedPct), pct: `${studiedPct}%` },
+    { label: 'Revised', height: Math.max(15, revisedPct), pct: `${revisedPct}%` },
+    { label: 'Pending', height: Math.max(15, pendingPct), pct: `${pendingPct}%` },
+    { label: 'PYQ Ready', height: Math.min(100, Math.max(20, totalPYQs * 10)), pct: `${totalPYQs} Sets` },
+    { label: 'Target', height: 100, pct: '100%' },
   ];
 
   return (
     <div className="w-full flex flex-col lg:flex-row gap-6 p-4 sm:p-6 lg:p-8 min-h-[720px] select-none">
       
       {/* ============================================================== */}
-      {/* LEFT SIDEBAR (Dark Obsidian Nav with Janice Chandler Profile) */}
+      {/* LEFT SIDEBAR (Dark Obsidian Nav with Scholar Profile) */}
       {/* ============================================================== */}
       <aside className="w-full lg:w-56 shrink-0 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-[#222530] pb-6 lg:pb-0 lg:pr-6">
         <div>
@@ -124,29 +91,29 @@ export default function ExpensioDashboard({
               <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden ring-3 ring-[#2a2e3d] shadow-lg mb-3">
                 <img 
                   src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80" 
-                  alt="Janice Chandler"
+                  alt="KTU Scholar"
                   className="w-full h-full object-cover"
                 />
               </div>
               <span className="absolute bottom-3 right-0 w-4 h-4 bg-[#00d49f] border-2 border-[#121316] rounded-full" />
             </div>
-            <h2 className="text-sm sm:text-base font-semibold text-white tracking-tight">Janice Chandler</h2>
-            <p className="text-[11px] text-[#717888] font-medium mt-0.5">KTU Scholar · {currentSemester}</p>
+            <h2 className="text-sm sm:text-base font-semibold text-white tracking-tight">KTU Scholar</h2>
+            <p className="text-[11px] text-[#717888] font-medium mt-0.5">KTU B.Tech · {currentSemester}</p>
           </div>
 
           {/* Navigation Links */}
           <nav className="flex flex-row lg:flex-col gap-1.5 overflow-x-auto lg:overflow-visible pb-2 lg:pb-0">
-            {/* 1. Home (Active Teal Capsule) */}
+            {/* 1. Dashboard (Active Teal Capsule) */}
             <button
               type="button"
               onClick={() => onNavigate('dashboard')}
               className="flex items-center gap-3 px-4 py-2.5 rounded-xl font-medium text-xs sm:text-sm bg-[#162421] text-[#00d49f] border border-[#00d49f]/20 shadow-xs cursor-pointer w-full transition-all text-left"
             >
               <Home className="w-4 h-4 shrink-0 text-[#00d49f]" />
-              <span className="whitespace-nowrap">Home</span>
+              <span className="whitespace-nowrap">Dashboard</span>
             </button>
 
-            {/* 2. Expenses / Courses */}
+            {/* 2. Courses */}
             <button
               type="button"
               onClick={() => {
@@ -158,31 +125,41 @@ export default function ExpensioDashboard({
               }}
               className="flex items-center gap-3 px-4 py-2.5 rounded-xl font-medium text-xs sm:text-sm text-[#8e95a5] hover:text-white hover:bg-white/5 cursor-pointer w-full transition-all text-left"
             >
-              <CreditCard className="w-4 h-4 shrink-0" />
-              <span className="whitespace-nowrap">Expenses</span>
+              <BookOpen className="w-4 h-4 shrink-0" />
+              <span className="whitespace-nowrap">Courses & PYQs</span>
             </button>
 
-            {/* 3. Trips / Exam Schedule */}
+            {/* 3. Exam Schedule */}
             <button
               type="button"
               onClick={() => onNavigate('timetable')}
               className="flex items-center gap-3 px-4 py-2.5 rounded-xl font-medium text-xs sm:text-sm text-[#8e95a5] hover:text-white hover:bg-white/5 cursor-pointer w-full transition-all text-left"
             >
-              <Plane className="w-4 h-4 shrink-0" />
-              <span className="whitespace-nowrap">Trips</span>
+              <Calendar className="w-4 h-4 shrink-0" />
+              <span className="whitespace-nowrap">Exam Schedule</span>
             </button>
 
-            {/* 4. Approvals / Revision Mode */}
+            {/* 4. Revision Mode */}
             <button
               type="button"
               onClick={() => onNavigate('revision')}
               className="flex items-center gap-3 px-4 py-2.5 rounded-xl font-medium text-xs sm:text-sm text-[#8e95a5] hover:text-white hover:bg-white/5 cursor-pointer w-full transition-all text-left"
             >
               <CheckSquare className="w-4 h-4 shrink-0" />
-              <span className="whitespace-nowrap">Approvals</span>
+              <span className="whitespace-nowrap">Revision Sprint</span>
             </button>
 
-            {/* 5. Settings */}
+            {/* 5. Notes Vault */}
+            <button
+              type="button"
+              onClick={() => onNavigate('notes')}
+              className="flex items-center gap-3 px-4 py-2.5 rounded-xl font-medium text-xs sm:text-sm text-[#8e95a5] hover:text-white hover:bg-white/5 cursor-pointer w-full transition-all text-left"
+            >
+              <FileText className="w-4 h-4 shrink-0" />
+              <span className="whitespace-nowrap">Notes Vault</span>
+            </button>
+
+            {/* 6. Settings */}
             <button
               type="button"
               onClick={() => onNavigate('settings')}
@@ -191,20 +168,10 @@ export default function ExpensioDashboard({
               <SettingsIcon className="w-4 h-4 shrink-0" />
               <span className="whitespace-nowrap">Settings</span>
             </button>
-
-            {/* 6. Support / Notes Vault */}
-            <button
-              type="button"
-              onClick={() => onNavigate('notes')}
-              className="flex items-center gap-3 px-4 py-2.5 rounded-xl font-medium text-xs sm:text-sm text-[#8e95a5] hover:text-white hover:bg-white/5 cursor-pointer w-full transition-all text-left"
-            >
-              <Headphones className="w-4 h-4 shrink-0" />
-              <span className="whitespace-nowrap">Support</span>
-            </button>
           </nav>
         </div>
 
-        {/* Brand Bottom: EXPENSIO with Glowing Cyan Arrows */}
+        {/* Brand Bottom: STUDY LEDGER */}
         <div className="pt-8 px-2">
           <div className="flex items-center gap-2">
             <div className="flex items-center text-[#00d49f] font-mono font-bold tracking-tighter text-sm">
@@ -212,10 +179,10 @@ export default function ExpensioDashboard({
               <span className="-ml-1">➔</span>
             </div>
             <span className="text-xs font-bold tracking-[0.2em] text-[#00d49f] uppercase font-sans">
-              EXPENSIO
+              STUDY LEDGER
             </span>
           </div>
-          <p className="text-[10px] text-[#555b6c] mt-1">Study Ledger Studio</p>
+          <p className="text-[10px] text-[#555b6c] mt-1">KTU Academic Hub</p>
         </div>
       </aside>
 
@@ -224,123 +191,111 @@ export default function ExpensioDashboard({
       {/* ============================================================== */}
       <main className="flex-1 flex flex-col gap-6 min-w-0">
         
-        {/* Top Control Strip (Mode Toggle & Live Semester Indicator) */}
+        {/* Top Control Strip */}
         <div className="flex items-center justify-between px-1">
           <div className="flex items-center gap-2">
             <span className="text-xs font-bold uppercase tracking-wider text-[#7e8597]">
-              Workspace:
+              Current Semester:
             </span>
-            <div className="flex items-center bg-[#181a20] p-1 rounded-xl border border-[#272a34]">
-              <button
-                type="button"
-                onClick={() => setViewMode('mockup')}
-                className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
-                  viewMode === 'mockup'
-                    ? 'bg-[#00d49f] text-[#121316] shadow-xs'
-                    : 'text-[#8e95a5] hover:text-white'
-                }`}
-              >
-                1:1 Mockup View
-              </button>
-              <button
-                type="button"
-                onClick={() => setViewMode('study')}
-                className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
-                  viewMode === 'study'
-                    ? 'bg-[#00d49f] text-[#121316] shadow-xs'
-                    : 'text-[#8e95a5] hover:text-white'
-                }`}
-              >
-                Live KTU Sync
-              </button>
+            <div className="flex items-center bg-[#181a20] px-3 py-1 rounded-xl border border-[#272a34]">
+              <span className="text-xs font-bold text-[#00d49f]">
+                {currentSemester} KTU 2019 Scheme
+              </span>
             </div>
           </div>
 
           <div className="text-xs text-[#8e95a5] font-semibold hidden sm:flex items-center gap-2">
             <span className="inline-block w-2 h-2 rounded-full bg-[#00d49f] animate-pulse" />
-            <span>Active Semester: <strong className="text-white">{currentSemester}</strong></span>
+            <span>Live KTU Academic Sync Active</span>
           </div>
         </div>
 
         {/* ============================================================== */}
-        {/* ROW 1: Pending Tasks (Left) & Recent Expenses (Right) */}
+        {/* ROW 1: 5 KPI Status Cards + Table */}
         {/* ============================================================== */}
-        <div className="grid grid-cols-1 xl:grid-cols-12 gap-5">
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-5 items-stretch">
           
-          {/* CARD 1: Pending Tasks */}
+          {/* CARD 1: Academic Tasks (5 Stats stacked) */}
           <div className="xl:col-span-5 expensio-card p-5 flex flex-col justify-between">
             <div>
-              <h3 className="text-sm font-semibold text-white tracking-tight mb-4">
-                {viewMode === 'mockup' ? 'Pending Tasks' : 'KTU Academic Tasks'}
-              </h3>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-sm font-semibold text-white tracking-tight">
+                  KTU Academic Status
+                </h3>
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#00d49f]/10 text-[#00d49f] border border-[#00d49f]/30">
+                  Active
+                </span>
+              </div>
 
-              <div className="space-y-3.5 text-xs">
-                {/* 1. Pending Approvals */}
-                <div className="flex items-center justify-between text-[#c8cdd9] hover:text-white transition-colors py-0.5">
-                  <div className="flex items-center gap-3">
-                    <Clock className="w-4 h-4 text-[#8e95a5]" />
-                    <span>{viewMode === 'mockup' ? 'Pending Approvals' : 'Topics Due for Revision'}</span>
+              {/* 5 Stacked Stats */}
+              <div className="space-y-3">
+                {/* 1. Topics Due for Revision */}
+                <div className="flex items-center justify-between text-xs py-1.5 border-b border-[#232632]">
+                  <div className="flex items-center gap-2 text-[#9ba2b3]">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#ff4d79]" />
+                    <span>Topics Due for Revision</span>
                   </div>
-                  <span className="font-semibold text-white">{viewMode === 'mockup' ? '5' : Math.max(5, totalTopics - completedTopics)}</span>
+                  <span className="font-semibold text-white">{Math.max(0, totalTopics - completedTopics)}</span>
                 </div>
 
-                {/* 2. New Trips Registered */}
-                <div className="flex items-center justify-between text-[#c8cdd9] hover:text-white transition-colors py-0.5">
-                  <div className="flex items-center gap-3">
-                    <Plane className="w-4 h-4 text-[#8e95a5]" />
-                    <span>{viewMode === 'mockup' ? 'New Trips Registered' : 'Active Semester Modules'}</span>
+                {/* 2. Active Semester Modules */}
+                <div className="flex items-center justify-between text-xs py-1.5 border-b border-[#232632]">
+                  <div className="flex items-center gap-2 text-[#9ba2b3]">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#00d49f]" />
+                    <span>Active Semester Courses</span>
                   </div>
-                  <span className="font-semibold text-white">{viewMode === 'mockup' ? '1' : subjects.length}</span>
+                  <span className="font-semibold text-white">{subjects.length}</span>
                 </div>
 
-                {/* 3. Unreported Expenses */}
-                <div className="flex items-center justify-between text-[#c8cdd9] hover:text-white transition-colors py-0.5">
-                  <div className="flex items-center gap-3">
-                    <ShoppingBag className="w-4 h-4 text-[#8e95a5]" />
-                    <span>{viewMode === 'mockup' ? 'Unreported Expenses' : 'Past PYQ Question Papers'}</span>
+                {/* 3. Past Question Papers */}
+                <div className="flex items-center justify-between text-xs py-1.5 border-b border-[#232632]">
+                  <div className="flex items-center gap-2 text-[#9ba2b3]">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#827bfa]" />
+                    <span>Past PYQ Question Papers</span>
                   </div>
-                  <span className="font-semibold text-white">{viewMode === 'mockup' ? '4' : totalPYQs || 4}</span>
+                  <span className="font-semibold text-white">{totalPYQs}</span>
                 </div>
 
-                {/* 4. Upcoming Expenses */}
-                <div className="flex items-center justify-between text-[#c8cdd9] hover:text-white transition-colors py-0.5">
-                  <div className="flex items-center gap-3">
-                    <CreditCard className="w-4 h-4 text-[#8e95a5]" />
-                    <span>{viewMode === 'mockup' ? 'Upcoming Expenses' : 'Upcoming Exams in Window'}</span>
+                {/* 4. Upcoming Exams */}
+                <div className="flex items-center justify-between text-xs py-1.5 border-b border-[#232632]">
+                  <div className="flex items-center gap-2 text-[#9ba2b3]">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#f59e0b]" />
+                    <span>Upcoming Exams in Window</span>
                   </div>
-                  <span className="font-semibold text-white">{viewMode === 'mockup' ? '0' : '0'}</span>
+                  <span className="font-semibold text-white">{upcomingExams}</span>
                 </div>
 
-                {/* 5. Unreported Advances */}
-                <div className="flex items-center justify-between text-[#c8cdd9] hover:text-white transition-colors py-0.5">
-                  <div className="flex items-center gap-3">
-                    <RefreshCw className="w-4 h-4 text-[#8e95a5]" />
-                    <span>{viewMode === 'mockup' ? 'Unreported Advances' : 'Mastery Progress Rate'}</span>
+                {/* 5. Mastery Progress Rate */}
+                <div className="flex items-center justify-between text-xs py-1.5">
+                  <div className="flex items-center gap-2 text-[#9ba2b3]">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#10b981]" />
+                    <span>Mastery Progress Rate</span>
                   </div>
-                  <span className="font-semibold text-white">{viewMode === 'mockup' ? '€0.00' : `${studyProgressPct}%`}</span>
+                  <span className="font-semibold text-white">{studyProgressPct}%</span>
                 </div>
               </div>
             </div>
 
-            <div className="pt-4 mt-3 border-t border-[#232632] flex items-center justify-between text-[11px] text-[#717888]">
-              <span>Synchronized with KTU Ledger</span>
-              <button 
+            {/* Bottom Card Action Link */}
+            <div className="pt-4 mt-2 border-t border-[#232632] flex justify-end">
+              <button
+                type="button"
                 onClick={() => onNavigate('revision')}
-                className="text-[#00d49f] hover:underline flex items-center gap-1 font-semibold"
+                className="text-xs text-[#00d49f] hover:text-[#00f5b8] font-semibold flex items-center gap-1 transition-colors cursor-pointer"
               >
-                <span>View all tasks</span>
+                <span>View revision checklist</span>
                 <ChevronRight className="w-3 h-3" />
               </button>
             </div>
           </div>
 
-          {/* CARD 2: Recent Expenses (Table) */}
+          {/* CARD 2: Courses & Modules (Table) */}
           <div className="xl:col-span-7 expensio-card p-5">
             <div className="flex items-center justify-between mb-3.5">
               <h3 className="text-sm font-semibold text-white tracking-tight">
-                {viewMode === 'mockup' ? 'Recent Expenses' : 'Recent KTU Study Modules'}
+                Semester Courses & Syllabus Modules
               </h3>
-              <span className="text-[11px] text-[#717888] font-medium">Updated 5 min ago</span>
+              <span className="text-[11px] text-[#717888] font-medium">Real-time sync</span>
             </div>
 
             {/* Table */}
@@ -348,28 +303,20 @@ export default function ExpensioDashboard({
               <table className="w-full text-left text-xs">
                 <thead>
                   <tr className="text-[#727a8c] border-b border-[#232632] text-[11px] uppercase tracking-wider font-semibold">
-                    <th className="pb-2.5 font-medium">Subject</th>
-                    <th className="pb-2.5 font-medium">{viewMode === 'mockup' ? 'Employee' : 'Faculty / Module'}</th>
-                    <th className="pb-2.5 font-medium">{viewMode === 'mockup' ? 'Team' : 'Branch / Tag'}</th>
-                    <th className="pb-2.5 font-medium text-right">{viewMode === 'mockup' ? 'Amount' : 'Score / Pct'}</th>
+                    <th className="pb-2.5 font-medium">Course</th>
+                    <th className="pb-2.5 font-medium">Code</th>
+                    <th className="pb-2.5 font-medium">Modules / PYQs</th>
+                    <th className="pb-2.5 font-medium text-right">Mastery Progress</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#1e2029]">
-                  {viewMode === 'mockup' ? (
-                    mockExpenses.map((row) => (
-                      <tr key={row.id} className="hover:bg-white/[0.02] transition-colors">
-                        <td className="py-2.5 text-white font-medium">{row.subject}</td>
-                        <td className="py-2.5 text-[#9ba2b3]">{row.employee}</td>
-                        <td className="py-2.5">
-                          <span className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-semibold border ${row.teamColor}`}>
-                            {row.team}
-                          </span>
-                        </td>
-                        <td className="py-2.5 text-right font-medium text-white">{row.amount}</td>
-                      </tr>
-                    ))
-                  ) : (
-                    subjects.slice(0, 5).map((sub, idx) => (
+                  {subjects.map((sub) => {
+                    const sTotal = (sub.modules || []).reduce((acc, m) => acc + (m.topics?.length || 0), 0);
+                    const sDone = (sub.modules || []).reduce((acc, m) => 
+                      acc + (m.topics || []).filter(t => t.status === 'studied' || t.status === 'revised').length, 0);
+                    const sPct = sTotal > 0 ? Math.round((sDone / sTotal) * 100) : 0;
+
+                    return (
                       <tr 
                         key={sub.id} 
                         onClick={() => onOpenSubject(sub.id)}
@@ -379,18 +326,18 @@ export default function ExpensioDashboard({
                           <span className="w-2 h-2 rounded-full bg-[#00d49f]" />
                           <span>{sub.name}</span>
                         </td>
-                        <td className="py-2.5 text-[#9ba2b3]">{sub.code}</td>
+                        <td className="py-2.5 text-[#9ba2b3] font-mono text-[11px]">{sub.code}</td>
                         <td className="py-2.5">
                           <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-semibold border bg-purple-950/70 text-purple-300 border-purple-800/60">
-                            {sub.color || 'KTU Core'}
+                            {sub.modules?.length || 5} Mods · {sub.pastPapers?.length || 0} PYQs
                           </span>
                         </td>
                         <td className="py-2.5 text-right font-medium text-white">
-                          {`${sub.modules?.length || 5} Mods`}
+                          <span className="text-[#00d49f] font-mono">{sPct}%</span>
                         </td>
                       </tr>
-                    ))
-                  )}
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
@@ -407,21 +354,21 @@ export default function ExpensioDashboard({
           </h3>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5">
-            {/* 1. Pink Action: + New Expense */}
+            {/* 1. Focus Session */}
             <button
               type="button"
-              onClick={() => onNavigate('settings')}
+              onClick={onOpenFocusModal}
               className="expensio-quick-card p-3 sm:p-3.5 flex items-center gap-3 cursor-pointer text-left group"
             >
               <div className="w-8 h-8 rounded-full bg-[#ff4d79]/20 flex items-center justify-center shrink-0 border border-[#ff4d79]/30 group-hover:scale-105 transition-transform">
                 <Plus className="w-4 h-4 text-[#ff4d79]" />
               </div>
               <span className="text-xs font-semibold text-[#dfe3ed] group-hover:text-white transition-colors truncate">
-                + New expense
+                + Focus session
               </span>
             </button>
 
-            {/* 2. Indigo Action: + Add Receipt */}
+            {/* 2. Notes Vault */}
             <button
               type="button"
               onClick={() => onNavigate('notes')}
@@ -431,11 +378,11 @@ export default function ExpensioDashboard({
                 <Plus className="w-4 h-4 text-[#827bfa]" />
               </div>
               <span className="text-xs font-semibold text-[#dfe3ed] group-hover:text-white transition-colors truncate">
-                + Add receipt
+                + Notes vault
               </span>
             </button>
 
-            {/* 3. Teal Action: + Create Report */}
+            {/* 3. Exam Schedule */}
             <button
               type="button"
               onClick={() => onNavigate('timetable')}
@@ -445,89 +392,45 @@ export default function ExpensioDashboard({
                 <Plus className="w-4 h-4 text-[#00d49f]" />
               </div>
               <span className="text-xs font-semibold text-[#dfe3ed] group-hover:text-white transition-colors truncate">
-                + Create report
+                + Exam timetable
               </span>
             </button>
 
-            {/* 4. Coral Action: + Create Trip */}
+            {/* 4. Revision Sprint */}
             <button
               type="button"
-              onClick={onOpenFocusModal}
+              onClick={() => onNavigate('revision')}
               className="expensio-quick-card p-3 sm:p-3.5 flex items-center gap-3 cursor-pointer text-left group"
             >
               <div className="w-8 h-8 rounded-full bg-[#ef4444]/20 flex items-center justify-center shrink-0 border border-[#ef4444]/30 group-hover:scale-105 transition-transform">
                 <Plus className="w-4 h-4 text-[#ef4444]" />
               </div>
               <span className="text-xs font-semibold text-[#dfe3ed] group-hover:text-white transition-colors truncate">
-                + Create trip
+                + Revision sprint
               </span>
             </button>
           </div>
         </section>
 
         {/* ============================================================== */}
-        {/* ROW 3: Monthly Report (Team Spending Trend & Day-to-Day Expenses) */}
+        {/* ROW 3: Semester Report (Subject Mastery Trend & Topic Status) */}
         {/* ============================================================== */}
         <section>
           <h3 className="text-sm font-semibold text-white tracking-tight mb-3 px-0.5">
-            Monthly Report
+            Academic Performance Analytics
           </h3>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             
-            {/* CHART 1: Team Spending Trend (Teal Bars) */}
+            {/* CHART 1: Subject Mastery Trend (Teal Bars) */}
             <div className="expensio-card p-5">
               <div className="flex items-center justify-between mb-4">
                 <h4 className="text-xs font-semibold text-[#c8cdd9]">
-                  {viewMode === 'mockup' ? 'Team Spending Trend' : 'Semester Subject Mastery Trend'}
+                  Semester Subject Mastery Trend
                 </h4>
-                <span className="text-[10px] text-[#00d49f] font-mono font-bold">+18.4% vs last month</span>
-              </div>
-
-              {/* Bar Graph Canvas */}
-              <div className="flex items-end gap-3 h-40 pt-4 border-b border-[#232632] relative">
-                {/* Y-Axis Grid Guidelines */}
-                <div className="absolute left-0 top-0 bottom-0 flex flex-col justify-between text-[9px] text-[#5b6274] font-mono pointer-events-none">
-                  <span>100K</span>
-                  <span>60K</span>
-                  <span>20K</span>
-                  <span>0K</span>
-                </div>
-
-                {/* Bars Container */}
-                <div className="flex-1 flex items-end justify-around pl-8 h-full">
-                  {spendingTrendData.map((bar) => (
-                    <div key={bar.label} className="flex flex-col items-center gap-1.5 h-full justify-end group">
-                      <div className="relative flex justify-center w-5 sm:w-6">
-                        <div 
-                          style={{ height: `${bar.height}%` }}
-                          className="w-full bg-[#00d49f] rounded-t-sm shadow-md shadow-[#00d49f]/20 group-hover:brightness-110 transition-all cursor-pointer"
-                        />
-                        {/* Tooltip on hover */}
-                        <div className="absolute -top-7 opacity-0 group-hover:opacity-100 transition-opacity bg-[#121316] text-[#00d49f] text-[10px] font-mono font-bold px-1.5 py-0.5 rounded border border-[#272a34] shadow-md pointer-events-none whitespace-nowrap z-10">
-                          {bar.amount}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* X-Axis Labels */}
-              <div className="flex justify-around pl-8 pt-2 text-[10px] text-[#788094] font-semibold">
-                {spendingTrendData.map((bar) => (
-                  <span key={bar.label}>{bar.label}</span>
-                ))}
-              </div>
-            </div>
-
-            {/* CHART 2: Day-to-Day Expenses (Vivid Purple Bars) */}
-            <div className="expensio-card p-5">
-              <div className="flex items-center justify-between mb-4">
-                <h4 className="text-xs font-semibold text-[#c8cdd9]">
-                  {viewMode === 'mockup' ? 'Day-to-Day Expenses' : 'KTU Topic Distribution'}
-                </h4>
-                <span className="text-[10px] text-[#b37aff] font-mono font-bold">5 Active Categories</span>
+                <span className="text-[10px] text-[#00d49f] font-mono font-bold">
+                  {studyProgressPct}% Completed
+                </span>
               </div>
 
               {/* Bar Graph Canvas */}
@@ -542,9 +445,61 @@ export default function ExpensioDashboard({
 
                 {/* Bars Container */}
                 <div className="flex-1 flex items-end justify-around pl-8 h-full">
-                  {dayToDayData.map((bar) => (
+                  {subjectBars.map((bar) => (
+                    <div 
+                      key={bar.label} 
+                      onClick={() => bar.id && onOpenSubject(bar.id)}
+                      className="flex flex-col items-center gap-1.5 h-full justify-end group cursor-pointer"
+                    >
+                      <div className="relative flex justify-center w-6 sm:w-8">
+                        <div 
+                          style={{ height: `${bar.height}%` }}
+                          className="w-full bg-[#00d49f] rounded-t-sm shadow-md shadow-[#00d49f]/20 group-hover:brightness-110 transition-all"
+                        />
+                        {/* Tooltip on hover */}
+                        <div className="absolute -top-7 opacity-0 group-hover:opacity-100 transition-opacity bg-[#121316] text-[#00d49f] text-[10px] font-mono font-bold px-1.5 py-0.5 rounded border border-[#272a34] shadow-md pointer-events-none whitespace-nowrap z-10">
+                          {bar.amount}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* X-Axis Labels */}
+              <div className="flex justify-around pl-8 pt-2 text-[10px] text-[#788094] font-semibold">
+                {subjectBars.map((bar) => (
+                  <span key={bar.label} className="truncate max-w-[60px]" title={bar.fullName}>
+                    {bar.label}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* CHART 2: Topic Preparation Distribution (Purple Bars) */}
+            <div className="expensio-card p-5">
+              <div className="flex items-center justify-between mb-4">
+                <h4 className="text-xs font-semibold text-[#c8cdd9]">
+                  KTU Topic Status Distribution
+                </h4>
+                <span className="text-[10px] text-[#b37aff] font-mono font-bold">{totalTopics} Total Topics</span>
+              </div>
+
+              {/* Bar Graph Canvas */}
+              <div className="flex items-end gap-3 h-40 pt-4 border-b border-[#232632] relative">
+                {/* Y-Axis Grid Guidelines */}
+                <div className="absolute left-0 top-0 bottom-0 flex flex-col justify-between text-[9px] text-[#5b6274] font-mono pointer-events-none">
+                  <span>100%</span>
+                  <span>60%</span>
+                  <span>20%</span>
+                  <span>0%</span>
+                </div>
+
+                {/* Bars Container */}
+                <div className="flex-1 flex items-end justify-around pl-8 h-full">
+                  {topicDistribution.map((bar) => (
                     <div key={bar.label} className="flex flex-col items-center gap-1.5 h-full justify-end group">
-                      <div className="relative flex justify-center w-5 sm:w-6">
+                      <div className="relative flex justify-center w-6 sm:w-8">
                         <div 
                           style={{ height: `${bar.height}%` }}
                           className="w-full bg-[#9353d3] rounded-t-sm shadow-md shadow-[#9353d3]/20 group-hover:brightness-110 transition-all cursor-pointer"
@@ -561,9 +516,9 @@ export default function ExpensioDashboard({
 
               {/* X-Axis Labels */}
               <div className="flex justify-around pl-8 pt-2 text-[9px] text-[#788094] font-semibold truncate">
-                {dayToDayData.map((bar) => (
-                  <span key={bar.label} className="truncate max-w-[50px] text-center" title={bar.label}>
-                    {bar.label.slice(0, 5)}..
+                {topicDistribution.map((bar) => (
+                  <span key={bar.label} className="truncate max-w-[55px] text-center" title={bar.label}>
+                    {bar.label}
                   </span>
                 ))}
               </div>

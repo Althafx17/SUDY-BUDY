@@ -21,12 +21,12 @@ export default function RightPanel({ subjects = [], onOpenFocusModal, onOpenSubj
     }
   });
 
-  // Mock online study buddies from mockup
+  // Active KTU study peers
   const onlineUsers = [
-    { id: 'usr-1', name: 'Maren Maureen', regId: '1094882001', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80', active: true, course: 'Operating Systems' },
-    { id: 'usr-2', name: 'Jenniffer Jane', regId: '1094672000', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80', active: true, course: 'Artificial Intelligence' },
-    { id: 'usr-3', name: 'Ryan Herwinds', regId: '1094342003', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80', active: true, course: 'Software Engineering' },
-    { id: 'usr-4', name: 'Kierra Culhane', regId: '1094662002', avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150&auto=format&fit=crop&q=80', active: true, course: 'Focus Session' }
+    { id: 'usr-1', name: 'Adithya R.', regId: 'KTU-CS-042', avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80', active: true, course: 'Linear Algebra MAT101' },
+    { id: 'usr-2', name: 'Fathima Noor', regId: 'KTU-CS-019', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80', active: true, course: 'Engineering Chemistry' },
+    { id: 'usr-3', name: 'Rahul K.', regId: 'KTU-CS-088', avatar: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=150&auto=format&fit=crop&q=80', active: true, course: 'Engineering Physics' },
+    { id: 'usr-4', name: 'Sneha Menon', regId: 'KTU-CS-064', avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&auto=format&fit=crop&q=80', active: true, course: 'Calculus Sprint' }
   ];
 
   return (
@@ -36,17 +36,17 @@ export default function RightPanel({ subjects = [], onOpenFocusModal, onOpenSubj
         <div className="flex items-center justify-end gap-3.5 pb-2">
           <div className="text-right">
             <h4 className="text-sm font-black text-white tracking-tight leading-tight">
-              Christine Eva
+              KTU Scholar
             </h4>
             <span className="text-[11px] font-bold text-zinc-400 font-mono">
-              1094881999
+              KTU-BTECH-2026
             </span>
           </div>
 
           <div className="relative">
             <img
               src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80"
-              alt="Christine Eva"
+              alt="KTU Scholar"
               className="w-11 h-11 rounded-2xl object-cover ring-2 ring-zinc-700 shadow-md"
             />
             <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-500 border-2 border-[#121214]" />
@@ -97,7 +97,6 @@ export default function RightPanel({ subjects = [], onOpenFocusModal, onOpenSubj
             {Array.from({ length: daysInMonth }).map((_, idx) => {
               const day = idx + 1;
               const examSubject = examDaysMap[day];
-              const isHighlightMock = day === 9 || day === 13 || day === 14 || day === 18 || day === 22;
 
               return (
                 <div key={day} className="flex items-center justify-center">
@@ -107,7 +106,7 @@ export default function RightPanel({ subjects = [], onOpenFocusModal, onOpenSubj
                     }}
                     title={examSubject ? `${examSubject.name} Exam` : undefined}
                     className={`w-7 h-7 rounded-full text-xs font-extrabold flex items-center justify-center transition-all ${
-                      isHighlightMock || examSubject
+                      examSubject
                         ? 'bg-white text-black shadow-md hover:scale-110'
                         : 'text-zinc-400 hover:bg-zinc-800 hover:text-white'
                     }`}

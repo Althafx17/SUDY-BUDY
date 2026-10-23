@@ -18,7 +18,9 @@ import {
   Sparkles,
   BookOpen,
   ArrowRight,
-  Send
+  Send,
+  CheckCircle2,
+  GraduationCap
 } from 'lucide-react';
 
 export default function DosageDashboard({
@@ -29,161 +31,95 @@ export default function DosageDashboard({
   onNavigate,
   onOpenFocusModal
 }) {
-  // Mode toggle: 1:1 Image Mockup data vs KTU Study Buddy real data
-  const [dataMode, setDataMode] = useState('mockup'); // 'mockup' | 'study'
   const [friendTab, setFriendTab] = useState('activities'); // 'activities' | 'online'
-  const [selectedMonth, setSelectedMonth] = useState('Apr');
-  const [monthDropdownOpen, setMonthDropdownOpen] = useState(false);
-
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'];
+  const [selectedPeriod, setSelectedPeriod] = useState('Monthly');
+  const [periodDropdownOpen, setPeriodDropdownOpen] = useState(false);
 
   // Current semester subjects
   const semesterData = data?.[currentSemester] || { subjects: [] };
   const subjects = semesterData?.subjects || [];
 
-  // Friend list data matching mockup exactly
-  const mockFriends = [
+  // Calculate real KTU progress metrics
+  const totalTopics = subjects.reduce((acc, sub) => 
+    acc + (sub.modules || []).reduce((mAcc, mod) => mAcc + (mod.topics?.length || 0), 0), 0);
+  const completedTopics = subjects.reduce((acc, sub) => 
+    acc + (sub.modules || []).reduce((mAcc, mod) => 
+      mAcc + (mod.topics || []).filter(t => t.status === 'studied' || t.status === 'revised').length, 0), 0);
+  const revisedTopics = subjects.reduce((acc, sub) => 
+    acc + (sub.modules || []).reduce((mAcc, mod) => 
+      mAcc + (mod.topics || []).filter(t => t.status === 'revised').length, 0), 0);
+  const studyProgressPct = totalTopics > 0 ? Math.round((completedTopics / totalTopics) * 100) : 0;
+  const totalPYQs = subjects.reduce((acc, sub) => acc + (sub.pastPapers?.length || 0), 0);
+
+  // Connected KTU study peers
+  const studyBuddies = [
     {
       id: 1,
-      name: 'Max Stone',
+      name: 'Adithya R.',
       avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80',
-      action: 'Weekly Bicycle',
+      course: 'Linear Algebra MAT101',
+      studyAction: 'Practicing Cayley-Hamilton',
       time: '10 min ago',
-      studyAction: 'Calculus Module 3',
       isOnline: true
     },
     {
       id: 2,
-      name: 'Grisha Jack',
-      avatar: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=150&auto=format&fit=crop&q=80',
-      action: 'Slow Jogging',
-      time: '32 min ago',
-      studyAction: 'Physics Wave Optics',
+      name: 'Fathima Noor',
+      avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80',
+      course: 'Chemistry CYT100',
+      studyAction: 'Reviewing Spectroscopic Methods',
+      time: '25 min ago',
       isOnline: true
     },
     {
       id: 3,
-      name: 'Levi Patrick',
-      avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&auto=format&fit=crop&q=80',
-      action: 'Morning Swim',
-      time: '52 min ago',
-      studyAction: 'Chemistry Polymers',
+      name: 'Rahul K.',
+      avatar: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=150&auto=format&fit=crop&q=80',
+      course: 'Physics PHT100',
+      studyAction: 'Solving Wave Optics PYQ',
+      time: '45 min ago',
       isOnline: false
     },
     {
       id: 4,
-      name: 'Cody Bryan',
-      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
-      action: 'Quick Sprint',
-      time: '37 min ago',
-      studyAction: 'Graphics Isometric Projection',
-      isOnline: true
-    },
-    {
-      id: 5,
-      name: 'Max Stone',
-      avatar: 'https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=150&auto=format&fit=crop&q=80',
-      action: 'Hiking',
+      name: 'Sneha Menon',
+      avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&auto=format&fit=crop&q=80',
+      course: 'Vector Calculus',
+      studyAction: 'Green & Gauss Divergence',
       time: '1 hour ago',
-      studyAction: 'Mechanics Friction',
-      isOnline: false
+      isOnline: true
     }
   ];
 
-  // SVG Custom Runner Icon matching mockup
-  const RunnerIcon = ({ className = "w-5 h-5 text-white" }) => (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <circle cx="17" cy="4" r="2" />
-      <path d="M15 8l-4 4-3-2-4 3" />
-      <path d="M11 12l2 4 4-1" />
-      <path d="M13 16l-2 5" />
-      <path d="M7 13l2 5" />
-    </svg>
-  );
-
-  // SVG Custom Sneaker / Shoe Icon matching mockup
-  const ShoeIcon = ({ className = "w-5 h-5 text-white" }) => (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <path d="M3 17h18a2 2 0 0 0 2-2c0-1.5-.5-2.5-2-3l-5-2-3-4H8L5 9l-3 4a2 2 0 0 0 1 4z" />
-      <path d="M8 9h5" />
-      <path d="M6 13h12" />
-    </svg>
-  );
-
-  // SVG Custom Bicycle Icon matching mockup
-  const BikeIcon = ({ className = "w-5 h-5 text-white" }) => (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <circle cx="5.5" cy="17.5" r="3.5" />
-      <circle cx="18.5" cy="17.5" r="3.5" />
-      <path d="M15 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-3 11.5L15 6h3" />
-      <path d="M12 17.5V14l-3-3 4-3 2 3h4" />
-    </svg>
-  );
-
-  // Bottom 3 Cards Data
-  const bottomCards = dataMode === 'mockup' ? [
-    {
-      id: 'bike',
-      icon: BikeIcon,
-      title: 'Bicycle Drill',
-      subtitle: '36 km / weeks',
-      progress: 45,
-      stat: '17 / 36km',
-      pill: '2 days left',
-      subjectId: subjects[0]?.id
-    },
-    {
-      id: 'jog',
-      icon: RunnerIcon,
-      title: 'Jogging Hero',
-      subtitle: '12 km / month',
-      progress: 13,
-      stat: '2 / 12km',
-      pill: '17 days left',
-      subjectId: subjects[1]?.id
-    },
-    {
-      id: 'busy',
-      icon: ShoeIcon,
-      title: 'Healthy Busy',
-      subtitle: '3600 steps / weeks',
-      progress: 90,
-      stat: '3200 / 3600 steps',
-      pill: '3 days left',
-      subjectId: subjects[2]?.id
+  // Map real subjects to the 3 bottom cards
+  const bottomCards = subjects.slice(0, 3).map((sub, idx) => {
+    const subTotalTopics = (sub.modules || []).reduce((acc, m) => acc + (m.topics?.length || 0), 0);
+    const subDoneTopics = (sub.modules || []).reduce((acc, m) => 
+      acc + (m.topics || []).filter(t => t.status === 'studied' || t.status === 'revised').length, 0);
+    const subPct = subTotalTopics > 0 ? Math.round((subDoneTopics / subTotalTopics) * 100) : 0;
+    
+    // Days until exam
+    let examLabel = 'Scheduled';
+    if (sub.examDate) {
+      const diffDays = Math.ceil((new Date(sub.examDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+      examLabel = diffDays > 0 ? `Exam in ${diffDays}d` : 'Exam Due';
     }
-  ] : [
-    {
-      id: 'sub-0',
-      icon: BookOpen,
-      title: subjects[0]?.name || 'Mathematics S1',
-      subtitle: 'Module 1 - 5 Syllabus',
-      progress: 45,
-      stat: '18 / 40 Topics',
-      pill: 'Exam in 2 days',
-      subjectId: subjects[0]?.id
-    },
-    {
-      id: 'sub-1',
-      icon: Activity,
-      title: subjects[1]?.name || 'Engineering Physics',
-      subtitle: 'Module 1 - 5 Syllabus',
-      progress: 13,
-      stat: '5 / 38 Topics',
-      pill: 'Exam in 17 days',
-      subjectId: subjects[1]?.id
-    },
-    {
-      id: 'sub-2',
-      icon: Sparkles,
-      title: subjects[2]?.name || 'Engineering Chemistry',
-      subtitle: 'Module 1 - 5 Syllabus',
-      progress: 90,
-      stat: '34 / 38 Topics',
-      pill: 'Exam in 3 days',
-      subjectId: subjects[2]?.id
-    }
-  ];
+
+    const icons = [BookOpen, Activity, Sparkles];
+
+    return {
+      id: sub.id,
+      icon: icons[idx % icons.length],
+      title: sub.name,
+      subtitle: `${sub.code} • ${sub.modules?.length || 5} Modules`,
+      progress: subPct,
+      stat: `${subDoneTopics} / ${subTotalTopics} Topics`,
+      pill: examLabel,
+      subjectId: sub.id
+    };
+  });
+
+  const timelineMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'];
 
   return (
     <div className="w-full flex flex-col xl:flex-row gap-5 items-start">
@@ -196,7 +132,7 @@ export default function DosageDashboard({
         <header className="flex flex-wrap items-center justify-between gap-4 py-1">
           <div>
             <span className="text-[11px] font-semibold tracking-wider text-[#9195ab] uppercase block">
-              Primary
+              KTU Academic Hub
             </span>
             <h1 className="text-2xl sm:text-[28px] font-extrabold text-[#1a1b32] tracking-tight leading-none mt-0.5">
               Dashboard
@@ -204,30 +140,10 @@ export default function DosageDashboard({
           </div>
 
           <div className="flex items-center gap-3">
-            {/* View Mode Switcher Pill */}
-            <div className="hidden sm:flex items-center bg-white/80 p-1 rounded-full border border-[#e4e6f2] shadow-xs text-xs font-semibold">
-              <button
-                type="button"
-                onClick={() => setDataMode('mockup')}
-                className={`px-3 py-1 rounded-full transition-all ${
-                  dataMode === 'mockup'
-                    ? 'bg-[#5f51bd] text-white shadow-xs'
-                    : 'text-[#8b8fa8] hover:text-[#1a1b32]'
-                }`}
-              >
-                1:1 Mockup View
-              </button>
-              <button
-                type="button"
-                onClick={() => setDataMode('study')}
-                className={`px-3 py-1 rounded-full transition-all ${
-                  dataMode === 'study'
-                    ? 'bg-[#5f51bd] text-white shadow-xs'
-                    : 'text-[#8b8fa8] hover:text-[#1a1b32]'
-                }`}
-              >
-                KTU Study Buddy
-              </button>
+            {/* Live Semester Indicator */}
+            <div className="flex items-center gap-1.5 bg-white/90 px-3.5 py-1.5 rounded-full border border-[#e4e6f2] shadow-xs text-xs font-semibold text-[#5f51bd]">
+              <span className="w-2 h-2 rounded-full bg-[#5f51bd] animate-pulse" />
+              <span>{currentSemester} Semester Active</span>
             </div>
 
             {/* Pill Search Input */}
@@ -235,7 +151,7 @@ export default function DosageDashboard({
               <Search className="w-4 h-4 text-[#8b8fa8] absolute left-3.5 pointer-events-none" />
               <input
                 type="text"
-                placeholder="Search"
+                placeholder="Search courses..."
                 className="bg-white text-[#1a1b32] placeholder-[#a0a4bc] text-xs font-medium pl-9 pr-4 py-2 rounded-full border border-[#e4e6f2] shadow-xs focus:outline-none focus:ring-2 focus:ring-[#5f51bd]/25 w-36 sm:w-52 transition-all"
               />
             </div>
@@ -262,26 +178,32 @@ export default function DosageDashboard({
             
             {/* Card Header: Overview & Monthly Dropdown */}
             <div className="flex items-center justify-between relative z-10">
-              <h2 className="text-base sm:text-lg font-bold text-white tracking-wide">
-                Overview
-              </h2>
+              <div>
+                <h2 className="text-base sm:text-lg font-bold text-white tracking-wide">
+                  Syllabus Mastery Overview
+                </h2>
+                <p className="text-xs text-white/70 font-medium">Real-time semester progress tracking</p>
+              </div>
 
               <div className="relative">
                 <button
                   type="button"
-                  onClick={() => setMonthDropdownOpen(prev => !prev)}
+                  onClick={() => setPeriodDropdownOpen(prev => !prev)}
                   className="bg-white/15 hover:bg-white/25 active:bg-white/30 text-white text-xs font-semibold px-3 py-1.5 rounded-full backdrop-blur-md flex items-center gap-1.5 border border-white/10 transition-colors"
                 >
-                  <span>Monthly</span>
+                  <span>{selectedPeriod}</span>
                   <ChevronDown className="w-3.5 h-3.5 opacity-80" />
                 </button>
 
-                {monthDropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-32 bg-[#44388e] text-white rounded-2xl shadow-xl border border-white/20 py-1.5 z-30 text-xs backdrop-blur-xl">
-                    {['Weekly', 'Monthly', 'Semester', 'Yearly'].map(option => (
+                {periodDropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-36 bg-[#44388e] text-white rounded-2xl shadow-xl border border-white/20 py-1.5 z-30 text-xs backdrop-blur-xl">
+                    {['Weekly Sprint', 'Monthly', 'Semester View', 'Exam Window'].map(option => (
                       <button
                         key={option}
-                        onClick={() => setMonthDropdownOpen(false)}
+                        onClick={() => {
+                          setSelectedPeriod(option);
+                          setPeriodDropdownOpen(false);
+                        }}
                         className="w-full text-left px-3 py-1.5 hover:bg-white/15 font-medium transition-colors"
                       >
                         {option}
@@ -341,7 +263,7 @@ export default function DosageDashboard({
                   strokeLinecap="round"
                 />
 
-                {/* Indicator Vertical Line down to April */}
+                {/* Indicator Vertical Line */}
                 <line 
                   x1="235" 
                   y1="25" 
@@ -352,7 +274,7 @@ export default function DosageDashboard({
                   strokeDasharray="3 3" 
                 />
 
-                {/* Glowing Marker Pin at Peak (April: x=235, y=25) */}
+                {/* Glowing Marker Pin at Peak */}
                 <circle 
                   cx="235" 
                   cy="25" 
@@ -377,30 +299,28 @@ export default function DosageDashboard({
                 />
               </svg>
 
-              {/* Floating Tooltip Pill: "9.178 Steps" */}
+              {/* Floating Tooltip Pill: Live Mastery Percentage */}
               <div 
                 className="absolute z-20 pointer-events-none transition-all duration-300"
                 style={{ left: '39%', top: '-6%' }}
               >
                 <div className="bg-white/20 backdrop-blur-md border border-white/30 text-white rounded-xl px-2.5 py-1 shadow-lg shadow-black/10 flex flex-col items-center leading-none">
                   <span className="text-[11px] font-black tracking-tight">
-                    {dataMode === 'mockup' ? '9.178' : '92%'}
+                    {studyProgressPct}%
                   </span>
                   <span className="text-[9px] font-semibold text-white/90 mt-0.5">
-                    {dataMode === 'mockup' ? 'Steps' : 'Mastery'}
+                    Mastery
                   </span>
                 </div>
               </div>
 
               {/* Months X-Axis */}
               <div className="flex items-center justify-between text-[11px] font-medium text-white/60 pt-1.5 px-1 relative z-10">
-                {months.map(m => {
-                  const isActive = m === selectedMonth;
+                {timelineMonths.map((m, idx) => {
+                  const isActive = idx === 3;
                   return (
-                    <button
+                    <span
                       key={m}
-                      type="button"
-                      onClick={() => setSelectedMonth(m)}
                       className={`transition-all ${
                         isActive
                           ? 'bg-white text-[#5141a8] font-black px-2.5 py-0.5 rounded-full shadow-xs scale-105'
@@ -408,7 +328,7 @@ export default function DosageDashboard({
                       }`}
                     >
                       {m}
-                    </button>
+                    </span>
                   );
                 })}
               </div>
@@ -417,42 +337,42 @@ export default function DosageDashboard({
             {/* Bottom Stat Row (3 Pillars with Center Highlight) */}
             <div className="grid grid-cols-3 gap-2 sm:gap-3 items-center pt-2 border-t border-white/10 mt-1">
               
-              {/* Stat 1: Total Time */}
+              {/* Stat 1: Total Subjects */}
               <div className="flex flex-col">
                 <span className="text-[10px] sm:text-[11px] font-medium text-white/70">
-                  Total Time
+                  Active Courses
                 </span>
                 <span className="text-base sm:text-lg font-extrabold text-white tracking-tight mt-0.5">
-                  748 Hr
+                  {subjects.length} Subjects
                 </span>
                 <span className="text-[10px] text-white/50 font-medium">
-                  April
+                  {currentSemester} Syllabus
                 </span>
               </div>
 
-              {/* Stat 2: Total Steps (Elevated Center Card) */}
+              {/* Stat 2: Topics Done (Elevated Center Card) */}
               <div className="bg-white/15 backdrop-blur-sm rounded-2xl py-1.5 px-3 sm:px-4 border border-white/10 text-center shadow-xs">
                 <span className="text-[10px] sm:text-[11px] font-medium text-white/80 block">
-                  {dataMode === 'mockup' ? 'Total Steps' : 'Topics Done'}
+                  Topics Done
                 </span>
                 <span className="text-base sm:text-lg font-black text-white tracking-tight block mt-0.5">
-                  {dataMode === 'mockup' ? '9.178 St' : '57 / 62'}
+                  {completedTopics} / {totalTopics}
                 </span>
                 <span className="text-[10px] text-white/60 font-medium block">
-                  April
+                  {revisedTopics} Revised
                 </span>
               </div>
 
               {/* Stat 3: Target */}
               <div className="flex flex-col text-right">
                 <span className="text-[10px] sm:text-[11px] font-medium text-white/70">
-                  {dataMode === 'mockup' ? 'Target' : 'Target Goal'}
+                  Target Goal
                 </span>
                 <span className="text-base sm:text-lg font-extrabold text-white tracking-tight mt-0.5">
-                  {dataMode === 'mockup' ? '9.200 St' : '100% S-Grade'}
+                  100% S-Grade
                 </span>
                 <span className="text-[10px] text-white/50 font-medium">
-                  April
+                  {totalPYQs} PYQs Bank
                 </span>
               </div>
 
@@ -465,31 +385,27 @@ export default function DosageDashboard({
           {/* ========================================================== */}
           <div className="lg:col-span-4 flex flex-col gap-4 justify-between">
             
-            {/* Top Purple Pill Card: "Daily Jogging" */}
+            {/* Top Purple Pill Card: "Daily Focus Goal" */}
             <div 
               onClick={() => onOpenFocusModal && onOpenFocusModal()}
               className="bg-[#5f51bd] hover:bg-[#5749b5] text-white rounded-[26px] p-4 sm:p-5 flex items-center gap-4 shadow-md shadow-[#5f51bd]/20 cursor-pointer transition-transform hover:-translate-y-0.5"
             >
               {/* Soft Frosted Icon Box */}
               <div className="w-12 h-12 rounded-2xl bg-white/15 flex items-center justify-center shrink-0 shadow-inner">
-                {dataMode === 'mockup' ? (
-                  <ShoeIcon className="w-6 h-6 text-white" />
-                ) : (
-                  <BookOpen className="w-6 h-6 text-white" />
-                )}
+                <BookOpen className="w-6 h-6 text-white" />
               </div>
 
               <div>
                 <h3 className="text-base sm:text-lg font-bold text-white tracking-tight leading-snug">
-                  {dataMode === 'mockup' ? 'Daily Jogging' : 'Daily Focus Goal'}
+                  Daily Focus Goal
                 </h3>
                 <span className="text-[11px] text-white/70 font-medium block">
-                  {dataMode === 'mockup' ? 'Track daily activity' : '25 min Pomodoro sprint'}
+                  25 min Pomodoro sprint session
                 </span>
               </div>
             </div>
 
-            {/* Bottom Coral/Rose Pink Card: "My Jogging" */}
+            {/* Bottom Coral/Rose Pink Card: "My Study Sprint" */}
             <div className="bg-gradient-to-br from-[#ff6686] to-[#ff5074] text-white rounded-[30px] p-5 sm:p-6 shadow-xl shadow-pink-500/20 relative overflow-hidden flex flex-col justify-between h-44 sm:h-48 group">
               
               {/* Background Decorative Soft Wave */}
@@ -501,31 +417,27 @@ export default function DosageDashboard({
                 <path d="M0 60 C50 30 120 90 200 40 L200 100 L0 100 Z" fill="currentColor" />
               </svg>
 
-              {/* Top Row: Runner Badge + Title */}
+              {/* Top Row: Activity Badge + Title */}
               <div className="flex items-center gap-3 relative z-10">
                 <div className="w-10 h-10 rounded-2xl bg-white/20 backdrop-blur-xs flex items-center justify-center shrink-0">
-                  {dataMode === 'mockup' ? (
-                    <RunnerIcon className="w-5 h-5 text-white" />
-                  ) : (
-                    <Activity className="w-5 h-5 text-white" />
-                  )}
+                  <Activity className="w-5 h-5 text-white" />
                 </div>
                 <h3 className="text-base font-bold text-white tracking-tight">
-                  {dataMode === 'mockup' ? 'My Jogging' : 'My Study Sprint'}
+                  My Study Sprint
                 </h3>
               </div>
 
-              {/* Bottom Row: Total Time + Arrow Button */}
+              {/* Bottom Row: Revision Progress + Arrow Button */}
               <div className="flex items-end justify-between relative z-10">
                 <div>
                   <span className="text-[10px] font-semibold text-white/80 uppercase tracking-wider block">
-                    Total Time
+                    Revision Readiness
                   </span>
                   <div className="text-2xl sm:text-[26px] font-black text-white tracking-tight leading-tight">
-                    748 hr
+                    {studyProgressPct}%
                   </div>
                   <span className="text-xs font-semibold text-white/80 block">
-                    July
+                    {completedTopics} Topics Mastered
                   </span>
                 </div>
 
@@ -533,6 +445,7 @@ export default function DosageDashboard({
                   type="button"
                   onClick={() => onNavigate && onNavigate('revision')}
                   className="w-10 h-10 rounded-full bg-white/25 hover:bg-white/35 active:bg-white/40 flex items-center justify-center text-white backdrop-blur-xs shadow-xs transition-transform group-hover:scale-110"
+                  title="Open Revision Sprint"
                 >
                   <ChevronRight className="w-5 h-5" />
                 </button>
@@ -545,7 +458,7 @@ export default function DosageDashboard({
         </div>
 
         {/* ============================================================== */}
-        {/* LOWER ROW: 3 METRIC CARDS */}
+        {/* LOWER ROW: REAL SUBJECT CARDS */}
         {/* ============================================================== */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           {bottomCards.map((card) => {
@@ -566,6 +479,7 @@ export default function DosageDashboard({
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation();
+                      if (onOpenSubject) onOpenSubject(card.subjectId);
                     }}
                     className="p-1 text-gray-300 hover:text-gray-500 rounded-lg transition-colors"
                   >
@@ -621,29 +535,30 @@ export default function DosageDashboard({
       </div>
 
       {/* ============================================================== */}
-      {/* FAR RIGHT SIDEBAR COLUMN: FRIENDS + LIVE MAP (Matching Mockup) */}
+      {/* FAR RIGHT SIDEBAR COLUMN: STUDY BUDDIES + CAMPUS STUDY HUBS */}
       {/* ============================================================== */}
       <div className="w-full xl:w-76 shrink-0 flex flex-col gap-5">
         
         {/* ============================================================ */}
-        {/* FRIENDS CARD */}
+        {/* STUDY BUDDIES CARD */}
         {/* ============================================================ */}
         <div className="bg-white rounded-[28px] p-5 sm:p-6 shadow-sm border border-[#eef0f8] flex flex-col gap-4">
           
-          {/* Header Row: Friends + View All */}
+          {/* Header Row: Study Buddies + Focus Room Launch */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 text-[#1f2137]">
               <Users className="w-4 h-4 text-[#5f51bd]" />
               <h3 className="text-base font-extrabold tracking-tight">
-                Friends
+                Study Buddies
               </h3>
             </div>
 
             <button 
               type="button"
+              onClick={onOpenFocusModal}
               className="text-xs font-semibold text-[#8b8fa8] hover:text-[#5f51bd] transition-colors"
             >
-              View All
+              Focus Room
             </button>
           </div>
 
@@ -673,42 +588,41 @@ export default function DosageDashboard({
             </button>
           </div>
 
-          {/* Friend List */}
+          {/* Study Buddy List */}
           <div className="space-y-3.5 pt-1">
-            {mockFriends
+            {studyBuddies
               .filter(f => friendTab === 'activities' || f.isOnline)
-              .map((friend) => (
+              .map((buddy) => (
                 <div 
-                  key={friend.id} 
+                  key={buddy.id} 
                   className="flex items-center justify-between gap-3 group"
                 >
                   <div className="flex items-center gap-3 min-w-0">
                     <div className="relative shrink-0">
                       <img
-                        src={friend.avatar}
-                        alt={friend.name}
+                        src={buddy.avatar}
+                        alt={buddy.name}
                         className="w-9 h-9 rounded-full object-cover ring-2 ring-[#eef0f8]"
                       />
-                      {friend.isOnline && (
+                      {buddy.isOnline && (
                         <span className="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-emerald-500 ring-1 ring-white" />
                       )}
                     </div>
 
                     <div className="min-w-0">
                       <h4 className="text-xs font-bold text-[#1f2137] tracking-tight truncate">
-                        {friend.name}
+                        {buddy.name}
                       </h4>
                       <p className="text-[10px] text-[#8b8fa8] font-medium truncate">
-                        {dataMode === 'mockup' 
-                          ? `${friend.action} • ${friend.time}` 
-                          : `${friend.studyAction} • ${friend.time}`}
+                        {buddy.studyAction} • {buddy.time}
                       </p>
                     </div>
                   </div>
 
                   <button
                     type="button"
-                    title={`Message ${friend.name}`}
+                    onClick={onOpenFocusModal}
+                    title={`Study with ${buddy.name}`}
                     className="p-1.5 text-gray-400 hover:text-[#5f51bd] hover:bg-[#f2f4fb] rounded-full transition-colors shrink-0"
                   >
                     <MessageCircle className="w-4 h-4" />
@@ -720,28 +634,29 @@ export default function DosageDashboard({
         </div>
 
         {/* ============================================================ */}
-        {/* LIVE MAP CARD */}
+        {/* CAMPUS STUDY HUBS (Vector Map) */}
         {/* ============================================================ */}
         <div className="bg-white rounded-[28px] p-5 sm:p-6 shadow-sm border border-[#eef0f8] flex flex-col gap-3">
           
-          {/* Header Row: Live map + View */}
+          {/* Header Row: Campus Study Hubs */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 text-[#1f2137]">
               <MapPin className="w-4 h-4 text-[#5f51bd]" />
               <h3 className="text-base font-extrabold tracking-tight">
-                Live map
+                Campus Study Hubs
               </h3>
             </div>
 
             <button 
               type="button"
+              onClick={onOpenFocusModal}
               className="text-xs font-semibold text-[#8b8fa8] hover:text-[#5f51bd] transition-colors"
             >
-              View
+              Join Hub
             </button>
           </div>
 
-          {/* Stylized Vector Map with Avatar Pins and Target Pin */}
+          {/* Stylized Vector Map with Campus Study Hubs */}
           <div className="relative h-40 rounded-[22px] overflow-hidden bg-[#eef1f8] border border-[#e2e5f0] shadow-inner select-none">
             
             {/* Vector Roads & Topo Grid */}
@@ -757,43 +672,43 @@ export default function DosageDashboard({
               <path d="M 20 180 Q 140 100 280 40" fill="none" stroke="#ffffff" strokeWidth="6" />
               <path d="M 40 20 Q 150 70 260 170" fill="none" stroke="#ffffff" strokeWidth="4" />
               
-              {/* Soft Green Area / Park */}
+              {/* Campus Green / Library lawn */}
               <rect x="70" y="60" width="100" height="50" rx="12" fill="#d9e6dc" opacity="0.7" />
               <rect x="195" y="130" width="80" height="45" rx="10" fill="#d9e6dc" opacity="0.6" />
             </svg>
 
-            {/* Friend Pin 1 */}
-            <div className="absolute top-6 left-12 transform -translate-x-1/2 -translate-y-1/2">
+            {/* Hub Pin 1: Central Library */}
+            <div className="absolute top-7 left-12 transform -translate-x-1/2 -translate-y-1/2 group cursor-pointer" title="Central Library - 8 Buddies Active">
               <img
-                src={mockFriends[0].avatar}
-                alt="Friend Pin"
+                src={studyBuddies[0].avatar}
+                alt="Adithya R."
                 className="w-7 h-7 rounded-full ring-2 ring-white shadow-md object-cover"
               />
             </div>
 
-            {/* Friend Pin 2 */}
-            <div className="absolute top-24 left-24 transform -translate-x-1/2 -translate-y-1/2">
+            {/* Hub Pin 2: Digital Reading Room */}
+            <div className="absolute top-24 left-24 transform -translate-x-1/2 -translate-y-1/2 group cursor-pointer" title="Digital Reading Room - 5 Buddies Active">
               <img
-                src={mockFriends[1].avatar}
-                alt="Friend Pin"
+                src={studyBuddies[1].avatar}
+                alt="Fathima Noor"
                 className="w-6 h-6 rounded-full ring-2 ring-white shadow-md object-cover"
               />
             </div>
 
-            {/* Friend Pin 3 */}
-            <div className="absolute bottom-6 right-16 transform -translate-x-1/2 -translate-y-1/2">
+            {/* Hub Pin 3: Department Seminar Hall */}
+            <div className="absolute bottom-6 right-16 transform -translate-x-1/2 -translate-y-1/2 group cursor-pointer" title="Seminar Hall - 3 Buddies Active">
               <img
-                src={mockFriends[3].avatar}
-                alt="Friend Pin"
+                src={studyBuddies[3].avatar}
+                alt="Sneha Menon"
                 className="w-6 h-6 rounded-full ring-2 ring-white shadow-md object-cover"
               />
             </div>
 
-            {/* Active Bright Orange Destination Target Pin */}
+            {/* Active Destination Target Pin: KTU Main Study Hub */}
             <div className="absolute top-14 right-10 transform -translate-x-1/2 -translate-y-1/2 flex items-center justify-center">
               <div className="relative">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75" />
-                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#ff5a24] to-[#ff7d45] flex items-center justify-center text-white shadow-lg ring-2 ring-white">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75" />
+                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#5f51bd] to-[#7f72db] flex items-center justify-center text-white shadow-lg ring-2 ring-white" title="Main Study Hub">
                   <MapPin className="w-4 h-4 fill-white" />
                 </div>
               </div>
