@@ -20,7 +20,8 @@ import {
   CheckCircle2,
   DollarSign,
   PieChart,
-  GraduationCap
+  GraduationCap,
+  FileText
 } from 'lucide-react';
 
 export default function ExpensioDashboard({
