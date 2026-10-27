@@ -13,12 +13,14 @@ import {
 export default function ExpensioDashboard({
   data,
   currentSemester = 'S1',
+  currentView = 'dashboard',
   onSelectSemester,
   onOpenSubject,
   onNavigate,
   onOpenFocusModal,
   onOpenThemeModal,
-  onAddSubject
+  onAddSubject,
+  children
 }) {
   const semesterData = data?.[currentSemester] || { subjects: [] };
   const subjects = semesterData?.subjects || [];
@@ -90,71 +92,38 @@ export default function ExpensioDashboard({
 
           {/* Navigation Links */}
           <nav className="flex flex-row lg:flex-col gap-1.5 overflow-x-auto lg:overflow-visible pb-2 lg:pb-0">
-            {/* 1. Dashboard (Active Teal Capsule) */}
-            <button
-              type="button"
-              onClick={() => onNavigate('dashboard')}
-              className="flex items-center gap-3 px-4 py-2.5 rounded-xl font-medium text-xs sm:text-sm bg-[#162421] text-[#00d49f] border border-[#00d49f]/20 shadow-xs cursor-pointer w-full transition-all text-left"
-            >
-              <Home className="w-4 h-4 shrink-0 text-[#00d49f]" />
-              <span className="whitespace-nowrap">Dashboard</span>
-            </button>
-
-            {/* 2. Courses */}
-            <button
-              type="button"
-              onClick={() => {
+            {[
+              { id: 'dashboard', label: 'Dashboard', icon: Home, onClick: () => onNavigate('dashboard') },
+              { id: 'subject', label: 'Courses & PYQs', icon: BookOpen, onClick: () => {
                 if (subjects.length > 0) {
                   onOpenSubject(subjects[0].id);
                 } else {
                   onNavigate('dashboard');
                 }
-              }}
-              className="flex items-center gap-3 px-4 py-2.5 rounded-xl font-medium text-xs sm:text-sm text-[#8e95a5] hover:text-white hover:bg-white/5 cursor-pointer w-full transition-all text-left"
-            >
-              <BookOpen className="w-4 h-4 shrink-0" />
-              <span className="whitespace-nowrap">Courses & PYQs</span>
-            </button>
-
-            {/* 3. Exam Schedule */}
-            <button
-              type="button"
-              onClick={() => onNavigate('timetable')}
-              className="flex items-center gap-3 px-4 py-2.5 rounded-xl font-medium text-xs sm:text-sm text-[#8e95a5] hover:text-white hover:bg-white/5 cursor-pointer w-full transition-all text-left"
-            >
-              <Calendar className="w-4 h-4 shrink-0" />
-              <span className="whitespace-nowrap">Exam Schedule</span>
-            </button>
-
-            {/* 4. Revision Mode */}
-            <button
-              type="button"
-              onClick={() => onNavigate('revision')}
-              className="flex items-center gap-3 px-4 py-2.5 rounded-xl font-medium text-xs sm:text-sm text-[#8e95a5] hover:text-white hover:bg-white/5 cursor-pointer w-full transition-all text-left"
-            >
-              <CheckSquare className="w-4 h-4 shrink-0" />
-              <span className="whitespace-nowrap">Revision Sprint</span>
-            </button>
-
-            {/* 5. Notes Vault */}
-            <button
-              type="button"
-              onClick={() => onNavigate('notes')}
-              className="flex items-center gap-3 px-4 py-2.5 rounded-xl font-medium text-xs sm:text-sm text-[#8e95a5] hover:text-white hover:bg-white/5 cursor-pointer w-full transition-all text-left"
-            >
-              <FileText className="w-4 h-4 shrink-0" />
-              <span className="whitespace-nowrap">Notes Vault</span>
-            </button>
-
-            {/* 6. Settings */}
-            <button
-              type="button"
-              onClick={() => onNavigate('settings')}
-              className="flex items-center gap-3 px-4 py-2.5 rounded-xl font-medium text-xs sm:text-sm text-[#8e95a5] hover:text-white hover:bg-white/5 cursor-pointer w-full transition-all text-left"
-            >
-              <SettingsIcon className="w-4 h-4 shrink-0" />
-              <span className="whitespace-nowrap">Settings</span>
-            </button>
+              }},
+              { id: 'timetable', label: 'Exam Schedule', icon: Calendar, onClick: () => onNavigate('timetable') },
+              { id: 'revision', label: 'Revision Sprint', icon: CheckSquare, onClick: () => onNavigate('revision') },
+              { id: 'notes', label: 'Notes Vault', icon: FileText, onClick: () => onNavigate('notes') },
+              { id: 'settings', label: 'Settings', icon: SettingsIcon, onClick: () => onNavigate('settings') },
+            ].map((item) => {
+              const isActive = currentView === item.id;
+              const Icon = item.icon;
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={item.onClick}
+                  className={`flex items-center gap-3 px-4 py-2.5 rounded-xl font-medium text-xs sm:text-sm cursor-pointer w-full transition-all text-left ${
+                    isActive
+                      ? 'bg-[#162421] text-[#00d49f] border border-[#00d49f]/20 shadow-xs font-semibold'
+                      : 'text-[#8e95a5] hover:text-white hover:bg-white/5'
+                  }`}
+                >
+                  <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-[#00d49f]' : 'text-[#8e95a5]'}`} />
+                  <span className="whitespace-nowrap">{item.label}</span>
+                </button>
+              );
+            })}
           </nav>
         </div>
 
@@ -177,8 +146,11 @@ export default function ExpensioDashboard({
       {/* MAIN CONTENT AREA */}
       {/* ============================================================== */}
       <main className="flex-1 flex flex-col gap-6 min-w-0">
-        
-        {/* Top Control Strip */}
+        {children ? (
+          children
+        ) : (
+          <>
+            {/* Top Control Strip */}
         <div className="flex items-center justify-between px-1">
           <div className="flex items-center gap-2">
             <span className="text-xs font-bold uppercase tracking-wider text-[#7e8597]">
@@ -530,7 +502,8 @@ export default function ExpensioDashboard({
 
           </div>
         </section>
-
+          </>
+        )}
       </main>
 
     </div>

@@ -27,6 +27,9 @@ import { recordStudyEvent } from '../utils/studyActivity';
 
 export default function SubjectView({ 
   subject, 
+  allSubjects = [],
+  onSelectSubject,
+  onAddSubject,
   semesterKey, 
   onBack, 
   onUpdateSubject,
@@ -49,6 +52,21 @@ export default function SubjectView({
   // Modals state
   const [isAddModuleOpen, setIsAddModuleOpen] = useState(false);
   const [newModuleName, setNewModuleName] = useState('');
+  const [moduleToEdit, setModuleToEdit] = useState(null);
+  const [editModuleName, setEditModuleName] = useState('');
+
+  const handleSaveEditModule = (e) => {
+    e.preventDefault();
+    if (!editModuleName.trim() || !moduleToEdit) return;
+    const updatedModules = (subject.modules || []).map(m => 
+      m.id === moduleToEdit.id ? { ...m, name: editModuleName.trim() } : m
+    );
+    onUpdateSubject({
+      ...subject,
+      modules: updatedModules
+    });
+    setModuleToEdit(null);
+  };
 
   const [isAddTopicOpen, setIsAddTopicOpen] = useState(false);
   const [newTopicName, setNewTopicName] = useState('');
@@ -255,6 +273,42 @@ export default function SubjectView({
 
   return (
     <div className="space-y-6 animate-in fade-in duration-200">
+      {/* Horizontal Course Switcher Bar */}
+      {allSubjects && allSubjects.length > 0 && (
+        <div className="flex items-center gap-2 overflow-x-auto custom-scrollbar pb-3 border-b border-[#262934]">
+          <span className="text-[11px] font-bold text-[#8b8fa8] uppercase tracking-wider shrink-0 mr-1">
+            Courses:
+          </span>
+          {allSubjects.map((s) => {
+            const isCurrent = s.id === subject.id;
+            return (
+              <button
+                key={s.id}
+                type="button"
+                onClick={() => onSelectSubject && onSelectSubject(s.id)}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shrink-0 cursor-pointer ${
+                  isCurrent
+                    ? 'bg-[#00d49f] text-[#121316] shadow-sm font-extrabold'
+                    : 'bg-[#181a20] text-[#8e95a5] hover:text-white border border-[#272a34]'
+                }`}
+              >
+                <span>{s.code || s.name}</span>
+              </button>
+            );
+          })}
+          {onAddSubject && (
+            <button
+              type="button"
+              onClick={onAddSubject}
+              className="px-2.5 py-1.5 rounded-xl text-xs font-semibold bg-[#181a20] hover:bg-[#222530] text-[#00d49f] border border-[#00d49f]/30 flex items-center gap-1 shrink-0 transition-colors cursor-pointer"
+            >
+              <Plus className="w-3 h-3" />
+              <span>New Course</span>
+            </button>
+          )}
+        </div>
+      )}
+
       {/* Top Back & Action Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <button

@@ -16,11 +16,14 @@ export default function NotesVault({
 }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTag, setSelectedTag] = useState('ALL');
+  const [selectedSubject, setSelectedSubject] = useState('ALL');
   const [copiedId, setCopiedId] = useState(null);
 
   // Extract all notes
   const notesList = [];
   const allTags = new Set();
+  const allSubjects = [];
+  const seenSubjectIds = new Set();
 
   ['S1', 'S2'].forEach(semKey => {
     (data[semKey]?.subjects || []).forEach(sub => {
@@ -36,6 +39,10 @@ export default function NotesVault({
               tags: top.tags || []
             });
             (top.tags || []).forEach(t => allTags.add(t));
+            if (!seenSubjectIds.has(sub.id)) {
+              seenSubjectIds.add(sub.id);
+              allSubjects.push(sub);
+            }
           }
         });
       });
@@ -143,8 +150,25 @@ export default function NotesVault({
           />
         </div>
 
+        {/* Course filter */}
+        <div className="w-full sm:w-56">
+          <select
+            value={selectedSubject}
+            onChange={(e) => setSelectedSubject(e.target.value)}
+            aria-label="Filter notes by course"
+            className="w-full bg-[#0d1117] border border-[#30363d] rounded-md px-3 py-1.5 text-xs text-[#f0f6fc] focus:outline-none focus:border-[#58a6ff] cursor-pointer"
+          >
+            <option value="ALL" className="bg-[#161b22] text-[#f0f6fc]">All Courses ({allSubjects.length})</option>
+            {allSubjects.map(sub => (
+              <option key={sub.id} value={sub.id} className="bg-[#161b22] text-[#f0f6fc]">
+                {sub.code || sub.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
         {/* Tags filter */}
-        <div className="w-full sm:w-64">
+        <div className="w-full sm:w-56">
           <select
             value={selectedTag}
             onChange={(e) => setSelectedTag(e.target.value)}

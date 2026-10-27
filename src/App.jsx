@@ -255,12 +255,18 @@ export default function App() {
             </div>
           </div>
 
-          {/* Right: Pro Badge (Matching Reference Mockup) + Quick Tools */}
+          {/* Right: Quick Focus Timer + Expand + Themes */}
           <div className="flex items-center gap-2.5">
-            {/* Blue 'Pro' badge as in image */}
-            <div className="bg-[#0091ff] text-white px-3 py-1 rounded-xl text-xs font-extrabold shadow-lg shadow-blue-500/25 flex items-center gap-1">
-              <span>Pro</span>
-            </div>
+            {/* Quick Focus Timer Button */}
+            <button
+              type="button"
+              onClick={() => setIsFocusModalOpen(true)}
+              className="bg-[#00d49f]/15 hover:bg-[#00d49f]/25 text-[#00d49f] border border-[#00d49f]/30 px-3 py-1.5 rounded-full text-xs font-bold shadow-xs flex items-center gap-1.5 transition-all cursor-pointer"
+              title="Start 25m Focus Pomodoro Session"
+            >
+              <Play className="w-3.5 h-3.5 fill-[#00d49f]" />
+              <span className="hidden sm:inline">Focus Session</span>
+            </button>
 
             <button
               type="button"
@@ -297,107 +303,108 @@ export default function App() {
         <div className={`w-full transition-all duration-300 relative ${isFrameExpanded ? 'max-w-none' : 'max-w-[1360px]'}`}>
           <div className="expensio-device-container p-2 sm:p-4 lg:p-5 relative overflow-hidden">
             
-            {/* Views */}
-            {currentView === 'dashboard' && (
-              <ExpensioDashboard
-                data={safeData}
-                currentSemester={safeSemester}
-                onSelectSemester={setCurrentSemester}
-                onOpenSubject={(subId, modId) => handleOpenSubject(subId, safeSemester, modId)}
-                onNavigate={handleNavigation}
-                onOpenFocusModal={() => setIsFocusModalOpen(true)}
-                onOpenThemeModal={() => setIsThemeModalOpen(true)}
-                onAddSubject={handleAddSubject}
-              />
-            )}
+            <ExpensioDashboard
+              data={safeData}
+              currentSemester={safeSemester}
+              currentView={currentView}
+              onSelectSemester={setCurrentSemester}
+              onOpenSubject={(subId, modId) => handleOpenSubject(subId, safeSemester, modId)}
+              onNavigate={handleNavigation}
+              onOpenFocusModal={() => setIsFocusModalOpen(true)}
+              onOpenThemeModal={() => setIsThemeModalOpen(true)}
+              onAddSubject={handleAddSubject}
+            >
+              {currentView !== 'dashboard' && (
+                <div className="space-y-4 animate-in fade-in">
+                  <div className="flex items-center justify-between pb-3 border-b border-[#262934]">
+                    <button
+                      type="button"
+                      onClick={() => handleNavigation('dashboard')}
+                      className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[#181a20] text-white border border-[#262934] shadow-xs hover:border-[#00d49f]/50 text-xs font-bold transition-all cursor-pointer"
+                    >
+                      <ArrowLeft className="w-3.5 h-3.5 text-[#00d49f]" />
+                      <span>Back to Dashboard</span>
+                    </button>
 
-            {currentView !== 'dashboard' && (
-              <div className="space-y-4 animate-in fade-in p-2 sm:p-4">
-                <div className="flex items-center justify-between pb-3 border-b border-[#262934]">
-                  <button
-                    type="button"
-                    onClick={() => handleNavigation('dashboard')}
-                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#181a20] text-white border border-[#262934] shadow-xs hover:border-[#00d49f]/50 text-xs font-bold transition-all cursor-pointer"
-                  >
-                    <ArrowLeft className="w-4 h-4 text-[#00d49f]" />
-                    <span>Back to Dashboard</span>
-                  </button>
+                    <span className="text-xs font-semibold text-[#8b8fa8] uppercase tracking-wider">
+                      {currentView.toUpperCase()} VIEW
+                    </span>
+                  </div>
 
-                  <span className="text-xs font-semibold text-[#8b8fa8] uppercase tracking-wider">
-                    {currentView.toUpperCase()} VIEW
-                  </span>
-                </div>
+                  {currentView === 'subject' && (
+                    activeSubject ? (
+                      <div className="bg-[#181a20] rounded-3xl p-4 sm:p-6 shadow-sm border border-[#262934] text-[#f3f4f6]">
+                        <SubjectView
+                          subject={activeSubject}
+                          allSubjects={currentSemesterSubjects}
+                          onSelectSubject={(subId) => handleOpenSubject(subId, safeSemester)}
+                          onAddSubject={handleAddSubject}
+                          semesterKey={safeSemester}
+                          onBack={() => {
+                            handleNavigation('dashboard');
+                            setActiveModuleId(null);
+                          }}
+                          onUpdateSubject={handleUpdateSubject}
+                          initialModuleId={activeModuleId}
+                        />
+                      </div>
+                    ) : (
+                      <div className="p-8 text-center bg-[#181a20] rounded-2xl border border-[#262934]">
+                        <h3 className="font-bold text-white">No subject selected</h3>
+                        <button
+                          onClick={() => handleNavigation('dashboard')}
+                          className="mt-3 px-4 py-2 bg-[#00d49f] text-[#121316] rounded-xl text-xs font-bold"
+                        >
+                          Return to Dashboard
+                        </button>
+                      </div>
+                    )
+                  )}
 
-                {currentView === 'subject' && (
-                  activeSubject ? (
+                  {currentView === 'timetable' && (
                     <div className="bg-[#181a20] rounded-3xl p-4 sm:p-6 shadow-sm border border-[#262934] text-[#f3f4f6]">
-                      <SubjectView
-                        subject={activeSubject}
-                        semesterKey={safeSemester}
-                        onBack={() => {
-                          handleNavigation('dashboard');
-                          setActiveModuleId(null);
-                        }}
-                        onUpdateSubject={handleUpdateSubject}
-                        initialModuleId={activeModuleId}
+                      <ExamTimetable
+                        data={safeData}
+                        onOpenSubject={(subId) => handleOpenSubject(subId, safeSemester)}
                       />
                     </div>
-                  ) : (
-                    <div className="p-8 text-center bg-[#181a20] rounded-2xl border border-[#262934]">
-                      <h3 className="font-bold text-white">No subject selected</h3>
-                      <button
-                        onClick={() => handleNavigation('dashboard')}
-                        className="mt-3 px-4 py-2 bg-[#00d49f] text-[#121316] rounded-xl text-xs font-bold"
-                      >
-                        Return to Dashboard
-                      </button>
+                  )}
+
+                  {currentView === 'revision' && (
+                    <div className="bg-[#181a20] rounded-3xl p-4 sm:p-6 shadow-sm border border-[#262934] text-[#f3f4f6]">
+                      <RevisionMode
+                        data={safeData}
+                        onMarkRevised={handleMarkTopicRevised}
+                        onOpenSubject={(subId) => handleOpenSubject(subId, safeSemester)}
+                      />
                     </div>
-                  )
-                )}
+                  )}
 
-                {currentView === 'timetable' && (
-                  <div className="bg-[#181a20] rounded-3xl p-4 sm:p-6 shadow-sm border border-[#262934] text-[#f3f4f6]">
-                    <ExamTimetable
-                      data={safeData}
-                      onOpenSubject={(subId) => handleOpenSubject(subId, safeSemester)}
-                    />
-                  </div>
-                )}
+                  {currentView === 'notes' && (
+                    <div className="bg-[#181a20] rounded-3xl p-4 sm:p-6 shadow-sm border border-[#262934] text-[#f3f4f6]">
+                      <NotesVault
+                        data={safeData}
+                        onOpenSubject={(subId) => handleOpenSubject(subId, safeSemester)}
+                      />
+                    </div>
+                  )}
 
-                {currentView === 'revision' && (
-                  <div className="bg-[#181a20] rounded-3xl p-4 sm:p-6 shadow-sm border border-[#262934] text-[#f3f4f6]">
-                    <RevisionMode
-                      data={safeData}
-                      onMarkRevised={handleMarkTopicRevised}
-                      onOpenSubject={(subId) => handleOpenSubject(subId, safeSemester)}
-                    />
-                  </div>
-                )}
-
-                {currentView === 'notes' && (
-                  <div className="bg-[#181a20] rounded-3xl p-4 sm:p-6 shadow-sm border border-[#262934] text-[#f3f4f6]">
-                    <NotesVault
-                      data={safeData}
-                      onOpenSubject={(subId) => handleOpenSubject(subId, safeSemester)}
-                    />
-                  </div>
-                )}
-
-                {currentView === 'settings' && (
-                  <div className="bg-[#181a20] rounded-3xl p-4 sm:p-6 shadow-sm border border-[#262934] text-[#f3f4f6]">
-                    <Settings
-                      data={safeData}
-                      onUpdateData={setData}
-                      onResetData={handleResetData}
-                      currentTheme={currentTheme}
-                      onSelectTheme={setCurrentTheme}
-                      currentColorAccent={currentColorAccent}
-                      onSelectColorAccent={setCurrentColorAccent}
-                    />
-                  </div>
-                )}
-              </div>
-            )}
+                  {currentView === 'settings' && (
+                    <div className="bg-[#181a20] rounded-3xl p-4 sm:p-6 shadow-sm border border-[#262934] text-[#f3f4f6]">
+                      <Settings
+                        data={safeData}
+                        onUpdateData={setData}
+                        onResetData={handleResetData}
+                        currentTheme={currentTheme}
+                        onSelectTheme={setCurrentTheme}
+                        currentColorAccent={currentColorAccent}
+                        onSelectColorAccent={setCurrentColorAccent}
+                      />
+                    </div>
+                  )}
+                </div>
+              )}
+            </ExpensioDashboard>
 
           </div>
         </div>
