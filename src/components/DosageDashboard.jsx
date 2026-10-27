@@ -1,12 +1,6 @@
 import React, { useState } from 'react';
 import { 
-  Bell, 
-  Home, 
-  FileText, 
-  BarChart3, 
   MessageCircle, 
-  Play, 
-  LogOut, 
   Search, 
   MoreHorizontal, 
   ChevronDown, 
@@ -14,13 +8,8 @@ import {
   Users, 
   MapPin, 
   Activity, 
-  Calendar,
   Sparkles,
-  BookOpen,
-  ArrowRight,
-  Send,
-  CheckCircle2,
-  GraduationCap
+  BookOpen
 } from 'lucide-react';
 
 export default function DosageDashboard({
@@ -34,6 +23,7 @@ export default function DosageDashboard({
   const [friendTab, setFriendTab] = useState('activities'); // 'activities' | 'online'
   const [selectedPeriod, setSelectedPeriod] = useState('Monthly');
   const [periodDropdownOpen, setPeriodDropdownOpen] = useState(false);
+  const [nowTime] = useState(() => Date.now());
 
   // Current semester subjects
   const semesterData = data?.[currentSemester] || { subjects: [] };
@@ -101,7 +91,7 @@ export default function DosageDashboard({
     // Days until exam
     let examLabel = 'Scheduled';
     if (sub.examDate) {
-      const diffDays = Math.ceil((new Date(sub.examDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+      const diffDays = Math.ceil((new Date(sub.examDate).getTime() - nowTime) / (1000 * 60 * 60 * 24));
       examLabel = diffDays > 0 ? `Exam in ${diffDays}d` : 'Exam Due';
     }
 
@@ -141,10 +131,15 @@ export default function DosageDashboard({
 
           <div className="flex items-center gap-3">
             {/* Live Semester Indicator */}
-            <div className="flex items-center gap-1.5 bg-white/90 px-3.5 py-1.5 rounded-full border border-[#e4e6f2] shadow-xs text-xs font-semibold text-[#5f51bd]">
+            <button
+              type="button"
+              onClick={() => onSelectSemester && onSelectSemester(currentSemester === 'S1' ? 'S2' : 'S1')}
+              className="flex items-center gap-1.5 bg-white/90 hover:bg-white px-3.5 py-1.5 rounded-full border border-[#e4e6f2] shadow-xs text-xs font-semibold text-[#5f51bd] transition-all cursor-pointer"
+              title="Click to toggle semester"
+            >
               <span className="w-2 h-2 rounded-full bg-[#5f51bd] animate-pulse" />
               <span>{currentSemester} Semester Active</span>
-            </div>
+            </button>
 
             {/* Pill Search Input */}
             <div className="relative flex items-center">

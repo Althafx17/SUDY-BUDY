@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { 
   ArrowLeft, 
   Plus, 
@@ -8,24 +8,16 @@ import {
   MapPin, 
   BookOpen, 
   Layers, 
-  CheckCircle2, 
   Search, 
-  Filter, 
-  Flame, 
-  Award, 
   ListTodo, 
-  CheckSquare, 
-  Clock, 
-  AlertTriangle,
-  FileText,
-  Sparkles
+  FileText
 } from 'lucide-react';
 import YouTubeIcon from './YouTubeIcon';
 import TopicItem from './TopicItem';
 import YouTubeEmbed from './YouTubeEmbed';
 import PastQuestionPapers from './PastQuestionPapers';
 import Modal from './Modal';
-import { SUBJECT_COLORS, getModuleRainbowColor } from '../constants/initialData';
+import { getModuleRainbowColor } from '../constants/initialData';
 import { 
   calculateModuleProgress, 
   calculateSubjectProgress, 
@@ -40,18 +32,16 @@ export default function SubjectView({
   onUpdateSubject,
   initialModuleId
 }) {
-  const [selectedModuleId, setSelectedModuleId] = useState(
-    initialModuleId || (subject.modules && subject.modules.length > 0 ? subject.modules[0].id : null)
-  );
+  const [userSelectedModuleId, setUserSelectedModuleId] = useState(initialModuleId || null);
 
-  // Sync selectedModuleId whenever initialModuleId changes (e.g. clicked in sidebar or dashboard)
-  useEffect(() => {
-    if (initialModuleId && subject.modules?.some(m => m.id === initialModuleId)) {
-      setSelectedModuleId(initialModuleId);
-    } else if (subject.modules && subject.modules.length > 0 && !subject.modules.some(m => m.id === selectedModuleId)) {
-      setSelectedModuleId(subject.modules[0].id);
-    }
-  }, [initialModuleId, subject]);
+  // Derive active module ID safely without cascading useEffect renders:
+  const selectedModuleId = (initialModuleId && subject.modules?.some(m => m.id === initialModuleId))
+    ? initialModuleId
+    : (userSelectedModuleId && subject.modules?.some(m => m.id === userSelectedModuleId))
+      ? userSelectedModuleId
+      : (subject.modules && subject.modules.length > 0 ? subject.modules[0].id : null);
+
+  const setSelectedModuleId = setUserSelectedModuleId;
 
   // Primary Tab state: 'syllabus' | 'tasks' | 'pyq'
   const [activeTab, setActiveTab] = useState('syllabus');
@@ -59,11 +49,6 @@ export default function SubjectView({
   // Modals state
   const [isAddModuleOpen, setIsAddModuleOpen] = useState(false);
   const [newModuleName, setNewModuleName] = useState('');
-  
-  const [moduleToEdit, setModuleToEdit] = useState(null);
-  const [editModuleName, setEditModuleName] = useState('');
-
-  const [moduleToDelete, setModuleToDelete] = useState(null);
 
   const [isAddTopicOpen, setIsAddTopicOpen] = useState(false);
   const [newTopicName, setNewTopicName] = useState('');
@@ -86,7 +71,7 @@ export default function SubjectView({
   const [isEditSubjectModalOpen, setIsEditSubjectModalOpen] = useState(false);
   const [editSubjectName, setEditSubjectName] = useState(subject.name);
   const [editSubjectCode, setEditSubjectCode] = useState(subject.code || '');
-  const [editSubjectColor, setEditSubjectColor] = useState(subject.color || 'violet');
+  const [editSubjectColor] = useState(subject.color || 'violet');
   const [editSubjectExamDate, setEditSubjectExamDate] = useState(subject.examDate || '');
   const [editSubjectVenue, setEditSubjectVenue] = useState(subject.venue || '');
 
@@ -107,7 +92,6 @@ export default function SubjectView({
   // Calculate stats
   const subjectProgress = Math.round(calculateSubjectProgress(subject) * 100);
   const subjectRevision = Math.round(calculateSubjectRevisionProgress(subject));
-  const subjectColorObj = SUBJECT_COLORS.find(c => c.id === subject.color) || SUBJECT_COLORS[0];
   const subjectTodos = subject.todos || [];
   const completedSubjectTodosCount = subjectTodos.filter(t => t.done).length;
 
@@ -129,32 +113,6 @@ export default function SubjectView({
     setSelectedModuleId(newMod.id);
     setNewModuleName('');
     setIsAddModuleOpen(false);
-  };
-
-  const handleSaveEditModule = (e) => {
-    e.preventDefault();
-    if (!editModuleName.trim() || !moduleToEdit) return;
-    const updatedModules = (subject.modules || []).map(m => 
-      m.id === moduleToEdit.id ? { ...m, name: editModuleName.trim() } : m
-    );
-    onUpdateSubject({
-      ...subject,
-      modules: updatedModules
-    });
-    setModuleToEdit(null);
-  };
-
-  const handleConfirmDeleteModule = () => {
-    if (!moduleToDelete) return;
-    const updatedModules = (subject.modules || []).filter(m => m.id !== moduleToDelete.id);
-    onUpdateSubject({
-      ...subject,
-      modules: updatedModules
-    });
-    if (selectedModuleId === moduleToDelete.id) {
-      setSelectedModuleId(updatedModules.length > 0 ? updatedModules[0].id : null);
-    }
-    setModuleToDelete(null);
   };
 
   // TOPIC CRUD

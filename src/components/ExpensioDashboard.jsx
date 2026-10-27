@@ -1,26 +1,12 @@
 import React from 'react';
 import { 
   Home, 
-  CreditCard, 
-  Plane, 
   CheckSquare, 
   Settings as SettingsIcon, 
-  Headphones, 
-  Clock, 
-  ShoppingBag, 
-  RefreshCw, 
   Plus, 
-  ArrowRight,
-  TrendingUp,
-  Sparkles,
-  BookOpen,
-  Calendar,
-  Layers,
-  ChevronRight,
-  CheckCircle2,
-  DollarSign,
-  PieChart,
-  GraduationCap,
+  BookOpen, 
+  Calendar, 
+  ChevronRight, 
   FileText
 } from 'lucide-react';
 
@@ -198,11 +184,16 @@ export default function ExpensioDashboard({
             <span className="text-xs font-bold uppercase tracking-wider text-[#7e8597]">
               Current Semester:
             </span>
-            <div className="flex items-center bg-[#181a20] px-3 py-1 rounded-xl border border-[#272a34]">
+            <button
+              type="button"
+              onClick={() => onSelectSemester && onSelectSemester(currentSemester === 'S1' ? 'S2' : 'S1')}
+              className="flex items-center bg-[#181a20] hover:bg-[#222530] px-3 py-1 rounded-xl border border-[#272a34] cursor-pointer transition-colors"
+              title="Click to toggle semester"
+            >
               <span className="text-xs font-bold text-[#00d49f]">
                 {currentSemester} KTU 2019 Scheme
               </span>
-            </div>
+            </button>
           </div>
 
           <div className="text-xs text-[#8e95a5] font-semibold hidden sm:flex items-center gap-2">
@@ -296,7 +287,19 @@ export default function ExpensioDashboard({
               <h3 className="text-sm font-semibold text-white tracking-tight">
                 Semester Courses & Syllabus Modules
               </h3>
-              <span className="text-[11px] text-[#717888] font-medium">Real-time sync</span>
+              <div className="flex items-center gap-2">
+                {onAddSubject && (
+                  <button
+                    type="button"
+                    onClick={onAddSubject}
+                    className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#00d49f]/10 text-[#00d49f] border border-[#00d49f]/30 hover:bg-[#00d49f]/20 text-[11px] font-semibold transition-all cursor-pointer"
+                  >
+                    <Plus className="w-3 h-3" />
+                    <span>Add Course</span>
+                  </button>
+                )}
+                <span className="text-[11px] text-[#717888] font-medium hidden sm:inline">Real-time sync</span>
+              </div>
             </div>
 
             {/* Table */}

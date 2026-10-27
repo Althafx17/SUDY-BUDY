@@ -5,18 +5,16 @@ import {
   Trash2, 
   Download, 
   Upload, 
-  RotateCcw, 
   Save, 
   AlertTriangle, 
   Check, 
-  MapPin,
   Clock,
   Sparkles,
   Layout,
   Palette
 } from 'lucide-react';
 import Modal from './Modal';
-import { INITIAL_DATA, SUBJECT_COLORS } from '../constants/initialData';
+import { INITIAL_DATA } from '../constants/initialData';
 import { THEMES, COLOR_ACCENTS } from '../constants/themes';
 
 export default function Settings({ 

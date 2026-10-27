@@ -4,11 +4,7 @@ import {
   Clock, 
   AlertTriangle, 
   MapPin, 
-  ArrowRight, 
-  CheckCircle2, 
-  Award,
-  Layers,
-  Sparkles
+  ArrowRight
 } from 'lucide-react';
 import { 
   calculateSubjectProgress, 
@@ -16,13 +12,12 @@ import {
   formatTimeRemaining,
   isExamWithin7Days 
 } from '../utils/progress';
-import { SUBJECT_COLORS } from '../constants/initialData';
 
 export default function ExamTimetable({ 
   data, 
   onOpenSubject 
 }) {
-  const [currentTime, setCurrentTime] = useState(Date.now());
+  const [currentTime, setCurrentTime] = useState(() => Date.now());
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(Date.now()), 1000);
@@ -91,7 +86,6 @@ export default function ExamTimetable({
           {timetableEntries.map((entry) => {
             const isUrgent = isExamWithin7Days(entry.examDateStr);
             const remaining = formatTimeRemaining(entry.examTime - currentTime);
-            const subColor = SUBJECT_COLORS.find(c => c.id === entry.subject.color) || SUBJECT_COLORS[0];
 
             return (
               <div

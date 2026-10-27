@@ -2,25 +2,20 @@ import React, { useState } from 'react';
 import { 
   FileText, 
   Search, 
-  Tag, 
   Copy, 
   Check, 
   Download, 
-  ExternalLink, 
-  BookOpen, 
-  Sparkles,
-  Filter
+  ExternalLink
 } from 'lucide-react';
-import { SUBJECT_COLORS, getModuleRainbowColor } from '../constants/initialData';
+import { getModuleRainbowColor } from '../constants/initialData';
 
 export default function NotesVault({ 
   data, 
   onOpenSubject, 
-  onUpdateTopicNote 
+  _onUpdateTopicNote 
 }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTag, setSelectedTag] = useState('ALL');
-  const [selectedSubject, setSelectedSubject] = useState('ALL');
   const [copiedId, setCopiedId] = useState(null);
 
   // Extract all notes

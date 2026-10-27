@@ -7,16 +7,13 @@ import {
   BookOpen, 
   FileText,
   Flame,
-  Trophy,
-  CheckCircle2
+  Trophy
 } from 'lucide-react';
 import Modal from './Modal';
 import ContributionGraph from './ContributionGraph';
 import { SUBJECT_COLORS, MODULE_RAINBOW_COLORS, getModuleRainbowColor } from '../constants/initialData';
 import { 
   calculateSubjectProgress, 
-  calculateSubjectRevisionProgress, 
-  calculateModuleProgress,
   getSemesterStats, 
   getNearestUpcomingExam, 
   formatTimeRemaining 
@@ -64,7 +61,7 @@ export default function Dashboard({
   };
 
   // Ticking countdown state for nearest exam
-  const [now, setNow] = useState(Date.now());
+  const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
     const timer = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(timer);
@@ -389,7 +386,11 @@ export default function Dashboard({
             </div>
 
             {/* Col 3 */}
-            <div className="flex flex-col items-center justify-center text-center px-1">
+            <div 
+              className={`flex flex-col items-center justify-center text-center px-1 ${onNavigateToTimetable ? 'cursor-pointer hover:opacity-80 transition-opacity' : ''}`}
+              onClick={onNavigateToTimetable}
+              title={nearestItem ? `${nearestItem.subject.name} - Click to view Timetable` : 'View Timetable'}
+            >
               <div className={`text-xl sm:text-2xl font-black font-mono ${textTitle}`}>
                 {nearestItem ? String(countdown.days).padStart(2, '0') : '—'}
               </div>

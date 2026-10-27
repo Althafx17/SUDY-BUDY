@@ -20,7 +20,6 @@ import {
   MessageCircle, 
   Play, 
   LogOut, 
-  Settings as SettingsIcon, 
   Palette, 
   Maximize2, 
   Minimize2, 
@@ -63,8 +62,10 @@ export default function App() {
   const [currentTheme, setCurrentTheme] = useState(() => {
     try {
       const saved = localStorage.getItem(THEME_STORAGE_KEY);
-      if (saved && saved !== 'dosage-frame' && saved !== 'rainbow-sidebar' && saved !== 'monochrome-noir' && THEMES.some(t => t.id === saved)) return saved;
-    } catch (e) {}
+      if (saved && THEMES.some(t => t.id === saved)) return saved;
+    } catch {
+      // Ignore storage error
+    }
     return 'expensio-dark';
   });
   const [isFrameExpanded, setIsFrameExpanded] = useState(false);
@@ -74,7 +75,9 @@ export default function App() {
     try {
       const saved = localStorage.getItem(COLOR_ACCENT_KEY);
       if (saved && COLOR_ACCENTS.some(c => c.id === saved)) return saved;
-    } catch (e) {}
+    } catch {
+      // Ignore storage error
+    }
     return 'monochrome';
   });
 
@@ -103,14 +106,18 @@ export default function App() {
   useEffect(() => {
     try {
       localStorage.setItem(THEME_STORAGE_KEY, currentTheme);
-    } catch (e) {}
+    } catch {
+      // Ignore storage error
+    }
   }, [currentTheme]);
 
   // Sync color accent to localStorage
   useEffect(() => {
     try {
       localStorage.setItem(COLOR_ACCENT_KEY, currentColorAccent);
-    } catch (e) {}
+    } catch {
+      // Ignore storage error
+    }
   }, [currentColorAccent]);
 
   // Navigate directly to subject and optional module
@@ -213,15 +220,10 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Active theme object
-  const activeThemeObj = THEMES.find(t => t.id === currentTheme) || THEMES[0];
   const isExpensioTheme = currentTheme === 'expensio-dark';
   const isDosageTheme = currentTheme === 'dosage-frame';
   const isAppleTheme = currentTheme === 'apple-minimal';
   const isEcoursieTheme = currentTheme === 'ecoursie-studio';
-  const isCyberDark = currentTheme === 'cyber-dark';
-  const isZenNotion = currentTheme === 'zen-notion';
-  const isMonochromeLight = currentTheme === 'monochrome-light';
 
   // Flagship Expensio Uizard Dark Frame Experience (Matching the uploaded design)
   if (isExpensioTheme) {
@@ -594,14 +596,13 @@ export default function App() {
                 {/* Views */}
                 <div className="flex-1">
                   {currentView === 'dashboard' && (
-                    <Dashboard
+                    <DosageDashboard
                       data={safeData}
                       currentSemester={safeSemester}
                       onSelectSemester={setCurrentSemester}
                       onOpenSubject={(subId, modId) => handleOpenSubject(subId, safeSemester, modId)}
-                      onAddSubject={handleAddSubject}
-                      onNavigateToTimetable={() => handleNavigation('timetable')}
-                      currentTheme={currentTheme}
+                      onNavigate={handleNavigation}
+                      onOpenFocusModal={() => setIsFocusModalOpen(true)}
                     />
                   )}
 

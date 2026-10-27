@@ -135,6 +135,11 @@ export default function ContributionGraph({
           <span className={`text-[10px] font-mono ${isDosage ? 'text-[#8c91a4]' : 'text-[#8b949e]'}`}>
             ({totalRealSessions} all-time sessions)
           </span>
+          {topicsCompleted > 0 && (
+            <span className={`text-[10px] font-mono ${isDosage ? 'text-[#5f51bd]' : 'text-[#58a6ff]'}`}>
+              • {topicsCompleted} topics mastered
+            </span>
+          )}
         </div>
 
         <div className="flex items-center gap-1.5 self-start sm:self-auto font-mono text-[11px]">

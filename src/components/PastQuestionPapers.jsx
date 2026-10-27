@@ -2,14 +2,12 @@ import React, { useState } from 'react';
 import { 
   FileText, 
   CheckCircle2, 
-  Circle, 
   Plus, 
   Trash2, 
   ChevronDown, 
   ChevronUp, 
   Calendar, 
   Award, 
-  AlertCircle, 
   Printer, 
   Sparkles,
   HelpCircle,
@@ -19,13 +17,10 @@ import {
   Search,
   Filter,
   Flame,
-  CheckSquare,
-  BookOpen,
   Copy,
   Check,
   ExternalLink,
-  FolderPlus,
-  ArrowRight
+  FolderPlus
 } from 'lucide-react';
 import Modal from './Modal';
 import { getModuleRainbowColor } from '../constants/initialData';
@@ -33,7 +28,7 @@ import PdfMasterManager from './PdfMasterManager';
 
 export default function PastQuestionPapers({ 
   subject, 
-  semesterKey,
+  _semesterKey,
   onUpdateSubject,
   onNavigateToModule
 }) {
