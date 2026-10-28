@@ -232,6 +232,8 @@ export default function App() {
       <div className="min-h-screen expensio-outer-canvas text-[#f3f4f6] font-sans flex flex-col items-center justify-center p-2 sm:p-4 lg:p-6 py-6 relative selection:bg-[#00d49f] selection:text-black">
         {/* Neon Yellow Left Border Laser */}
         <div className="viewport-neon-left-line" aria-hidden="true" />
+        {/* Tron Model Neon Yellow Right Border Laser */}
+        <div className="viewport-neon-right-tron-line" aria-hidden="true" />
         
         {/* Top Floating Control Bar with Neon Gradient Lighting */}
         <header className="w-full max-w-[1360px] neon-navbar-floating rounded-2xl px-3.5 sm:px-5 py-2.5 mb-3 flex items-center justify-between text-xs font-semibold select-none">
@@ -304,7 +306,7 @@ export default function App() {
 
         {/* Central Expensio Dark Device Container */}
         <div className={`w-full transition-all duration-300 relative ${isFrameExpanded ? 'max-w-none' : 'max-w-[1360px]'}`}>
-          <div className="expensio-device-container neon-border-left-yellow p-2 sm:p-4 lg:p-5 relative overflow-hidden">
+          <div className="expensio-device-container neon-border-left-yellow neon-border-right-tron-yellow p-2 sm:p-4 lg:p-5 relative overflow-hidden">
             
             <ExpensioDashboard
               data={safeData}
@@ -445,6 +447,8 @@ export default function App() {
       <div className="min-h-screen bg-[#c8cbe2] text-[#1a1b32] font-sans flex flex-col items-center justify-center p-2 sm:p-4 lg:p-6 py-4 relative selection:bg-[#5f51bd] selection:text-white">
         {/* Neon Yellow Left Border Laser */}
         <div className="viewport-neon-left-line" aria-hidden="true" />
+        {/* Tron Model Neon Yellow Right Border Laser */}
+        <div className="viewport-neon-right-tron-line" aria-hidden="true" />
         
         {/* Top Floating Control Bar */}
         <header className="w-full max-w-[1360px] flex items-center justify-between pb-3 px-2 text-xs font-semibold select-none">
@@ -766,6 +770,8 @@ export default function App() {
     <div className={getContainerClass()}>
       {/* Neon Yellow Left Border Laser */}
       <div className="viewport-neon-left-line" aria-hidden="true" />
+      {/* Tron Model Neon Yellow Right Border Laser */}
+      <div className="viewport-neon-right-tron-line" aria-hidden="true" />
 
       {/* Skip to Main Content Link for Keyboard Accessibility */}
       <a 

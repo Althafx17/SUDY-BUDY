@@ -375,5 +375,94 @@
   box-shadow: 0 0 14px rgba(255, 230, 0, 0.45);
 }
 
+/* Tron Model Neon Yellow Right Border */
+.viewport-neon-right-tron-line {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 4px;
+  background: linear-gradient(180deg, #ffe600 0%, #ffff33 50%, #ffe600 100%);
+  box-shadow: 
+    0 0 10px #ffe600,
+    0 0 20px rgba(255, 230, 0, 0.8),
+    0 0 35px rgba(255, 204, 0, 0.6),
+    -2px 0 15px rgba(255, 230, 0, 0.4);
+  z-index: 9999;
+  pointer-events: none;
+}
+
+/* Tron Light Cycle Runner Pulse */
+.viewport-neon-right-tron-line::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -2px;
+  right: -2px;
+  height: 140px;
+  background: linear-gradient(180deg, transparent 0%, #ffffff 70%, #ffff00 100%);
+  box-shadow: 0 0 15px #ffffff, 0 0 30px #ffff00, -4px 0 25px rgba(255, 230, 0, 0.9);
+  border-radius: 4px;
+  animation: tron-light-cycle-run 2.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+/* Tron Cyber Grid Ticks along the right border */
+.viewport-neon-right-tron-line::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 5px;
+  width: 6px;
+  background-image: repeating-linear-gradient(
+    180deg,
+    rgba(255, 230, 0, 0.6) 0px,
+    rgba(255, 230, 0, 0.6) 2px,
+    transparent 2px,
+    transparent 16px
+  );
+  pointer-events: none;
+}
+
+@keyframes tron-light-cycle-run {
+  0% {
+    top: -140px;
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    top: 100%;
+    opacity: 0;
+  }
+}
+
+/* Container Right Border Tron Styling */
+.neon-border-right-tron-yellow {
+  position: relative;
+  border-right: 3px solid #ffe600 !important;
+  box-shadow: 
+    inset -4px 0 18px -2px rgba(255, 230, 0, 0.3),
+    4px 0 20px rgba(255, 230, 0, 0.45);
+}
+
+.neon-border-right-tron-yellow::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: -3px;
+  width: 3px;
+  background: linear-gradient(180deg, #ffff00 0%, #ffe600 50%, #facc15 100%);
+  box-shadow: 0 0 14px #ffff00, 0 0 28px rgba(255, 230, 0, 0.7);
+  pointer-events: none;
+  z-index: 40;
+}
+
+
 
 

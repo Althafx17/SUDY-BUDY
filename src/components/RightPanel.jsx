@@ -30,7 +30,7 @@ export default function RightPanel({ subjects = [], onOpenFocusModal, onOpenSubj
   ];
 
   return (
-    <aside className="w-80 bg-[#121214] p-7 border-l border-zinc-800 flex flex-col justify-between shrink-0 select-none shadow-sm text-zinc-100">
+    <aside className="w-80 bg-[#121214] p-7 border-l border-zinc-800 neon-border-right-tron-yellow flex flex-col justify-between shrink-0 select-none shadow-sm text-zinc-100">
       <div className="space-y-7">
         {/* User Profile */}
         <div className="flex items-center justify-end gap-3.5 pb-2">
