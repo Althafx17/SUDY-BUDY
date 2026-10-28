@@ -180,3 +180,90 @@
   font-weight: 700;
   border-radius: 4px;
 }
+
+/* Neon Gradient Lighting for Navbar & Controls */
+.neon-navbar {
+  position: relative;
+  background: linear-gradient(135deg, rgba(13, 17, 23, 0.94) 0%, rgba(20, 25, 34, 0.9) 100%);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 
+    0 4px 20px -2px rgba(0, 245, 255, 0.18),
+    0 8px 30px -4px rgba(139, 92, 246, 0.2),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.neon-navbar::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #00f5ff, #8b5cf6, #ec4899, #00d49f, #00f5ff);
+  background-size: 200% 100%;
+  animation: neon-gradient-flow 4s linear infinite;
+  box-shadow: 0 0 10px rgba(0, 245, 255, 0.6), 0 0 20px rgba(139, 92, 246, 0.4);
+  pointer-events: none;
+}
+
+/* Floating variant for rounded island navbars */
+.neon-navbar-floating {
+  position: relative;
+  background: linear-gradient(135deg, rgba(18, 19, 26, 0.88) 0%, rgba(24, 26, 36, 0.85) 100%);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 245, 255, 0.25);
+  box-shadow: 
+    0 8px 32px -4px rgba(0, 0, 0, 0.5),
+    0 0 20px rgba(0, 245, 255, 0.2),
+    0 0 35px rgba(139, 92, 246, 0.15),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+@keyframes neon-gradient-flow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.neon-glow-cyan {
+  box-shadow: 0 0 14px rgba(0, 245, 255, 0.45);
+}
+
+.neon-glow-purple {
+  box-shadow: 0 0 14px rgba(139, 92, 246, 0.45);
+}
+
+.neon-glow-pink {
+  box-shadow: 0 0 14px rgba(236, 72, 153, 0.45);
+}
+
+.neon-text-gradient {
+  background: linear-gradient(135deg, #00f5ff 0%, #a855f7 50%, #ec4899 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 12px rgba(0, 245, 255, 0.4));
+}
+
+.neon-nav-pill-active {
+  background: linear-gradient(135deg, rgba(0, 245, 255, 0.2) 0%, rgba(139, 92, 246, 0.25) 100%);
+  border: 1px solid rgba(0, 245, 255, 0.6);
+  box-shadow: 0 0 14px rgba(0, 245, 255, 0.35), inset 0 0 8px rgba(139, 92, 246, 0.25);
+  color: #ffffff;
+}
+
+.neon-badge {
+  background: linear-gradient(135deg, rgba(0, 245, 255, 0.15) 0%, rgba(168, 85, 247, 0.2) 100%);
+  border: 1px solid rgba(0, 245, 255, 0.5);
+  box-shadow: 0 0 10px rgba(0, 245, 255, 0.3);
+  color: #38bdf8;
+}
+

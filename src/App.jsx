@@ -230,14 +230,14 @@ export default function App() {
     return (
       <div className="min-h-screen expensio-outer-canvas text-[#f3f4f6] font-sans flex flex-col items-center justify-center p-2 sm:p-4 lg:p-6 py-6 relative selection:bg-[#00d49f] selection:text-black">
         
-        {/* Top Floating Control Bar */}
-        <header className="w-full max-w-[1360px] flex items-center justify-between pb-3 px-2 text-xs font-semibold select-none">
+        {/* Top Floating Control Bar with Neon Gradient Lighting */}
+        <header className="w-full max-w-[1360px] neon-navbar-floating rounded-2xl px-3.5 sm:px-5 py-2.5 mb-3 flex items-center justify-between text-xs font-semibold select-none">
           {/* Left: Semester Switcher Pill */}
           <div className="flex items-center gap-2">
-            <span className="text-white/80 font-bold text-xs uppercase tracking-wider hidden sm:inline">
+            <span className="text-cyan-300 font-extrabold text-xs uppercase tracking-wider hidden sm:inline drop-shadow-[0_0_8px_rgba(0,245,255,0.4)]">
               KTU Semester:
             </span>
-            <div className="bg-[#121316]/80 backdrop-blur-md p-1 rounded-full border border-white/10 shadow-xs flex items-center gap-1">
+            <div className="bg-[#121316]/90 backdrop-blur-md p-1 rounded-full border border-cyan-400/30 shadow-[0_0_12px_rgba(0,245,255,0.15)] flex items-center gap-1">
               {['S1', 'S2'].map((sem) => (
                 <button
                   key={sem}
