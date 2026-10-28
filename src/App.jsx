@@ -12,6 +12,7 @@ import NotesVault from './components/NotesVault';
 import Settings from './components/Settings';
 import FocusModal from './components/FocusModal';
 import ThemeModal from './components/ThemeModal';
+import Footer from './components/Footer';
 import { 
   Bell, 
   Home, 
@@ -409,6 +410,15 @@ export default function App() {
           </div>
         </div>
 
+        {/* Neon Green Footer */}
+        <div className={`w-full mt-6 transition-all duration-300 ${isFrameExpanded ? 'max-w-none' : 'max-w-[1360px]'}`}>
+          <Footer 
+            onNavigate={handleNavigation}
+            onOpenFocusModal={() => setIsFocusModalOpen(true)}
+            currentSemester={safeSemester}
+          />
+        </div>
+
         {/* Modals */}
         <FocusModal
           isOpen={isFocusModalOpen}
@@ -716,6 +726,15 @@ export default function App() {
           </div>
         </div>
 
+        {/* Neon Green Footer */}
+        <div className="w-full mt-6 max-w-[1360px]">
+          <Footer 
+            onNavigate={handleNavigation}
+            onOpenFocusModal={() => setIsFocusModalOpen(true)}
+            currentSemester={safeSemester}
+          />
+        </div>
+
         {/* Modals */}
         <FocusModal
           isOpen={isFocusModalOpen}
@@ -880,6 +899,13 @@ export default function App() {
             </div>
           )}
         </main>
+
+        {/* Neon Green Footer */}
+        <Footer 
+          onNavigate={handleNavigation}
+          onOpenFocusModal={() => setIsFocusModalOpen(true)}
+          currentSemester={safeSemester}
+        />
       </div>
 
       {/* Right Panel for 3-Column Studio Theme (ēCoursie) */}
