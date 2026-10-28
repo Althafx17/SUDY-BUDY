@@ -190,9 +190,9 @@ export default function Sidebar({
         />
       )}
 
-      {/* Main Sidebar Aside */}
+      {/* Main Sidebar Aside with Neon Yellow Left Border */}
       <aside 
-        className={`fixed top-0 bottom-0 left-0 w-72 sm:w-80 bg-[#0d1117] text-[#c9d1d9] border-r border-[#30363d] flex flex-col justify-between p-3.5 select-none z-50 transition-transform duration-200 lg:translate-x-0 ${
+        className={`fixed top-0 bottom-0 left-0 w-72 sm:w-80 bg-[#0d1117] text-[#c9d1d9] neon-border-left-yellow border-r border-[#30363d] flex flex-col justify-between p-3.5 select-none z-50 transition-transform duration-200 lg:translate-x-0 ${
           isMobileOpen ? 'translate-x-0' : '-translate-x-full'
         } lg:static lg:h-screen lg:shrink-0 overflow-hidden font-sans`}
       >
