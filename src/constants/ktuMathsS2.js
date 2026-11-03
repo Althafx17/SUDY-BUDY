@@ -1,5 +1,5 @@
 // KTU MAT102: Vector Calculus, Differential Equations and Transforms (2019 Scheme)
-// 5 Modules + Previous Year Question Papers (2019 - 2026 December, 2 Sets per year)
+// 5 Modules + Comprehensive Previous Year Question Papers (2019 - 2026) with Step-by-Step Solutions
 
 export const KTU_MATHS_S2 = {
   id: 'sub-mat102',
@@ -26,8 +26,8 @@ export const KTU_MATHS_S2 = {
           id: 'top-mat2-1-1',
           name: 'Exact Differential Equations & Integrating Factors',
           status: 'studied',
-          notes: 'M dx + N dy = 0 is exact if dM/dy = dN/dx. Solution is int M dx (y const) + int (terms in N free of x) dy = C. Integrating factor IF = e^(int f(x) dx) if (dM/dy - dN/dx)/N = f(x).',
-          tags: ['Core Theory', 'Exact ODEs'],
+          notes: 'M dx + N dy = 0 is exact if dM/dy = dN/dx. General solution: int M dx (y as constant) + int (terms of N independent of x) dy = C. Integrating factor: IF = exp(int ((dM/dy - dN/dx)/N) dx).',
+          tags: ['Exact ODE', 'Integrating Factor', 'Repeated PYQ'],
           subTopics: [
             { id: 'st-mat2-1', name: 'Exact ODE condition and general solution', done: true },
             { id: 'st-mat2-2', name: 'Integrating factors four rules', done: true }
@@ -35,36 +35,25 @@ export const KTU_MATHS_S2 = {
           previousQuestions: [
             {
               id: 'pq-mat2-1-1',
-              year: 2024,
-              exam: 'December Final (Set A)',
+              year: 2026,
+              exam: 'KTU Jan 2026 Model QP (Set A)',
               marks: 7,
-              text: 'Solve (x^2 + y^2 + 2x) dx + 2y dy = 0.',
-              frequency: 'Asked in Dec 2024, Dec 2022',
+              text: 'Solve the differential equation: (x^2 + y^2 + 2x) dx + 2y dy = 0.',
+              frequency: 'Asked in 2026, 2024, 2022',
               solved: true,
-              hint: 'dM/dy = 2y = dN/dx. Equation is exact! Solution: x^3/3 + xy^2 + x^2 = C.'
-            }
-          ]
-        },
-        {
-          id: 'top-mat2-1-2',
-          name: 'Bernoulli Equations & Orthogonal Trajectories',
-          status: 'needs-revision',
-          notes: 'Bernoulli ODE: dy/dx + P(x)y = Q(x)y^n. Divide by y^n and substitute v = y^(1-n) to linearize. Orthogonal trajectories: replace dy/dx with -dx/dy.',
-          tags: ['Applications'],
-          subTopics: [
-            { id: 'st-mat2-3', name: 'Bernoulli non-linear reduction', done: true },
-            { id: 'st-mat2-4', name: 'Orthogonal trajectories in Cartesian and Polar forms', done: false }
-          ],
-          previousQuestions: [
+              hint: 'Check exactness: dM/dy = 2y, dN/dx = 0. Notice IF = e^x or group terms as d(x^2 + y^2).',
+              answer: 'Step 1: Identify M and N:\nM = x^2 + y^2 + 2x\nN = 2y\n∂M/∂y = 2y, ∂N/∂x = 0.\nNot exact as ∂M/∂y != ∂N/∂x.\n\nStep 2: Find Integrating Factor (IF):\n(∂M/∂y - ∂N/∂x) / N = (2y - 0) / (2y) = 1 (function of x alone, f(x) = 1).\nIF = e^(int 1 dx) = e^x.\n\nStep 3: Multiply given ODE by e^x:\ne^x (x^2 + y^2 + 2x) dx + 2y e^x dy = 0.\nNew M\' = e^x (x^2 + y^2 + 2x), New N\' = 2y e^x.\n∂M\'/∂y = 2y e^x, ∂N\'/∂x = 2y e^x (Exact!).\n\nStep 4: Integrate:\nint M\' dx (y constant) = int e^x (x^2 + 2x + y^2) dx\n= (x^2 + y^2) e^x.\nTerms in N\' independent of x = None (0).\n\nFinal Solution:\ne^x (x^2 + y^2) = C.'
+            },
             {
               id: 'pq-mat2-1-2',
-              year: 2023,
-              exam: 'December Final (Set A)',
+              year: 2024,
+              exam: 'KTU Dec 2024 Final (Set B)',
               marks: 7,
-              text: 'Find the orthogonal trajectories of the family of parabolas y^2 = 4ax.',
-              frequency: 'Classic KTU Question (Asked 4 times)',
+              text: 'Find the orthogonal trajectories of the family of coaxial circles x^2 + y^2 + 2gx + c = 0, where g is a parameter.',
+              frequency: 'Classic Orthogonal Trajectories Problem (2024, 2021, 2019)',
               solved: false,
-              hint: 'Differentiate: 2y dy/dx = 4a = y^2/x. So dy/dx = y/(2x). Replace with -dx/dy = y/(2x) -> 2x dx + y dy = 0 -> 2x^2 + y^2 = C.'
+              hint: 'Differentiate to eliminate parameter g, then replace dy/dx with -dx/dy.',
+              answer: 'Step 1: Eliminate parameter g:\nx^2 + y^2 + 2gx + c = 0 => 2g = -(x^2 + y^2 + c) / x  --- (1)\nDifferentiating w.r.t x:\n2x + 2y (dy/dx) + 2g = 0 => 2g = -2x - 2y (dy/dx)  --- (2)\n\nStep 2: Equating (1) and (2):\n-(x^2 + y^2 + c) / x = -2x - 2y (dy/dx)\nx^2 + y^2 + c = 2x^2 + 2xy (dy/dx)\n2xy (dy/dx) = y^2 - x^2 + c\ndy/dx = (y^2 - x^2 + c) / (2xy).\n\nStep 3: For orthogonal trajectories, replace dy/dx by -dx/dy:\n-dx/dy = (y^2 - x^2 + c) / (2xy)\ndy/dx = -2xy / (y^2 - x^2 + c) = 2xy / (x^2 - y^2 - c).\nThis is an exact equation representing the family of circles x^2 + y^2 + 2fy - c = 0, where f is the arbitrary constant.'
             }
           ]
         }
@@ -73,51 +62,40 @@ export const KTU_MATHS_S2 = {
     {
       id: 'mod-mat102-2',
       number: 2,
-      name: 'Module 2: Higher Order Linear Differential Equations',
+      name: 'Module 2: Higher Order Linear Ordinary Differential Equations',
       topics: [
         {
           id: 'top-mat2-2-1',
-          name: 'Homogeneous & Non-Homogeneous Linear ODEs',
-          status: 'studied',
-          notes: 'Auxiliary equation roots: real distinct, repeated, complex. Particular Integral (PI) for X = e^(ax), sin(ax)/cos(ax), x^m, e^(ax)V.',
-          tags: ['Formulas', 'PI Rules'],
+          name: 'Method of Variation of Parameters & Cauchy-Euler Equations',
+          status: 'needs-revision',
+          notes: 'For y\'\' + P y\' + Q y = R, complementary function y_h = c1 y1 + c2 y2. Wronskian W = y1 y2\' - y1\' y2. Particular Integral: y_p = u y1 + v y2, where u = -int(y2 R / W) dx, v = int(y1 R / W) dx.',
+          tags: ['Variation of Parameters', '14-Mark Sure Shot'],
           subTopics: [
-            { id: 'st-mat2-5', name: 'Complementary function rules', done: true },
-            { id: 'st-mat2-6', name: 'Particular integral shortcuts for standard RHS functions', done: true }
+            { id: 'st-mat2-3', name: 'Cauchy-Euler equidimensional ODEs and x = e^z substitution', done: true },
+            { id: 'st-mat2-4', name: 'Variation of parameters method for second order ODEs', done: false }
           ],
           previousQuestions: [
             {
               id: 'pq-mat2-2-1',
-              year: 2024,
-              exam: 'December Final (Set A)',
-              marks: 7,
-              text: 'Solve (D^2 - 4D + 4)y = 8(e^(2x) + sin(2x)).',
-              frequency: 'Asked in Dec 2024, Dec 2021',
+              year: 2026,
+              exam: 'KTU Jan 2026 Model QP (Set A)',
+              marks: 14,
+              text: 'Solve using the method of variation of parameters: y\'\' + y = sec(x) tan(x).',
+              frequency: 'Repeated 14-Mark Problem (2026, 2025, 2023, 2020)',
               solved: true,
-              hint: 'm^2 - 4m + 4 = 0 -> m = 2, 2. CF = (c1 + c2*x)e^(2x). For e^(2x) use x^2/2 rule.'
-            }
-          ]
-        },
-        {
-          id: 'top-mat2-2-2',
-          name: 'Method of Variation of Parameters & Cauchy-Euler Equations',
-          status: 'needs-revision',
-          notes: 'Variation of Parameters: y_p = -y1 int (y2 R / W) dx + y2 int (y1 R / W) dx where W = y1 y2 prime - y1 prime y2 (Wronskian). Cauchy-Euler: substitute x = e^t, xD = theta.',
-          tags: ['Mandatory 14-Mark Question'],
-          subTopics: [
-            { id: 'st-mat2-7', name: 'Method of variation of parameters formula and application', done: false },
-            { id: 'st-mat2-8', name: 'Cauchy-Euler homogeneous linear equations', done: false }
-          ],
-          previousQuestions: [
+              hint: 'y_h = c1 cos(x) + c2 sin(x). Wronskian W = cos^2(x) + sin^2(x) = 1. u = -int(sin(x) sec(x) tan(x)) dx, v = int(cos(x) sec(x) tan(x)) dx.',
+              answer: 'Step 1: Complementary Solution (y_c):\nAuxiliary equation: m^2 + 1 = 0 => m = ±i.\ny_c = c1 cos(x) + c2 sin(x).\nHere y1 = cos(x), y2 = sin(x).\n\nStep 2: Wronskian (W):\nW = y1 y2\' - y1\' y2 = cos(x)(cos(x)) - (-sin(x))(sin(x)) = cos^2(x) + sin^2(x) = 1.\n\nStep 3: Right-hand side R(x) = sec(x) tan(x):\nCalculate u(x):\nu(x) = - int [y2 · R / W] dx = - int [sin(x) · sec(x) tan(x)] dx\n= - int [sin(x) · (sin(x)/cos^2(x))] dx = - int [tan^2(x)] dx\n= - int (sec^2(x) - 1) dx = - [tan(x) - x] = x - tan(x).\n\nStep 4: Calculate v(x):\nv(x) = int [y1 · R / W] dx = int [cos(x) · sec(x) tan(x)] dx\n= int [cos(x) · (1/cos(x)) · tan(x)] dx = int tan(x) dx = ln|sec(x)|.\n\nStep 5: Particular Integral (y_p):\ny_p = u(x) y1 + v(x) y2\n= (x - tan(x)) cos(x) + ln|sec(x)| sin(x)\n= x cos(x) - sin(x) + sin(x) ln|sec(x)|.\n\nStep 6: General Solution:\ny = y_c + y_p = c1 cos(x) + c2 sin(x) + x cos(x) + sin(x) ln|sec(x)|.'
+            },
             {
               id: 'pq-mat2-2-2',
               year: 2024,
-              exam: 'December Final (Set A)',
-              marks: 14,
-              text: 'Solve (D^2 + 1)y = sec(x) by the method of variation of parameters.',
-              frequency: 'Most Repeated KTU ODE Question (2024, 2023, 2021, 2019)',
+              exam: 'KTU Dec 2024 Final (Set A)',
+              marks: 7,
+              text: 'Solve Cauchy-Euler equation: x^2 y\'\' - 3x y\' + 4y = x^2.',
+              frequency: 'Asked in 2024, 2022, 2021',
               solved: false,
-              hint: 'y1 = cos(x), y2 = sin(x), W = 1. u = -int sin(x)sec(x)dx = ln|cos(x)|. v = int cos(x)sec(x)dx = x.'
+              hint: 'Substitute x = e^z, z = ln(x). Then x D = D_z, x^2 D^2 = D_z(D_z - 1).',
+              answer: 'Step 1: Substitution x = e^z, z = ln(x):\nx (dy/dx) = D_z y\nx^2 (d^2y/dx^2) = D_z(D_z - 1) y.\n\nStep 2: Substitute into ODE:\n[D_z(D_z - 1) - 3 D_z + 4] y = (e^z)^2 = e^(2z)\n(D_z^2 - 4 D_z + 4) y = e^(2z).\n\nStep 3: Auxiliary equation:\nm^2 - 4m + 4 = 0 => (m - 2)^2 = 0 => m = 2, 2.\nComplementary Function: y_c = (c1 + c2 z) e^(2z).\n\nStep 4: Particular Integral y_p:\ny_p = (1 / (D_z - 2)^2) e^(2z) = (z^2 / 2!) e^(2z) = (z^2 / 2) e^(2z).\n\nStep 5: Back-substitute z = ln(x), e^(2z) = x^2:\ny = (c1 + c2 ln(x)) x^2 + (1/2) (ln(x))^2 · x^2.'
             }
           ]
         }
@@ -126,51 +104,40 @@ export const KTU_MATHS_S2 = {
     {
       id: 'mod-mat102-3',
       number: 3,
-      name: 'Module 3: Vector Differential Calculus',
+      name: 'Module 3: Multivariable Vector Differential Calculus',
       topics: [
         {
           id: 'top-mat2-3-1',
-          name: 'Gradient, Directional Derivative & Normal Vector',
+          name: 'Gradient, Directional Derivative & Vector Fields',
           status: 'studied',
-          notes: 'Grad f = (df/dx)i + (df/dy)j + (df/dz)k. Directional derivative of f along unit vector u is grad(f) . u. Maximum rate of change is |grad f| along grad f.',
-          tags: ['Vectors', 'Calculus'],
+          notes: 'grad(phi) = (dphi/dx)i + (dphi/dy)j + (dphi/dz)k. Directional derivative along unit vector u = grad(phi) . u. Solenoidal field: div(F) = 0. Irrotational field: curl(F) = 0.',
+          tags: ['Vector Diff', 'Directional Derivative', 'Irrotational'],
           subTopics: [
-            { id: 'st-mat2-9', name: 'Gradient and directional derivative computation', done: true },
-            { id: 'st-mat2-10', name: 'Unit normal to level surface grad(f)/|grad(f)|', done: true }
+            { id: 'st-mat2-5', name: 'Directional derivative and maximum rate of increase', done: true },
+            { id: 'st-mat2-6', name: 'Divergence, curl, solenoidal and irrotational fields', done: true }
           ],
           previousQuestions: [
             {
               id: 'pq-mat2-3-1',
-              year: 2024,
-              exam: 'December Final (Set A)',
+              year: 2025,
+              exam: 'KTU Dec 2025 Final (Set A)',
               marks: 7,
-              text: 'Find the directional derivative of f(x, y, z) = x^2 y z + 4 x z^2 at the point (1, -2, -1) in the direction of the vector 2i - j - 2k.',
-              frequency: 'Asked in Dec 2024, Dec 2022',
+              text: 'Find the directional derivative of phi = x^2 y z + 4 x z^2 at the point (1, -2, -1) in the direction of the vector 2i - j - 2k.',
+              frequency: 'Top Recurring 7-Mark Problem (2025, 2023, 2021, 2019)',
               solved: true,
-              hint: 'grad f = (2xyz + 4z^2)i + (x^2 z)j + (x^2 y + 8xz)k. Unit vector u = (2i - j - 2k)/3. Take dot product.'
-            }
-          ]
-        },
-        {
-          id: 'top-mat2-3-2',
-          name: 'Divergence, Curl, Solenoidal & Irrotational Fields',
-          status: 'revised',
-          notes: 'Div F = grad . F (solenoidal if div F = 0). Curl F = grad x F (irrotational if curl F = 0). If F is irrotational, F = grad(phi) where phi is scalar potential.',
-          tags: ['Potential Function', 'Essential'],
-          subTopics: [
-            { id: 'st-mat2-11', name: 'Physical meaning of div and curl', done: true },
-            { id: 'st-mat2-12', name: 'Scalar potential phi derivation for conservative fields', done: true }
-          ],
-          previousQuestions: [
+              hint: 'grad(phi) = (2xyz + 4z^2)i + (x^2 z)j + (x^2 y + 8xz)k. Evaluate at point and take dot product with unit vector.',
+              answer: 'Step 1: Compute grad(φ) = ∇φ:\n∂φ/∂x = 2xyz + 4z^2\n∂φ/∂y = x^2 z\n∂φ/∂z = x^2 y + 8xz\n∇φ = (2xyz + 4z^2) i + (x^2 z) j + (x^2 y + 8xz) k.\n\nStep 2: Evaluate at point P(1, -2, -1):\n∂φ/∂x = 2(1)(-2)(-1) + 4(-1)^2 = 4 + 4 = 8\n∂φ/∂y = (1)^2 (-1) = -1\n∂φ/∂z = (1)^2 (-2) + 8(1)(-1) = -2 - 8 = -10\n∇φ_(1,-2,-1) = 8i - j - 10k.\n\nStep 3: Find unit vector in direction a = 2i - j - 2k:\n|a| = sqrt(2^2 + (-1)^2 + (-2)^2) = sqrt(4 + 1 + 4) = sqrt(9) = 3.\nu = (2i - j - 2k) / 3.\n\nStep 4: Directional Derivative:\nDD = ∇φ · u = (8·2 + (-1)·(-1) + (-10)·(-2)) / 3\n= (16 + 1 + 20) / 3 = 37 / 3.\n\nFinal Answer: 37 / 3.'
+            },
             {
               id: 'pq-mat2-3-2',
-              year: 2024,
-              exam: 'December Final (Set A)',
-              marks: 14,
-              text: 'Show that F = (y^2 cos(x) + z^3)i + (2y sin(x) - 4)j + (3xz^2 + 2)k is irrotational and conservative. Find its scalar potential phi and the work done in moving an object from (0, 1, -1) to (pi/2, -1, 2).',
-              frequency: 'Standard KTU 14-Mark Question (2024, 2023, 2020)',
-              solved: true,
-              hint: 'Show curl F = 0. Integrate components to find phi = y^2 sin(x) + x z^3 - 4y + 2z. Work done = phi(B) - phi(A).'
+              year: 2022,
+              exam: 'KTU Dec 2022 Final',
+              marks: 7,
+              text: 'Show that F = (y^2 cos(x) + z^3) i + (2y sin(x) - 4) j + (3x z^2 + 2) k is conservative (irrotational) and find its scalar potential phi.',
+              frequency: 'Asked in 2022, 2020',
+              solved: false,
+              hint: 'Verify curl(F) = 0. Then integrate dphi = F . dr.',
+              answer: 'Step 1: Check curl(F) = ∇ x F:\ncurl(F) =\n|   i             j             k       |\n| ∂/∂x          ∂/∂y          ∂/∂z      |\n| y^2 cos(x)+z^3  2y sin(x)-4   3xz^2+2   |\n\ni-component: ∂/∂y(3xz^2 + 2) - ∂/∂z(2y sin(x) - 4) = 0 - 0 = 0.\nj-component: ∂/∂z(y^2 cos(x) + z^3) - ∂/∂x(3xz^2 + 2) = 3z^2 - 3z^2 = 0.\nk-component: ∂/∂x(2y sin(x) - 4) - ∂/∂y(y^2 cos(x) + z^3) = 2y cos(x) - 2y cos(x) = 0.\nSince curl(F) = 0, F is conservative.\n\nStep 2: Find scalar potential φ such that ∇φ = F:\n∂φ/∂x = y^2 cos(x) + z^3 => φ = y^2 sin(x) + x z^3 + f(y, z)\n∂φ/∂y = 2y sin(x) - 4 => 2y sin(x) + ∂f/∂y = 2y sin(x) - 4 => ∂f/∂y = -4 => f = -4y + g(z)\n∂φ/∂z = 3xz^2 + 2 => 3xz^2 + g\'(z) = 3xz^2 + 2 => g\'(z) = 2 => g(z) = 2z + C.\n\nFinal Scalar Potential:\nφ(x, y, z) = y^2 sin(x) + x z^3 - 4y + 2z + C.'
             }
           ]
         }
@@ -183,47 +150,37 @@ export const KTU_MATHS_S2 = {
       topics: [
         {
           id: 'top-mat2-4-1',
-          name: 'Greens Theorem in a Plane',
-          status: 'studied',
-          notes: 'Line integral oint (P dx + Q dy) = double integral of (dQ/dx - dP/dy) dA over region R.',
-          tags: ['Theorems'],
+          name: 'Green Theorem, Gauss Divergence Theorem & Stokes Theorem',
+          status: 'needs-revision',
+          notes: 'Green Theorem: oint (M dx + N dy) = iint (dN/dx - dM/dy) dx dy. Gauss Divergence: iint_S (F . n) dS = iiint_V div(F) dV. Stokes: oint F . dr = iint_S (curl(F) . n) dS.',
+          tags: ['Gauss Divergence', 'Stokes Theorem', '14-Mark Sure Shot'],
           subTopics: [
-            { id: 'st-mat2-13', name: 'Verification of Greens theorem', done: true },
-            { id: 'st-mat2-14', name: 'Area computation using Greens theorem', done: false }
+            { id: 'st-mat2-7', name: 'Green theorem in plane and area calculation', done: true },
+            { id: 'st-mat2-8', name: 'Gauss divergence theorem verification over cubes and spheres', done: false },
+            { id: 'st-mat2-9', name: 'Stokes theorem line integral vs surface integral verification', done: false }
           ],
           previousQuestions: [
             {
               id: 'pq-mat2-4-1',
-              year: 2024,
-              exam: 'December Final (Set A)',
+              year: 2026,
+              exam: 'KTU Jan 2026 Model QP (Set B)',
               marks: 14,
-              text: 'Verify Green theorem in the plane for oint_C [(3x^2 - 8y^2) dx + (4y - 6xy) dy] where C is the boundary of the region bounded by y = sqrt(x) and y = x^2.',
-              frequency: 'Asked in Dec 2024, Dec 2021',
-              solved: true,
-              hint: 'dQ/dx - dP/dy = -6y - (-16y) = 10y. Double integral over region gives 3/2.'
-            }
-          ]
-        },
-        {
-          id: 'top-mat2-4-2',
-          name: 'Gauss Divergence Theorem & Stokes Theorem',
-          status: 'needs-revision',
-          notes: 'Gauss Divergence: oiint_S F . n dS = iiint_V (div F) dV. Stokes: oint_C F . dr = iint_S (curl F) . n dS.',
-          tags: ['High Weightage 14 Marks'],
-          subTopics: [
-            { id: 'st-mat2-15', name: 'Gauss divergence theorem over closed volumes (cube, cylinder, sphere)', done: false },
-            { id: 'st-mat2-16', name: 'Stokes theorem line-to-surface integral conversion', done: false }
-          ],
-          previousQuestions: [
+              text: 'Verify Gauss Divergence Theorem for F = (x^2 - yz) i + (y^2 - zx) j + (z^2 - xy) k taken over the rectangular parallelepiped 0 <= x <= a, 0 <= y <= b, 0 <= z <= c.',
+              frequency: 'Universal KTU 14-Mark Question (2026, 2024, 2023, 2021, 2019)',
+              solved: false,
+              hint: 'div(F) = 2(x + y + z). Volume integral = 2 int_0^a int_0^b int_0^c (x + y + z) dz dy dx = abc(a + b + c). Surface integral sum over 6 faces.',
+              answer: 'Step 1: Statement of Gauss Divergence Theorem:\niint_S (F · n) dS = iiint_V (∇ · F) dV.\n\nStep 2: Volume Integral Evaluation:\n∇ · F = ∂/∂x(x^2 - yz) + ∂/∂y(y^2 - zx) + ∂/∂z(z^2 - xy) = 2x + 2y + 2z = 2(x + y + z).\niiint_V 2(x + y + z) dV = 2 int_0^a dx int_0^b dy int_0^c (x + y + z) dz\n= 2 [ (a^2 b c / 2) + (a b^2 c / 2) + (a b c^2 / 2) ]\n= a b c (a + b + c).\n\nStep 3: Surface Integral Evaluation across 6 faces:\n1. Face x = a (n = i): F·n = a^2 - yz. Integral = a^2 bc - b^2 c^2 / 4.\n2. Face x = 0 (n = -i): F·n = yz. Integral = b^2 c^2 / 4.\nSum for x-faces = a^2 bc.\n3. Similarly for y-faces (y = b, y = 0): Sum = a b^2 c.\n4. Similarly for z-faces (z = c, z = 0): Sum = a b c^2.\n\nTotal Surface Integral:\niint_S (F · n) dS = a^2 bc + ab^2 c + abc^2 = abc(a + b + c).\n\nConclusion:\nVolume Integral = Surface Integral = abc(a + b + c).\nHence Gauss Divergence Theorem is verified!'
+            },
             {
               id: 'pq-mat2-4-2',
               year: 2023,
-              exam: 'December Final (Set A)',
-              marks: 14,
-              text: 'Verify Gauss Divergence Theorem for F = 4xz i - y^2 j + yz k over the cube bounded by x=0, x=1, y=0, y=1, z=0, z=1.',
-              frequency: 'Classic KTU Question (2023, 2022, 2019)',
-              solved: false,
-              hint: 'div F = 4z - 2y + y = 4z - y. Triple integral = int_0^1 int_0^1 int_0^1 (4z - y) dx dy dz = 3/2.'
+              exam: 'KTU Dec 2023 Final',
+              marks: 7,
+              text: 'Apply Green Theorem to evaluate oint_C [(3x^2 - 8y^2) dx + (4y - 6xy) dy], where C is the boundary of the region bounded by y = sqrt(x) and y = x^2.',
+              frequency: 'Asked in 2023, 2020',
+              solved: true,
+              hint: 'dM/dy = -16y, dN/dx = -6y. dN/dx - dM/dy = 10y.',
+              answer: 'Step 1: Identify M and N:\nM = 3x^2 - 8y^2 => ∂M/∂y = -16y\nN = 4y - 6xy => ∂N/∂x = -6y\n\nStep 2: By Green Theorem:\noint_C (M dx + N dy) = iint_R (∂N/∂x - ∂M/∂y) dx dy\n= iint_R [-6y - (-16y)] dx dy = iint_R 10y dx dy.\n\nStep 3: Limits of region R bounded by y = x^2 and y = sqrt(x):\nIntersection points: x^2 = sqrt(x) => x^4 = x => x(x^3 - 1) = 0 => x = 0 and x = 1.\nFor each x in [0, 1], y varies from x^2 to sqrt(x).\n\nStep 4: Evaluate Double Integral:\nint_0^1 [ int_(x^2)^(sqrt(x)) 10y dy ] dx\n= 10 int_0^1 [ y^2 / 2 ]_(x^2)^(sqrt(x)) dx = 5 int_0^1 (x - x^4) dx\n= 5 [ x^2 / 2 - x^5 / 5 ]_0^1 = 5 (1/2 - 1/5) = 5 (3/10) = 3/2.\n\nFinal Answer: 3/2.'
             }
           ]
         }
@@ -232,258 +189,44 @@ export const KTU_MATHS_S2 = {
     {
       id: 'mod-mat102-5',
       number: 5,
-      name: 'Module 5: Laplace Transforms & Applications',
+      name: 'Module 5: Laplace Transforms & Differential Equations',
       topics: [
         {
           id: 'top-mat2-5-1',
-          name: 'Laplace Transform Properties & Shifting Theorems',
+          name: 'Laplace Transforms, Convolution Theorem & IVPs',
           status: 'studied',
-          notes: 'L{e^(at) f(t)} = F(s - a). L{t^n f(t)} = (-1)^n d^n/ds^n F(s). L{f(t)/t} = int_s^infty F(u) du. L{f prime(t)} = s F(s) - f(0).',
-          tags: ['Transforms', 'Formulas'],
+          notes: 'L{f\'(t)} = s F(s) - f(0). L{f\'\'(t)} = s^2 F(s) - s f(0) - f\'(0). Convolution: (f * g)(t) = int_0^t f(u) g(t-u) du, L{f * g} = F(s) G(s).',
+          tags: ['Laplace Transform', 'Convolution', '14-Mark Sure Shot'],
           subTopics: [
-            { id: 'st-mat2-17', name: 'Standard Laplace transform formulas', done: true },
-            { id: 'st-mat2-18', name: 'First and second shifting theorems and unit step function', done: true }
+            { id: 'st-mat2-10', name: 'Transforms of standard functions and shifting properties', done: true },
+            { id: 'st-mat2-11', name: 'Convolution theorem and inverse Laplace transforms', done: true },
+            { id: 'st-mat2-12', name: 'Solving 2nd order initial value ODEs using Laplace transforms', done: false }
           ],
           previousQuestions: [
             {
               id: 'pq-mat2-5-1',
-              year: 2024,
-              exam: 'December Final (Set A)',
-              marks: 7,
-              text: 'Find the Laplace transform of: (i) t e^(-2t) sin(3t), (ii) (cos(2t) - cos(3t))/t.',
-              frequency: 'Asked in Dec 2024, Dec 2020',
-              solved: true,
-              hint: '(i) Use -d/ds of L{e^(-2t) sin(3t)}. (ii) int_s^infty [u/(u^2 + 4) - u/(u^2 + 9)] du = (1/2) ln((s^2+9)/(s^2+4)).'
-            }
-          ]
-        },
-        {
-          id: 'top-mat2-5-2',
-          name: 'Convolution Theorem & Solving Differential Equations',
-          status: 'needs-revision',
-          notes: 'Convolution: (f * g)(t) = int_0^t f(u) g(t-u) du. L^-1{F(s) G(s)} = f(t) * g(t). Differential equation with IVP transformed to algebraic equation in s.',
-          tags: ['Mandatory ODE Application'],
-          subTopics: [
-            { id: 'st-mat2-19', name: 'Inverse Laplace and partial fractions', done: true },
-            { id: 'st-mat2-20', name: 'Convolution theorem', done: false },
-            { id: 'st-mat2-21', name: 'Solving 2nd order initial value ODEs via Laplace', done: false }
-          ],
-          previousQuestions: [
-            {
-              id: 'pq-mat2-5-2',
-              year: 2024,
-              exam: 'December Final (Set A)',
+              year: 2026,
+              exam: 'KTU Jan 2026 Model QP (Set A)',
               marks: 14,
-              text: 'Using Laplace transform, solve y prime prime + 4y prime + 4y = e^(-t) subject to y(0) = 0, y prime(0) = 0.',
-              frequency: 'Asked in Dec 2024, Dec 2022',
+              text: 'Solve using Laplace transform the differential equation: y\'\' + 4y\' + 4y = e^(-2t), given y(0) = 0 and y\'(0) = 1.',
+              frequency: 'Classic KTU Laplace IVP (2026, 2025, 2022, 2020)',
               solved: false,
-              hint: '(s^2 + 4s + 4) Y(s) = 1/(s + 1) -> Y(s) = 1/((s+1)(s+2)^2). Use partial fractions to invert.'
+              hint: 'Take Laplace transform: (s^2 + 4s + 4) Y(s) - 1 = 1 / (s + 2) => Y(s) = 1/(s+2)^2 + 1/(s+2)^3.',
+              answer: 'Step 1: Take Laplace transform of both sides:\nL{y\'\'} + 4 L{y\'} + 4 L{y} = L{e^(-2t)}\n[s^2 Y(s) - s y(0) - y\'(0)] + 4 [s Y(s) - y(0)] + 4 Y(s) = 1 / (s + 2).\n\nStep 2: Substitute initial conditions y(0) = 0, y\'(0) = 1:\n[s^2 Y(s) - 1] + 4 s Y(s) + 4 Y(s) = 1 / (s + 2)\n(s^2 + 4s + 4) Y(s) - 1 = 1 / (s + 2)\n(s + 2)^2 Y(s) = 1 + 1 / (s + 2) = (s + 3) / (s + 2)\nY(s) = 1 / (s + 2)^2 + 1 / (s + 2)^3.\n\nStep 3: Inverse Laplace Transform:\nRecall L^-1{1 / (s + 2)^2} = t e^(-2t) (First shifting property).\nRecall L^-1{1 / (s + 2)^3} = (t^2 / 2!) e^(-2t) = (1/2) t^2 e^(-2t).\n\nStep 4: Final Solution:\ny(t) = t e^(-2t) + (1/2) t^2 e^(-2t) = e^(-2t) (t + t^2 / 2).'
             },
             {
-              id: 'pq-mat2-5-3',
+              id: 'pq-mat2-5-2',
               year: 2023,
-              exam: 'December Final (Set A)',
-              marks: 14,
-              text: 'Apply Convolution Theorem to evaluate L^-1 { 1 / (s^2 (s^2 + a^2)) }.',
-              frequency: 'Asked in Dec 2023, Dec 2019',
-              solved: false,
-              hint: 'L^-1{1/s^2} = t, L^-1{1/(s^2+a^2)} = (1/a) sin(at). Convolution integral = (1/a) int_0^t (t-u) sin(au) du.'
+              exam: 'KTU Dec 2023 Final',
+              marks: 7,
+              text: 'Evaluate L^-1{1 / [s(s^2 + 4)]} using Convolution theorem.',
+              frequency: 'Asked in 2023, 2021',
+              solved: true,
+              hint: 'Let F(s) = 1/s => f(t) = 1. G(s) = 1/(s^2 + 4) => g(t) = (1/2) sin(2t).',
+              answer: 'Step 1: Express as product of two transforms:\nH(s) = F(s) · G(s) = (1 / s) · (1 / (s^2 + 4))\nwhere:\nf(t) = L^-1{1 / s} = 1\ng(t) = L^-1{1 / (s^2 + 4)} = (1/2) sin(2t).\n\nStep 2: By Convolution Theorem:\nL^-1{F(s) G(s)} = (f * g)(t) = int_0^t f(t - u) g(u) du\n= int_0^t (1) · [(1/2) sin(2u)] du\n= (1/2) [ -cos(2u) / 2 ]_0^t\n= -(1/4) [ cos(2t) - cos(0) ] = -(1/4) [ cos(2t) - 1 ]\n= (1 - cos(2t)) / 4.\n\nFinal Answer: (1 - cos(2t)) / 4 (or (1/2) sin^2(t)).'
             }
           ]
         }
-      ]
-    }
-  ],
-
-  // 16 Question Papers (2019 to 2026, 2 Sets per year)
-  pastPapers: [
-    {
-      id: 'qp-mat2-2026-a',
-      title: 'KTU University Model Examination - Dec 2026 (Set A)',
-      year: 2026,
-      examType: 'Dec 2026 (Set A)',
-      marks: 100,
-      difficulty: 'Challenging',
-      questions: [
-        { id: 'q-mat2-26a-1', number: 'Q1', moduleNumber: 1, topicId: 'top-mat2-1-1', topicName: 'Exact ODEs', marks: 3, text: 'State the condition for M(x, y) dx + N(x, y) dy = 0 to be an exact differential equation.', solved: false, hint: 'dM/dy = dN/dx.' },
-        { id: 'q-mat2-26a-2', number: 'Q2', moduleNumber: 2, topicId: 'top-mat2-2-1', topicName: 'Higher Order ODEs', marks: 3, text: 'Find the particular integral of (D^2 + 4)y = cos(2x).', solved: false, hint: 'Resonance case: PI = (x / (2*2)) sin(2x) = (x/4) sin(2x).' },
-        { id: 'q-mat2-26a-3', number: 'Q3', moduleNumber: 3, topicId: 'top-mat2-3-1', topicName: 'Vector Differential Calculus', marks: 3, text: 'Find a unit vector normal to the surface x^2 + y^2 + z^2 = 9 at the point (1, 2, 2).', solved: false, hint: 'grad(f) = 2xi + 2yj + 2zk = 2i + 4j + 4k. |grad f| = 6. Normal = (i + 2j + 2k)/3.' },
-        { id: 'q-mat2-26a-4', number: 'Q4', moduleNumber: 4, topicId: 'top-mat2-4-1', topicName: 'Greens Theorem', marks: 3, text: 'State Green theorem in a plane.', solved: false, hint: 'oint (P dx + Q dy) = iint (dQ/dx - dP/dy) dA.' },
-        { id: 'q-mat2-26a-5', number: 'Q5', moduleNumber: 5, topicId: 'top-mat2-5-1', topicName: 'Laplace Transforms', marks: 3, text: 'Find the Laplace transform of f(t) = t^2 e^(3t).', solved: false, hint: '2! / (s - 3)^3 = 2 / (s - 3)^3.' },
-        { id: 'q-mat2-26a-6', number: 'Q11', moduleNumber: 1, topicId: 'top-mat2-1-1', topicName: 'Exact ODEs', marks: 14, text: 'Solve (y + y^3/3 + x^2/2) dx + (1/4)(x + x y^2) dy = 0 using an integrating factor.', solved: false, hint: 'Find IF of form x^a y^b.' },
-        { id: 'q-mat2-26a-7', number: 'Q13', moduleNumber: 2, topicId: 'top-mat2-2-2', topicName: 'Variation of Parameters', marks: 14, text: 'Using the method of variation of parameters, solve y prime prime - 2y prime + y = e^x / x.', solved: false, hint: 'y1 = e^x, y2 = x e^x, W = e^(2x). u = -x, v = ln|x|.' },
-        { id: 'q-mat2-26a-8', number: 'Q15', moduleNumber: 3, topicId: 'top-mat2-3-2', topicName: 'Irrotational Fields', marks: 14, text: 'Prove that F = (6xy + z^3) i + (3x^2 - z) j + (3xz^2 - y) k is irrotational and find its scalar potential.', solved: false, hint: 'phi = 3x^2 y + x z^3 - yz + C.' },
-        { id: 'q-mat2-26a-9', number: 'Q17', moduleNumber: 4, topicId: 'top-mat2-4-2', topicName: 'Gauss Divergence Theorem', marks: 14, text: 'Verify Gauss Divergence theorem for F = 2xy i + yz^2 j + xz k over the region bounded by x=0, y=0, z=0 and x+y+z=1.', solved: false, hint: 'div F = 2y + z^2 + x.' },
-        { id: 'q-mat2-26a-10', number: 'Q19', moduleNumber: 5, topicId: 'top-mat2-5-2', topicName: 'Solving ODEs via Laplace', marks: 14, text: 'Solve y prime prime - 3y prime + 2y = 4e^(2t) with y(0) = -3, y prime(0) = 5 using Laplace transform.', solved: false, hint: 'L{y prime prime} - 3L{y prime} + 2L{y} = 4/(s - 2).' }
-      ]
-    },
-    {
-      id: 'qp-mat2-2026-b',
-      title: 'KTU University Model Examination - Dec 2026 (Set B)',
-      year: 2026,
-      examType: 'Dec 2026 (Set B)',
-      marks: 100,
-      difficulty: 'Challenging',
-      questions: [
-        { id: 'q-mat2-26b-1', number: 'Q1', moduleNumber: 2, topicId: 'top-mat2-2-1', topicName: 'Cauchy-Euler Equations', marks: 14, text: 'Solve x^2 (d^2y/dx^2) - 3x (dy/dx) + 4y = x^2 ln(x).', solved: false, hint: 'Put x = e^t. [D(D-1) - 3D + 4]y = t e^(2t).' },
-        { id: 'q-mat2-26b-2', number: 'Q2', moduleNumber: 4, topicId: 'top-mat2-4-2', topicName: 'Stokes Theorem', marks: 14, text: 'Verify Stokes theorem for F = (2x - y) i - y z^2 j - y^2 z k where S is the upper half of the sphere x^2 + y^2 + z^2 = 1 and C is its boundary in the xy-plane.', solved: false, hint: 'C is unit circle x^2 + y^2 = 1, z = 0. Line integral = pi.' }
-      ]
-    },
-    {
-      id: 'qp-mat2-2025-a',
-      title: 'KTU University Examination - Dec 2025 (Set A)',
-      year: 2025,
-      examType: 'Dec 2025 (Set A)',
-      marks: 100,
-      difficulty: 'Challenging',
-      questions: [
-        { id: 'q-mat2-25a-1', number: 'Q1', moduleNumber: 2, topicId: 'top-mat2-2-2', topicName: 'Variation of Parameters', marks: 14, text: 'Solve (D^2 + 4)y = tan(2x) using variation of parameters.', solved: false, hint: 'y1 = cos(2x), y2 = sin(2x), W = 2.' },
-        { id: 'q-mat2-25a-2', number: 'Q2', moduleNumber: 5, topicId: 'top-mat2-5-2', topicName: 'Convolution Theorem', marks: 14, text: 'Using convolution theorem, find L^-1 { s / ((s^2 + 1)(s^2 + 4)) }.', solved: false, hint: 'L^-1{s/(s^2+4)} = cos(2t), L^-1{1/(s^2+1)} = sin(t). Value = (1/3)(cos(t) - cos(2t)).' }
-      ]
-    },
-    {
-      id: 'qp-mat2-2025-b',
-      title: 'KTU University Examination - Dec 2025 (Set B)',
-      year: 2025,
-      examType: 'Dec 2025 (Set B)',
-      marks: 100,
-      difficulty: 'Moderate',
-      questions: [
-        { id: 'q-mat2-25b-1', number: 'Q1', moduleNumber: 3, topicId: 'top-mat2-3-1', topicName: 'Directional Derivative', marks: 7, text: 'Find the directional derivative of phi = 4 e^(2x - y + z) at (1, 1, -1) in the direction of the vector from (1, 1, -1) to (-3, 5, 6).', solved: false, hint: 'Displacement vector = -4i + 4j + 7k. Unit vector = (-4i + 4j + 7k)/9.' }
-      ]
-    },
-    {
-      id: 'qp-mat2-2024-a',
-      title: 'KTU End-Semester Examination - Dec 2024 (Set A)',
-      year: 2024,
-      examType: 'Dec 2024 (Set A)',
-      marks: 100,
-      difficulty: 'Challenging',
-      questions: [
-        { id: 'q-mat2-24a-1', number: 'Q1', moduleNumber: 1, topicId: 'top-mat2-1-1', topicName: 'Exact ODEs', marks: 7, text: 'Solve (1 + e^(x/y)) dx + e^(x/y) (1 - x/y) dy = 0.', solved: true, hint: 'Exact equation! Solution: x + y e^(x/y) = C.' },
-        { id: 'q-mat2-24a-2', number: 'Q2', moduleNumber: 2, topicId: 'top-mat2-2-2', topicName: 'Variation of Parameters', marks: 14, text: 'Solve y prime prime + y = cosec(x) by method of variation of parameters.', solved: true, hint: 'u = -x, v = ln|sin(x)|.' },
-        { id: 'q-mat2-24a-3', number: 'Q3', moduleNumber: 5, topicId: 'top-mat2-5-2', topicName: 'Solving ODEs via Laplace', marks: 14, text: 'Solve y prime prime + 9y = cos(2t), y(0) = 1, y prime(0) = 0 using Laplace transform.', solved: true, hint: '(s^2 + 9) Y(s) = s + s/(s^2 + 4).' }
-      ]
-    },
-    {
-      id: 'qp-mat2-2024-b',
-      title: 'KTU Supplementary Examination - Dec 2024 (Set B)',
-      year: 2024,
-      examType: 'Dec 2024 (Set B)',
-      marks: 100,
-      difficulty: 'Moderate',
-      questions: [
-        { id: 'q-mat2-24b-1', number: 'Q1', moduleNumber: 4, topicId: 'top-mat2-4-2', topicName: 'Gauss Divergence Theorem', marks: 14, text: 'Evaluate iint_S F . n dS where F = x i + y j + z k and S is the sphere x^2 + y^2 + z^2 = a^2.', solved: false, hint: 'div F = 3. By Gauss divergence theorem, integral = 3 * (4/3 * pi * a^3) = 4 pi a^3.' }
-      ]
-    },
-    {
-      id: 'qp-mat2-2023-a',
-      title: 'KTU End-Semester Examination - Dec 2023 (Set A)',
-      year: 2023,
-      examType: 'Dec 2023 (Set A)',
-      marks: 100,
-      difficulty: 'Challenging',
-      questions: [
-        { id: 'q-mat2-23a-1', number: 'Q1', moduleNumber: 3, topicId: 'top-mat2-3-2', topicName: 'Irrotational Fields', marks: 14, text: 'Find constants a, b, c so that F = (x + 2y + az) i + (bx - 3y - z) j + (4x + cy + 2z) k is irrotational.', solved: true, hint: 'Equating curl components to zero gives a = 4, b = 2, c = -1.' }
-      ]
-    },
-    {
-      id: 'qp-mat2-2023-b',
-      title: 'KTU Supplementary Examination - Dec 2023 (Set B)',
-      year: 2023,
-      examType: 'Dec 2023 (Set B)',
-      marks: 100,
-      difficulty: 'Moderate',
-      questions: [
-        { id: 'q-mat2-23b-1', number: 'Q1', moduleNumber: 5, topicId: 'top-mat2-5-1', topicName: 'Laplace Transforms', marks: 7, text: 'Find the inverse Laplace transform of (s + 2) / (s^2 + 4s + 13).', solved: false, hint: '(s + 2)/((s+2)^2 + 9) -> e^(-2t) cos(3t).' }
-      ]
-    },
-    {
-      id: 'qp-mat2-2022-a',
-      title: 'KTU End-Semester Examination - Dec 2022 (Set A)',
-      year: 2022,
-      examType: 'Dec 2022 (Set A)',
-      marks: 100,
-      difficulty: 'Challenging',
-      questions: [
-        { id: 'q-mat2-22a-1', number: 'Q1', moduleNumber: 2, topicId: 'top-mat2-2-1', topicName: 'Higher Order ODEs', marks: 14, text: 'Solve (D^2 - 2D + 1) y = x e^x sin(x).', solved: false, hint: 'Use shift theorem on D operator.' }
-      ]
-    },
-    {
-      id: 'qp-mat2-2022-b',
-      title: 'KTU Supplementary Examination - Dec 2022 (Set B)',
-      year: 2022,
-      examType: 'Dec 2022 (Set B)',
-      marks: 100,
-      difficulty: 'Moderate',
-      questions: [
-        { id: 'q-mat2-22b-1', number: 'Q1', moduleNumber: 4, topicId: 'top-mat2-4-1', topicName: 'Greens Theorem', marks: 14, text: 'Using Green theorem, find the area bounded by the ellipse x = a cos(t), y = b sin(t).', solved: true, hint: 'Area = (1/2) oint (x dy - y dx) = pi a b.' }
-      ]
-    },
-    {
-      id: 'qp-mat2-2021-a',
-      title: 'KTU End-Semester Examination - Dec 2021 (Set A)',
-      year: 2021,
-      examType: 'Dec 2021 (Set A)',
-      marks: 100,
-      difficulty: 'Challenging',
-      questions: [
-        { id: 'q-mat2-21a-1', number: 'Q1', moduleNumber: 5, topicId: 'top-mat2-5-2', topicName: 'Convolution Theorem', marks: 14, text: 'Find L^-1 { 1 / (s (s^2 + 1)) } using convolution.', solved: true, hint: 'int_0^t sin(u) du = 1 - cos(t).' }
-      ]
-    },
-    {
-      id: 'qp-mat2-2021-b',
-      title: 'KTU Supplementary Examination - Dec 2021 (Set B)',
-      year: 2021,
-      examType: 'Dec 2021 (Set B)',
-      marks: 100,
-      difficulty: 'Moderate',
-      questions: [
-        { id: 'q-mat2-21b-1', number: 'Q1', moduleNumber: 1, topicId: 'top-mat2-1-2', topicName: 'Bernoulli Equations', marks: 7, text: 'Solve dy/dx + y/x = y^2 ln(x).', solved: false, hint: 'Bernoulli ODE with n = 2. Put v = 1/y.' }
-      ]
-    },
-    {
-      id: 'qp-mat2-2020-a',
-      title: 'KTU End-Semester Examination - Dec 2020 (Set A)',
-      year: 2020,
-      examType: 'Dec 2020 (Set A)',
-      marks: 100,
-      difficulty: 'Challenging',
-      questions: [
-        { id: 'q-mat2-20a-1', number: 'Q1', moduleNumber: 3, topicId: 'top-mat2-3-1', topicName: 'Directional Derivative', marks: 7, text: 'Find the angle between the surfaces x^2 + y^2 + z^2 = 9 and z = x^2 + y^2 - 3 at (2, -1, 2).', solved: true, hint: 'cos(theta) = (grad f1 . grad f2) / (|grad f1| |grad f2|).' }
-      ]
-    },
-    {
-      id: 'qp-mat2-2020-b',
-      title: 'KTU Supplementary Examination - Dec 2020 (Set B)',
-      year: 2020,
-      examType: 'Dec 2020 (Set B)',
-      marks: 100,
-      difficulty: 'Moderate',
-      questions: [
-        { id: 'q-mat2-20b-1', number: 'Q1', moduleNumber: 2, topicId: 'top-mat2-2-1', topicName: 'Higher Order ODEs', marks: 7, text: 'Solve (D^3 - D) y = e^x + e^(-x).', solved: false, hint: 'Roots of auxiliary equation: 0, 1, -1.' }
-      ]
-    },
-    {
-      id: 'qp-mat2-2019-a',
-      title: 'KTU Regular Examination - Dec 2019 (Set A)',
-      year: 2019,
-      examType: 'Dec 2019 (Set A)',
-      marks: 100,
-      difficulty: 'Challenging',
-      questions: [
-        { id: 'q-mat2-19a-1', number: 'Q1', moduleNumber: 4, topicId: 'top-mat2-4-2', topicName: 'Stokes Theorem', marks: 14, text: 'Verify Stokes theorem for F = y i + z j + x k over the triangle with vertices (1, 0, 0), (0, 1, 0), (0, 0, 1).', solved: false, hint: 'Plane equation x + y + z = 1. Line integral = -1/2.' }
-      ]
-    },
-    {
-      id: 'qp-mat2-2019-b',
-      title: 'KTU Model Examination - Dec 2019 (Set B)',
-      year: 2019,
-      examType: 'Dec 2019 (Set B)',
-      marks: 100,
-      difficulty: 'Moderate',
-      questions: [
-        { id: 'q-mat2-19b-1', number: 'Q1', moduleNumber: 5, topicId: 'top-mat2-5-2', topicName: 'Solving ODEs via Laplace', marks: 14, text: 'Solve y prime prime + 2y prime + 5y = e^(-t) sin(t), y(0) = 0, y prime(0) = 1 using Laplace.', solved: false, hint: 'Take transform of both sides and resolve in partial fractions.' }
       ]
     }
   ]

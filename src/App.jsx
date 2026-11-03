@@ -1,953 +1,184 @@
-import React, { useState, useEffect } from 'react';
-import Sidebar from './components/Sidebar';
-import Navbar from './components/Navbar';
-import RightPanel from './components/RightPanel';
-import Dashboard from './components/Dashboard';
-import DosageDashboard from './components/DosageDashboard';
-import ExpensioDashboard from './components/ExpensioDashboard';
-import SubjectView from './components/SubjectView';
-import ExamTimetable from './components/ExamTimetable';
-import RevisionMode from './components/RevisionMode';
-import NotesVault from './components/NotesVault';
-import Settings from './components/Settings';
-import FocusModal from './components/FocusModal';
-import ThemeModal from './components/ThemeModal';
-import Footer from './components/Footer';
-import { 
-  Bell, 
-  Home, 
-  FileText, 
-  BarChart3, 
-  MessageCircle, 
-  Play, 
-  LogOut, 
-  Palette, 
-  Maximize2, 
-  Minimize2, 
-  ArrowLeft 
-} from 'lucide-react';
-import { INITIAL_DATA } from './constants/initialData';
-import { THEMES, COLOR_ACCENTS, THEME_STORAGE_KEY, COLOR_ACCENT_KEY } from './constants/themes';
-import { recordStudyEvent } from './utils/studyActivity';
-
-const STORAGE_KEY = 'study-ledger';
-
-export default function App() {
-  // Load state from localStorage or fallback to INITIAL_DATA
-  const [data, setData] = useState(() => {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (
-          parsed && 
-          typeof parsed === 'object' &&
-          Array.isArray(parsed.S1?.subjects) && 
-          Array.isArray(parsed.S2?.subjects)
-        ) {
-          return {
-            ...INITIAL_DATA,
-            ...parsed,
-            S1: { examWindowDate: '', ...parsed.S1 },
-            S2: { examWindowDate: '', ...parsed.S2 }
-          };
-        }
-      }
-    } catch (e) {
-      console.warn('Error loading study-ledger from localStorage, falling back to INITIAL_DATA:', e);
-    }
-    return INITIAL_DATA;
-  });
-
-  // UI Theme & Layout state (Expensio Dark Uizard Frame is default matching requested mockup)
-  const [currentTheme, setCurrentTheme] = useState(() => {
-    try {
-      const saved = localStorage.getItem(THEME_STORAGE_KEY);
-      if (saved && THEMES.some(t => t.id === saved)) return saved;
-    } catch {
-      // Ignore storage error
-    }
-    return 'expensio-dark';
-  });
-  const [isFrameExpanded, setIsFrameExpanded] = useState(false);
-
-  // Color Accent state
-  const [currentColorAccent, setCurrentColorAccent] = useState(() => {
-    try {
-      const saved = localStorage.getItem(COLOR_ACCENT_KEY);
-      if (saved && COLOR_ACCENTS.some(c => c.id === saved)) return saved;
-    } catch {
-      // Ignore storage error
-    }
-    return 'monochrome';
-  });
-
-  const [currentView, setCurrentView] = useState('dashboard');
-  const [currentSemester, setCurrentSemester] = useState('S1');
-  const [activeSubjectId, setActiveSubjectId] = useState(null);
-  const [activeModuleId, setActiveModuleId] = useState(null);
-  const [isFocusModalOpen, setIsFocusModalOpen] = useState(false);
-  const [isThemeModalOpen, setIsThemeModalOpen] = useState(false);
-  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
-
-  // Safe data guarantee: never undefined or missing semesters
-  const safeData = (data && typeof data === 'object' && data.S1 && data.S2) ? data : INITIAL_DATA;
-  const safeSemester = (safeData[currentSemester]) ? currentSemester : 'S1';
-
-  // Sync data to localStorage
-  useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    } catch (e) {
-      console.error('Error saving study-ledger to localStorage:', e);
-    }
-  }, [data]);
-
-  // Sync theme to localStorage
-  useEffect(() => {
-    try {
-      localStorage.setItem(THEME_STORAGE_KEY, currentTheme);
-    } catch {
-      // Ignore storage error
-    }
-  }, [currentTheme]);
-
-  // Sync color accent to localStorage
-  useEffect(() => {
-    try {
-      localStorage.setItem(COLOR_ACCENT_KEY, currentColorAccent);
-    } catch {
-      // Ignore storage error
-    }
-  }, [currentColorAccent]);
-
-  // Navigate directly to subject and optional module
-  const handleOpenSubject = (subjectId, optionalSemester = null, optionalModuleId = null) => {
-    if (optionalSemester) {
-      setCurrentSemester(optionalSemester);
-    }
-    setActiveSubjectId(subjectId);
-    setActiveModuleId(optionalModuleId || null);
-    setCurrentView('subject');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  // Add new subject to current semester
-  const handleAddSubject = (semesterKey, newSubject) => {
-    setData(prev => ({
-      ...prev,
-      [semesterKey]: {
-        ...prev[semesterKey],
-        subjects: [...(prev[semesterKey]?.subjects || []), newSubject]
-      }
-    }));
-  };
-
-  // Update existing subject
-  const handleUpdateSubject = (updatedSubject) => {
-    setData(prev => ({
-      ...prev,
-      [currentSemester]: {
-        ...prev[currentSemester],
-        subjects: (prev[currentSemester]?.subjects || []).map(s => 
-          s.id === updatedSubject.id ? updatedSubject : s
-        )
-      }
-    }));
-  };
-
-  // Quick mark revised from Revision Mode
-  const handleMarkTopicRevised = (semesterKey, subjectId, moduleId, topicId) => {
-    // Record genuine study activity for today
-    try {
-      recordStudyEvent();
-    } catch (e) {
-      console.warn('Could not record study event:', e);
-    }
-
-    setData(prev => {
-      const targetSem = prev[semesterKey];
-      if (!targetSem) return prev;
-
-      const updatedSubjects = (targetSem.subjects || []).map(sub => {
-        if (sub.id !== subjectId) return sub;
-        const updatedModules = (sub.modules || []).map(mod => {
-          if (mod.id !== moduleId) return mod;
-          const updatedTopics = (mod.topics || []).map(top => {
-            if (top.id !== topicId) return top;
+import React,{useEffect,useRef,useState} from 'react';
+import {Activity,ArrowRight,ArrowUpRight,Atom,BookOpen,CalendarDays,Check,CheckCheck,ChevronDown,Clock3,Download,FlaskConical,Focus,GraduationCap,LayoutDashboard,Menu,Pause,Play,Plus,RotateCcw,Search,Settings2,Sparkles,Target,Trash2,TrendingUp,X,Zap,Sigma,NotebookPen} from 'lucide-react';
+import {INITIAL_DATA} from './constants/initialData';
+import {calculateSubjectProgress,calculateTopicCompletion} from './utils/progress';
+import './App.css';
+const dayKey=(d=new Date())=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+const read=(key,fallback)=>{try{return JSON.parse(localStorage.getItem(key))??fallback}catch{return fallback}};
+const initialLedger=()=>{
+  const saved=read('study-ledger',INITIAL_DATA);
+  return Object.fromEntries(['S1','S2'].map(sem=>{
+    const semData=INITIAL_DATA[sem];
+    const savedSem=saved?.[sem];
+    return [sem,{
+      ...semData,
+      ...savedSem,
+      subjects:semData.subjects.map(freshSub=>{
+        const savedSub=savedSem?.subjects?.find(x=>x.id===freshSub.id);
+        if(!savedSub)return freshSub;
+        return {
+          ...freshSub,
+          examDate:savedSub.examDate||freshSub.examDate,
+          modules:freshSub.modules.map(freshMod=>{
+            const savedMod=savedSub.modules?.find(m=>m.id===freshMod.id);
+            if(!savedMod)return freshMod;
             return {
-              ...top,
-              status: 'revised'
+              ...freshMod,
+              topics:freshMod.topics.map(freshTop=>{
+                const savedTop=savedMod.topics?.find(t=>t.id===freshTop.id);
+                if(!savedTop)return freshTop;
+                return {
+                  ...freshTop,
+                  status:savedTop.status||freshTop.status,
+                  notes:savedTop.notes!==undefined?savedTop.notes:freshTop.notes,
+                  subTopics:freshTop.subTopics?.map(st=>{
+                    const savedSt=savedTop.subTopics?.find(x=>x.id===st.id);
+                    return savedSt?{...st,done:savedSt.done}:st;
+                  })||freshTop.subTopics,
+                  previousQuestions:freshTop.previousQuestions?.map(pq=>{
+                    const savedPq=savedTop.previousQuestions?.find(q=>q.id===pq.id);
+                    return savedPq?{...pq,solved:savedPq.solved??pq.solved}:pq;
+                  })||freshTop.previousQuestions
+                };
+              })
             };
-          });
-          return { ...mod, topics: updatedTopics };
-        });
-        return { ...sub, modules: updatedModules };
-      });
-
-      return {
-        ...prev,
-        [semesterKey]: {
-          ...targetSem,
-          subjects: updatedSubjects
-        }
-      };
-    });
-  };
-
-  // Reset all data
-  const handleResetData = () => {
-    const emptyState = {
-      S1: { examWindowDate: '', subjects: [] },
-      S2: { examWindowDate: '', subjects: [] }
-    };
-    setData(emptyState);
-    setCurrentView('dashboard');
-    setActiveSubjectId(null);
-    setActiveModuleId(null);
-  };
-
-  // Find active subject object if in subject view
-  const currentSemesterSubjects = (safeData && safeData[safeSemester]?.subjects) || [];
-  const activeSubject = activeSubjectId 
-    ? currentSemesterSubjects.find(s => s.id === activeSubjectId)
-    : currentSemesterSubjects[0];
-
-  const handleNavigation = (view) => {
-    setCurrentView(view);
-    if (view !== 'subject') {
-      setActiveModuleId(null);
-    }
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const isExpensioTheme = currentTheme === 'expensio-dark';
-  const isDosageTheme = currentTheme === 'dosage-frame';
-  const isAppleTheme = currentTheme === 'apple-minimal';
-  const isEcoursieTheme = currentTheme === 'ecoursie-studio';
-
-  // Flagship Expensio Uizard Dark Frame Experience (Matching the uploaded design)
-  if (isExpensioTheme) {
-    return (
-      <div className="min-h-screen expensio-outer-canvas text-[#f3f4f6] font-sans flex flex-col items-center justify-center p-2 sm:p-4 lg:p-6 py-6 relative selection:bg-[#00d49f] selection:text-black">
-        {/* Neon Yellow Left Border Laser */}
-        <div className="viewport-neon-left-line" aria-hidden="true" />
-        {/* Tron Model Neon Yellow Right Border Laser */}
-        <div className="viewport-neon-right-tron-line" aria-hidden="true" />
-        
-        {/* Top Floating Control Bar with Neon Gradient Lighting */}
-        <header className="w-full max-w-[1360px] neon-navbar-floating rounded-2xl px-3.5 sm:px-5 py-2.5 mb-3 flex items-center justify-between text-xs font-semibold select-none">
-          {/* Left: Semester Switcher Pill */}
-          <div className="flex items-center gap-2">
-            <span className="text-cyan-300 font-extrabold text-xs uppercase tracking-wider hidden sm:inline drop-shadow-[0_0_8px_rgba(0,245,255,0.4)]">
-              KTU Semester:
-            </span>
-            <div className="bg-[#121316]/90 backdrop-blur-md p-1 rounded-full border border-cyan-400/30 shadow-[0_0_12px_rgba(0,245,255,0.15)] flex items-center gap-1">
-              {['S1', 'S2'].map((sem) => (
-                <button
-                  key={sem}
-                  type="button"
-                  onClick={() => setCurrentSemester(sem)}
-                  className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${
-                    safeSemester === sem
-                      ? 'bg-[#00d49f] text-[#121316] shadow-xs'
-                      : 'text-[#8e95a5] hover:text-white'
-                  }`}
-                >
-                  {sem}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Right: Quick Focus Timer + Expand + Themes */}
-          <div className="flex items-center gap-2.5">
-            {/* Quick Focus Timer Button */}
-            <button
-              type="button"
-              onClick={() => setIsFocusModalOpen(true)}
-              className="bg-[#00d49f]/15 hover:bg-[#00d49f]/25 text-[#00d49f] border border-[#00d49f]/30 px-3 py-1.5 rounded-full text-xs font-bold shadow-xs flex items-center gap-1.5 transition-all cursor-pointer"
-              title="Start 25m Focus Pomodoro Session"
-            >
-              <Play className="w-3.5 h-3.5 fill-[#00d49f]" />
-              <span className="hidden sm:inline">Focus Session</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setIsFrameExpanded(prev => !prev)}
-              className="bg-[#121316]/80 hover:bg-[#121316] backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10 text-[#c8cdd9] shadow-xs flex items-center gap-1.5 transition-all cursor-pointer"
-              title={isFrameExpanded ? "Standard Frame" : "Expand to Full Width"}
-            >
-              {isFrameExpanded ? (
-                <>
-                  <Minimize2 className="w-3.5 h-3.5 text-[#00d49f]" />
-                  <span className="hidden sm:inline">Standard</span>
-                </>
-              ) : (
-                <>
-                  <Maximize2 className="w-3.5 h-3.5 text-[#00d49f]" />
-                  <span className="hidden sm:inline">Expand</span>
-                </>
-              )}
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setIsThemeModalOpen(true)}
-              className="bg-[#121316]/80 hover:bg-[#121316] backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10 text-[#c8cdd9] shadow-xs flex items-center gap-1.5 transition-all cursor-pointer"
-              title="Theme Studio"
-            >
-              <Palette className="w-3.5 h-3.5 text-[#00d49f]" />
-              <span className="hidden sm:inline">Themes</span>
-            </button>
-          </div>
-        </header>
-
-        {/* Central Expensio Dark Device Container */}
-        <div className={`w-full transition-all duration-300 relative ${isFrameExpanded ? 'max-w-none' : 'max-w-[1360px]'}`}>
-          <div className="expensio-device-container neon-border-left-yellow neon-border-right-tron-yellow p-2 sm:p-4 lg:p-5 relative overflow-hidden">
-            
-            <ExpensioDashboard
-              data={safeData}
-              currentSemester={safeSemester}
-              currentView={currentView}
-              onSelectSemester={setCurrentSemester}
-              onOpenSubject={(subId, modId) => handleOpenSubject(subId, safeSemester, modId)}
-              onNavigate={handleNavigation}
-              onOpenFocusModal={() => setIsFocusModalOpen(true)}
-              onOpenThemeModal={() => setIsThemeModalOpen(true)}
-              onAddSubject={handleAddSubject}
-            >
-              {currentView !== 'dashboard' && (
-                <div className="space-y-4 animate-in fade-in">
-                  <div className="flex items-center justify-between pb-3 border-b border-[#262934]">
-                    <button
-                      type="button"
-                      onClick={() => handleNavigation('dashboard')}
-                      className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[#181a20] text-white border border-[#262934] shadow-xs hover:border-[#00d49f]/50 text-xs font-bold transition-all cursor-pointer"
-                    >
-                      <ArrowLeft className="w-3.5 h-3.5 text-[#00d49f]" />
-                      <span>Back to Dashboard</span>
-                    </button>
-
-                    <span className="text-xs font-semibold text-[#8b8fa8] uppercase tracking-wider">
-                      {currentView.toUpperCase()} VIEW
-                    </span>
-                  </div>
-
-                  {currentView === 'subject' && (
-                    activeSubject ? (
-                      <div className="bg-[#181a20] rounded-3xl p-4 sm:p-6 shadow-sm border border-[#262934] text-[#f3f4f6]">
-                        <SubjectView
-                          subject={activeSubject}
-                          allSubjects={currentSemesterSubjects}
-                          onSelectSubject={(subId) => handleOpenSubject(subId, safeSemester)}
-                          onAddSubject={handleAddSubject}
-                          semesterKey={safeSemester}
-                          onBack={() => {
-                            handleNavigation('dashboard');
-                            setActiveModuleId(null);
-                          }}
-                          onUpdateSubject={handleUpdateSubject}
-                          initialModuleId={activeModuleId}
-                        />
-                      </div>
-                    ) : (
-                      <div className="p-8 text-center bg-[#181a20] rounded-2xl border border-[#262934]">
-                        <h3 className="font-bold text-white">No subject selected</h3>
-                        <button
-                          onClick={() => handleNavigation('dashboard')}
-                          className="mt-3 px-4 py-2 bg-[#00d49f] text-[#121316] rounded-xl text-xs font-bold"
-                        >
-                          Return to Dashboard
-                        </button>
-                      </div>
-                    )
-                  )}
-
-                  {currentView === 'timetable' && (
-                    <div className="bg-[#181a20] rounded-3xl p-4 sm:p-6 shadow-sm border border-[#262934] text-[#f3f4f6]">
-                      <ExamTimetable
-                        data={safeData}
-                        onOpenSubject={(subId) => handleOpenSubject(subId, safeSemester)}
-                      />
-                    </div>
-                  )}
-
-                  {currentView === 'revision' && (
-                    <div className="bg-[#181a20] rounded-3xl p-4 sm:p-6 shadow-sm border border-[#262934] text-[#f3f4f6]">
-                      <RevisionMode
-                        data={safeData}
-                        onMarkRevised={handleMarkTopicRevised}
-                        onOpenSubject={(subId) => handleOpenSubject(subId, safeSemester)}
-                      />
-                    </div>
-                  )}
-
-                  {currentView === 'notes' && (
-                    <div className="bg-[#181a20] rounded-3xl p-4 sm:p-6 shadow-sm border border-[#262934] text-[#f3f4f6]">
-                      <NotesVault
-                        data={safeData}
-                        onOpenSubject={(subId) => handleOpenSubject(subId, safeSemester)}
-                      />
-                    </div>
-                  )}
-
-                  {currentView === 'settings' && (
-                    <div className="bg-[#181a20] rounded-3xl p-4 sm:p-6 shadow-sm border border-[#262934] text-[#f3f4f6]">
-                      <Settings
-                        data={safeData}
-                        onUpdateData={setData}
-                        onResetData={handleResetData}
-                        currentTheme={currentTheme}
-                        onSelectTheme={setCurrentTheme}
-                        currentColorAccent={currentColorAccent}
-                        onSelectColorAccent={setCurrentColorAccent}
-                      />
-                    </div>
-                  )}
-                </div>
-              )}
-            </ExpensioDashboard>
-
-          </div>
+          })
+        };
+      })
+    }];
+  }));
+};
+const meta=[{short:'Mathematics I',label:'Linear algebra & calculus',icon:Sigma,color:'#b5a0fa'},{short:'Chemistry',label:'Engineering chemistry',icon:FlaskConical,color:'#f4bd84'},{short:'Mathematics II',label:'Vector calculus & differential equations',icon:Activity,color:'#8bbdfa'},{short:'Physics',label:'Engineering physics',icon:Atom,color:'#8bd8b6'}];
+const nav=[['Overview',LayoutDashboard],['My subjects',BookOpen],['Study planner',CalendarDays],['Notes library',NotebookPen],['Revision',RotateCcw],['Insights',TrendingUp]];
+export default function App(){
+const [data,setData]=useState(initialLedger);const [workspace,setWorkspace]=useState(()=>({tasks:[],sessions:[],notes:[],goal:120,...read('orbit-workspace-v1',{})}));
+const [page,setPage]=useState('Overview'),[subjectId,setSubjectId]=useState(null),[search,setSearch]=useState(''),[menu,setMenu]=useState(false),[modal,setModal]=useState(null),[toast,setToast]=useState(''),[filter,setFilter]=useState('All subjects'),[expandedQuestions,setExpandedQuestions]=useState({});
+const [savedTimer]=useState(()=>read('orbit-timer-v1',{}));
+const [timerSubject,setTimerSubject]=useState(savedTimer.subjectId||'sub-mat101'),[duration,setDuration]=useState(savedTimer.duration||25),[remaining,setRemaining]=useState(savedTimer.remaining??1500),[running,setRunning]=useState(!!savedTimer.running),[immersive,setImmersive]=useState(false),[timerMode,setTimerMode]=useState(savedTimer.mode||'Focus'),[today,setToday]=useState(dayKey());
+const deadline=useRef(savedTimer.deadline||null),sessionId=useRef(savedTimer.id||crypto.randomUUID());
+useEffect(()=>{try{localStorage.setItem('orbit-timer-v1',JSON.stringify({id:sessionId.current,subjectId:timerSubject,duration,remaining,running,mode:timerMode,deadline:deadline.current}));}catch{}},[timerSubject,duration,remaining,running,timerMode]);
+const subjects=['S1','S2'].flatMap(sem=>data[sem].subjects.map(s=>({...s,semester:sem}))).map((s,i)=>({...s,...meta[i]}));
+const selected=subjects.find(s=>s.id===subjectId),focusSubject=subjects.find(s=>s.id===timerSubject)||subjects[0];
+const allTopics=subjects.flatMap(s=>(s.modules||[]).flatMap(m=>(m.topics||[]).map(t=>({...t,subject:s,module:m}))));
+const progress=Math.round(subjects.reduce((sum,s)=>sum+calculateSubjectProgress(s),0)/4*100),todaySessions=workspace.sessions.filter(s=>s.date===today),todayMinutes=todaySessions.reduce((sum,s)=>sum+s.minutes,0),todayTasks=workspace.tasks.filter(t=>t.date===today),completed=allTopics.filter(t=>calculateTopicCompletion(t)===1).length;
+const notify=message=>setToast(message);
+useEffect(()=>{try{localStorage.setItem('study-ledger',JSON.stringify(data));localStorage.setItem('orbit-workspace-v1',JSON.stringify(workspace));}catch{setToast('Browser storage is unavailable. Export a backup to keep your work.')}},[data,workspace]);
+useEffect(()=>{if(!toast)return;const id=setTimeout(()=>setToast(''),5000);return()=>clearTimeout(id)},[toast]);
+useEffect(()=>{const id=setInterval(()=>setToday(dayKey()),30000);return()=>clearInterval(id)},[]);
+useEffect(()=>{if(!running)return;const tick=()=>{const left=Math.max(0,Math.ceil((deadline.current-Date.now())/1000));setRemaining(left);if(left===0){setRunning(false);if(timerMode==='Focus'){setWorkspace(w=>w.sessions.some(s=>s.id===sessionId.current)?w:({...w,sessions:[...w.sessions,{id:sessionId.current,date:dayKey(new Date(deadline.current)),subjectId:timerSubject,minutes:duration}]}));notify('Focus session complete. A little closer to your goals.')}else notify('Break complete. Ready for a fresh start.')}};tick();const id=setInterval(tick,250);return()=>clearInterval(id)},[running,duration,timerSubject,timerMode]);
+useEffect(()=>{const observer=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('revealed');observer.unobserve(e.target)}}),{threshold:.06});document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));return()=>observer.disconnect()},[page,subjectId,filter]);
+useEffect(()=>{const key=e=>{if(e.key==='Escape'){setModal(null);setImmersive(false);setMenu(false)}};window.addEventListener('keydown',key);return()=>window.removeEventListener('keydown',key)},[]);
+const navigate=p=>{setPage(p);setSubjectId(null);setMenu(false);setSearch('');setFilter('All subjects');window.scrollTo({top:0,behavior:'smooth'})};
+const openSubject=s=>{setSubjectId(s.id);setPage('My subjects');setMenu(false);setSearch('');window.scrollTo({top:0,behavior:'smooth'})};
+const updateTopic=(s,m,t,patch)=>setData(d=>({...d,[s.semester]:{...d[s.semester],subjects:d[s.semester].subjects.map(sub=>sub.id!==s.id?sub:{...sub,modules:sub.modules.map(mod=>mod.id!==m.id?mod:{...mod,topics:mod.topics.map(top=>top.id!==t.id?top:{...top,...patch})})})}}));
+const toggleQuestionExpand=qId=>setExpandedQuestions(prev=>({...prev,[qId]:!prev[qId]}));
+const toggleQuestionSolved=(s,m,t,qId)=>setData(d=>({...d,[s.semester]:{...d[s.semester],subjects:d[s.semester].subjects.map(sub=>sub.id!==s.id?sub:{...sub,modules:sub.modules.map(mod=>mod.id!==m.id?mod:{...mod,topics:mod.topics.map(top=>top.id!==t.id?top:{...top,previousQuestions:(top.previousQuestions||[]).map(q=>q.id===qId?{...q,solved:!q.solved}:q)})})})}}));
+const toggleTask=id=>setWorkspace(w=>({...w,tasks:w.tasks.map(t=>t.id===id?{...t,done:!t.done}:t)}));
+const resetTimer=(minutes=duration,mode=timerMode)=>{setRunning(false);sessionId.current=crypto.randomUUID();setDuration(minutes);setRemaining(minutes*60);setTimerMode(mode)};
+const toggleTimer=()=>{if(running)setRunning(false);else{if(!remaining)sessionId.current=crypto.randomUUID();deadline.current=Date.now()+(remaining||duration*60)*1000;setRunning(true)}};
+const exportData=()=>{const url=URL.createObjectURL(new Blob([JSON.stringify({ledger:data,workspace},null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download=`orbit-study-${today}.json`;a.click();URL.revokeObjectURL(url);notify('Your study backup has been downloaded.')};
+const importData=async e=>{const file=e.target.files?.[0];if(!file)return;try{const backup=JSON.parse(await file.text());if(!['S1','S2'].every(sem=>Array.isArray(backup.ledger?.[sem]?.subjects)&&INITIAL_DATA[sem].subjects.every(expected=>backup.ledger[sem].subjects.some(s=>s.id===expected.id&&Array.isArray(s.modules)&&s.modules.every(m=>Array.isArray(m.topics)))))||!Array.isArray(backup.workspace?.tasks)||!Array.isArray(backup.workspace?.notes)||!Array.isArray(backup.workspace?.sessions))throw new Error('Invalid backup');setModal({type:'restore',backup});}catch{notify('This file is not a valid Orbit study backup. Nothing was changed.')}finally{e.target.value=''}};
+const week=Array.from({length:7},(_,i)=>{const d=new Date();d.setDate(d.getDate()-6+i);return{label:d.toLocaleDateString('en',{weekday:'short'}),date:dayKey(d),minutes:workspace.sessions.filter(s=>s.date===dayKey(d)).reduce((a,s)=>a+s.minutes,0)}});
+const chart=<div className="bar-chart">{week.map(d=><div className="bar-column" key={d.date}><span>{d.minutes}m</span><div><i style={{height:`${Math.max(3,d.minutes/Math.max(60,...week.map(x=>x.minutes))*100)}%`}}/></div><small>{d.label}</small></div>)}</div>;
+const timer=<><div className="panel-heading"><h3><Focus size={17}/> Focus room</h3><span className="live-dot">{running?'IN SESSION':'YOUR QUIET SPACE'}</span></div><div className="timer-tabs">{['Focus','Short break'].map(mode=><button key={mode} className={timerMode===mode?'active':''} onClick={()=>resetTimer(mode==='Focus'?25:5,mode)}>{mode}</button>)}</div><div className={'clock '+(running?'ticking':'')} style={{'--timer-progress':`${100*(1-remaining/(duration*60))}%`}}><div><span>{String(Math.floor(remaining/60)).padStart(2,'0')}<b>:</b>{String(remaining%60).padStart(2,'0')}</span><small>{running?'ONE THING AT A TIME':timerMode==='Focus'?'TIME TO MAKE PROGRESS':'TAKE A BREATH'}</small></div></div><label className="select-label">WORKING ON<select aria-label="Focus subject" value={timerSubject} disabled={running} onChange={e=>setTimerSubject(e.target.value)}>{subjects.map(s=><option key={s.id} value={s.id}>{s.short}</option>)}</select></label><div className="timer-controls"><button className="primary" onClick={toggleTimer}>{running?<Pause size={16}/>:<Play size={16}/>} {running?'Pause session':'Start session'}</button><button className="icon-button" aria-label="Reset timer" onClick={()=>resetTimer()}><RotateCcw size={18}/></button></div><button className="quiet focus-expand" onClick={()=>setImmersive(!immersive)}><Focus size={13}/>{immersive?'Exit full focus':'Enter full focus'}<ArrowUpRight size={13}/></button></>;
+const taskList=tasks=>tasks.length?<div className="task-list">{tasks.map(t=>{const s=subjects.find(s=>s.id===t.subjectId);return <div className={'task-row '+(t.done?'done':'')} key={t.id}><button className="checkbox" aria-label={`${t.done?'Reopen':'Complete'} ${t.title}`} aria-pressed={t.done} onClick={()=>toggleTask(t.id)}>{t.done&&<Check size={13}/>}</button><div><strong>{t.title}</strong><small><i style={{background:s?.color}}/>{s?.short} <span>· {t.minutes} min · {t.date===today?'Today':t.date}</span></small></div><button className="icon-button delete-task" aria-label={`Delete ${t.title}`} onClick={()=>setWorkspace(w=>({...w,tasks:w.tasks.filter(x=>x.id!==t.id)}))}><Trash2 size={14}/></button></div>})}</div>:<div className="empty"><CheckCheck size={25}/><strong>A clear day. A fresh start.</strong><p>Add a small, achievable task for one of your subjects.</p><button className="quiet mint" onClick={()=>setModal('task')}>Create your first task <Plus size={14}/></button></div>;
+const subjectCards=<div className="subject-grid">{subjects.filter(s=>`${s.name} ${s.short} ${s.code}`.toLowerCase().includes(search.toLowerCase())&&(filter==='All subjects'||s.semester===filter)).map((s,i)=>{const Icon=s.icon,pct=Math.round(calculateSubjectProgress(s)*100);return <button key={s.id} className="subject-card reveal" style={{'--accent':s.color,transitionDelay:`${i*55}ms`}} onClick={()=>openSubject(s)}><div className="subject-top"><span className="subject-icon"><Icon size={24}/></span><span className="code">{s.code} <ArrowUpRight size={14}/></span></div><h3>{s.short}</h3><p>{s.label}</p><div className="subject-info"><span>{s.modules.length} modules</span><span>{s.semester} · KTU</span></div><div className="progress"><i style={{width:`${pct}%`}}/></div><div className="subject-bottom"><span>Course progress</span><strong>{pct}%</strong></div></button>})}</div>;
+return <div className="app-shell"><aside className={'sidebar '+(menu?'open':'')}><a className="brand" href="#" onClick={e=>{e.preventDefault();navigate('Overview')}}><span className="brand-symbol"><Atom size={26}/></span>orbit<span className="brand-period">.</span></a><div className="workspace-label"><span className="workspace-icon"><GraduationCap size={18}/></span><div>My study space<small>Personal workspace</small></div><ChevronDown size={13}/></div><p className="nav-label">WORKSPACE</p><nav>{nav.map(([name,Icon])=><button key={name} className={page===name?'active':''} onClick={()=>navigate(name)}><Icon size={18}/>{name}{name==='My subjects'&&<span className="nav-count">04</span>}{name==='Revision'&&<span className="tiny-dot"/>}</button>)}</nav><p className="nav-label subjects-label">YOUR SUBJECTS <span>4</span></p><div className="subject-nav">{subjects.map(s=><button key={s.id} onClick={()=>openSubject(s)}><i style={{background:s.color}}/>{s.short}<span>{s.semester}</span></button>)}</div><div className="sidebar-bottom"><div className="sidebar-tip"><Sparkles size={19}/><strong>Small steps. Big futures.</strong><p>Your only competition is<br/>who you were yesterday.</p><span>LET’S MAKE TODAY COUNT <ArrowUpRight size={13}/></span></div><button className="settings-link" onClick={()=>navigate('Settings')}><Settings2 size={18}/> Settings & backup</button><div className="profile"><span>A</span><div>Althaf<small>Building a better tomorrow</small></div><span className="online"/></div></div></aside>{menu&&<div className="sidebar-scrim" onClick={()=>setMenu(false)}/>}
+<div className="main-shell"><header className="topbar"><div className="breadcrumb"><button className="icon-button mobile-menu" aria-label="Open navigation" onClick={()=>setMenu(true)}><Menu size={20}/></button><span>Workspace</span><span>/</span><strong>{selected?selected.short:page}</strong></div><div className="topbar-right"><span className="local-status"><i/> Local workspace</span><button className="avatar" aria-label="Open settings" onClick={()=>navigate('Settings')}>A</button></div></header><main><div className="page-heading"><div><div className="eyebrow">YOUR PERSONAL LEARNING OS <span>✦</span></div><h1>{selected?selected.short:page==='Overview'?'A little focus. A lot of possibility.':page}</h1><p>{selected?selected.description:page==='Overview'?'Welcome back, Althaf. Let’s turn today’s effort into tomorrow’s progress.':'Four subjects. One clear direction. Keep moving forward.'}</p></div><span className="date-pill"><CalendarDays size={15}/>{new Date(today+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}</span></div>
+{page==='Overview'&&<><section className="hero reveal"><div className="hero-copy"><span className="hero-badge"><span/> BUILT FOR YOUR NEXT BREAKTHROUGH</span><h2>Your future is in focus.<br/><span>Let’s get you there.</span></h2><p>One topic, one session, one step closer.<br/>Your four-subject journey starts right here.</p><div className="hero-actions"><button className="primary" onClick={()=>setImmersive(true)}><Play size={15} fill="currentColor"/> Let’s focus <ArrowUpRight size={16}/></button><button className="quiet" onClick={()=>navigate('Study planner')}>View study plan <ArrowRight size={16}/></button></div></div><div className="orbital" aria-hidden="true"><div className="orbital-grid"/><div className="orbit orbit-one"/><div className="orbit orbit-two"/><div className="orbit orbit-three"/><div className="planet"><Atom size={64}/></div><span className="satellite satellite-a"><Sigma size={25}/></span><span className="satellite satellite-b"><Atom size={23}/></span><span className="satellite satellite-c"><FlaskConical size={22}/></span><span className="star star-a">+</span><span className="star star-b">+</span><span className="orbital-caption">LESS NOISE. MORE KNOWLEDGE.</span></div></section><section className="stats-grid reveal">{[[Clock3,'Focus time today',`${todayMinutes}m`,'Every minute is an investment'],[BookOpen,'Topics completed',`${completed}`,`of ${allTopics.length} syllabus topics`],[Target,'Overall progress',`${progress}%`,'Across your four subjects'],[Zap,'Sessions today',`${todaySessions.length}`,'Build your daily momentum']].map(([Icon,label,value,sub])=><div className="stat" key={label}><div><span>{label}</span><Icon size={17}/></div><strong>{value}</strong><small>{sub}</small></div>)}</section><div className="dashboard-columns"><div className="dashboard-main"><section><div className="section-heading"><div><h2>Your learning universe <span>04</span></h2><p>Four subjects. Endless possibilities.</p></div><button className="quiet" onClick={()=>navigate('My subjects')}>View all <ArrowUpRight size={15}/></button></div>{subjectCards}</section><section className="panel planner-panel reveal"><div className="panel-heading"><div><h3>Today’s game plan <span className="count-pill">{todayTasks.filter(t=>t.done).length}/{todayTasks.length}</span></h3><p>Make room for what matters.</p></div><button className="small-button" onClick={()=>setModal('task')}><Plus size={14}/> Add task</button></div>{taskList(todayTasks)}</section><section className="panel activity-panel reveal"><div className="panel-heading"><div><h3>Consistency is your superpower</h3><p>Your focus time over the last 7 days</p></div><span className="mint"><TrendingUp size={20}/></span></div>{chart}</section></div><aside className="right-rail"><section className="panel focus-panel reveal">{timer}</section><section className="panel goal-panel reveal"><div className="panel-heading"><h3><Target size={17}/> Daily goal</h3><button className="quiet" onClick={()=>navigate('Settings')}>Edit</button></div><div className="goal-numbers"><strong>{todayMinutes}<span> / {workspace.goal} min</span></strong><span>{Math.min(100,Math.round(todayMinutes/workspace.goal*100))}%</span></div><div className="progress"><i style={{width:`${Math.min(100,todayMinutes/workspace.goal*100)}%`}}/></div><p>{todayMinutes>=workspace.goal?'Goal reached. You showed up for yourself.':'Progress, not perfection. You’ve got this.'} <Sparkles size={13}/></p></section><section className="quote-card reveal"><span>✦</span><blockquote>“The secret of getting<br/>ahead is getting started.”</blockquote><small>A LITTLE REMINDER FOR TODAY</small></section></aside></div></>}
+{page==='My subjects'&&!selected&&<><div className="toolbar"><div className="tabs">{['All subjects','S1','S2'].map(f=><button key={f} className={filter===f?'active':''} onClick={()=>setFilter(f)}>{f}</button>)}</div><label className="search"><Search size={16}/><input placeholder="Find a subject…" value={search} onChange={e=>setSearch(e.target.value)}/></label></div>{subjectCards}</>}
+{selected&&<><div className="toolbar"><button className="quiet" onClick={()=>setSubjectId(null)}>← All subjects</button><button className="primary" onClick={()=>{if(!running)setTimerSubject(selected.id);setImmersive(true)}}><Focus size={16}/> Focus on this subject</button></div><div className="subject-summary panel"><span style={{color:selected.color}}>{selected.code} · {selected.semester}</span><strong>{Math.round(calculateSubjectProgress(selected)*100)}% complete</strong><div className="progress"><i style={{width:`${calculateSubjectProgress(selected)*100}%`,background:selected.color}}/></div><label>Exam date <input type="datetime-local" value={selected.examDate||''} onChange={e=>setData(d=>({...d,[selected.semester]:{...d[selected.semester],subjects:d[selected.semester].subjects.map(s=>s.id===selected.id?{...s,examDate:e.target.value}:s)}}))}/></label><small>Dates come from your saved syllabus. Confirm them with your official timetable.</small></div>{selected.modules.map((m,i)=>{
+  const totalModPqs=m.topics.reduce((acc,top)=>acc+(top.previousQuestions?.length||0),0);
+  const solvedModPqs=m.topics.reduce((acc,top)=>acc+(top.previousQuestions?.filter(q=>q.solved)?.length||0),0);
+  return (
+    <details className="module panel" key={m.id} open={i===0}>
+      <summary>
+        <span className="module-number">{String(i+1).padStart(2,'0')}</span>
+        <div>
+          <h3>{m.name.replace(/^Module \d+:\s*/,'')}</h3>
+          <small>{m.topics.length} topics · {m.topics.filter(t=>calculateTopicCompletion(t)===1).length} complete · {solvedModPqs}/{totalModPqs} PYQs solved</small>
         </div>
-
-        {/* Neon Green Footer */}
-        <div className={`w-full mt-6 transition-all duration-300 ${isFrameExpanded ? 'max-w-none' : 'max-w-[1360px]'}`}>
-          <Footer 
-            onNavigate={handleNavigation}
-            onOpenFocusModal={() => setIsFocusModalOpen(true)}
-            currentSemester={safeSemester}
-          />
-        </div>
-
-        {/* Modals */}
-        <FocusModal
-          isOpen={isFocusModalOpen}
-          onClose={() => setIsFocusModalOpen(false)}
-          data={safeData}
-        />
-        <ThemeModal
-          isOpen={isThemeModalOpen}
-          onClose={() => setIsThemeModalOpen(false)}
-          currentTheme={currentTheme}
-          onSelectTheme={setCurrentTheme}
-          currentColorAccent={currentColorAccent}
-          onSelectColorAccent={setCurrentColorAccent}
-        />
-      </div>
-    );
-  }
-
-  // Flagship Dosage Clay Tablet Frame Experience (Matching the uploaded design)
-  if (isDosageTheme) {
-    return (
-      <div className="min-h-screen bg-[#c8cbe2] text-[#1a1b32] font-sans flex flex-col items-center justify-center p-2 sm:p-4 lg:p-6 py-4 relative selection:bg-[#5f51bd] selection:text-white">
-        {/* Neon Yellow Left Border Laser */}
-        <div className="viewport-neon-left-line" aria-hidden="true" />
-        {/* Tron Model Neon Yellow Right Border Laser */}
-        <div className="viewport-neon-right-tron-line" aria-hidden="true" />
-        
-        {/* Top Floating Control Bar */}
-        <header className="w-full max-w-[1360px] flex items-center justify-between pb-3 px-2 text-xs font-semibold select-none">
-          {/* Left: Semester Switcher Pill */}
-          <div className="flex items-center gap-2">
-            <span className="text-[#686c85] font-bold text-xs uppercase tracking-wider hidden sm:inline">
-              KTU Semester:
-            </span>
-            <div className="bg-white/70 backdrop-blur-md p-1 rounded-full border border-white/60 shadow-xs flex items-center gap-1">
-              {['S1', 'S2'].map((sem) => (
-                <button
-                  key={sem}
-                  type="button"
-                  onClick={() => setCurrentSemester(sem)}
-                  className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${
-                    safeSemester === sem
-                      ? 'bg-[#5f51bd] text-white shadow-xs'
-                      : 'text-[#686c85] hover:text-[#1a1b32]'
-                  }`}
-                >
-                  {sem}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Right: Quick Tools (Expand frame, Theme Studio) */}
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setIsFrameExpanded(prev => !prev)}
-              className="bg-white/70 hover:bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/60 text-[#494c65] shadow-xs flex items-center gap-1.5 transition-all cursor-pointer"
-              title={isFrameExpanded ? "Standard Tablet Frame" : "Expand to Full Width"}
-            >
-              {isFrameExpanded ? (
-                <>
-                  <Minimize2 className="w-3.5 h-3.5" />
-                  <span className="hidden sm:inline">Standard Frame</span>
-                </>
-              ) : (
-                <>
-                  <Maximize2 className="w-3.5 h-3.5" />
-                  <span className="hidden sm:inline">Expand Frame</span>
-                </>
-              )}
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setIsThemeModalOpen(true)}
-              className="bg-white/70 hover:bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/60 text-[#494c65] shadow-xs flex items-center gap-1.5 transition-all cursor-pointer"
-              title="Theme Studio"
-            >
-              <Palette className="w-3.5 h-3.5 text-[#5f51bd]" />
-              <span className="hidden sm:inline">Themes</span>
-            </button>
-          </div>
-        </header>
-
-        {/* Floating Device / Tablet Frame Bezel */}
-        <div className={`w-full transition-all duration-300 relative ${isFrameExpanded ? 'max-w-none' : 'max-w-[1360px]'}`}>
-          <div className="tablet-frame-bezel p-3 sm:p-5 relative transition-all">
-            
-            {/* Dashboard Inner Canvas */}
-            <div className="bg-[#f5f6fc] rounded-[36px] p-4 sm:p-6 lg:p-7 relative overflow-hidden flex flex-col md:flex-row gap-5 items-stretch min-h-[760px] shadow-inner">
-              
-              {/* ====================================================== */}
-              {/* VERTICAL PURPLE PILL NAVIGATION (Matches uploaded mockup) */}
-              {/* ====================================================== */}
-              <aside className="bg-[#5f51bd] rounded-[32px] py-6 px-3 flex md:flex-col flex-row items-center justify-between shrink-0 shadow-lg shadow-[#5f51bd]/25 md:w-16 sm:md:w-18 w-full select-none z-20">
-                {/* Top Notification Bell Button */}
-                <button
-                  type="button"
-                  onClick={() => setIsThemeModalOpen(true)}
-                  className="w-10 h-10 rounded-full flex items-center justify-center text-white/75 hover:text-white hover:bg-white/10 transition-colors"
-                  title="Notifications & Theme"
-                >
-                  <Bell className="w-5 h-5" />
-                </button>
-
-                {/* Middle Icon Group */}
-                <nav className="flex md:flex-col flex-row items-center gap-2 sm:gap-3">
-                  {/* 1. Home / Dashboard */}
-                  <button
-                    type="button"
-                    onClick={() => handleNavigation('dashboard')}
-                    className={`transition-all ${
-                      currentView === 'dashboard'
-                        ? 'bg-white text-[#5f51bd] rounded-2xl w-11 h-11 flex items-center justify-center shadow-md font-bold'
-                        : 'text-white/70 hover:text-white hover:bg-white/10 rounded-2xl w-11 h-11 flex items-center justify-center'
-                    }`}
-                    title="Dashboard"
-                  >
-                    <Home className="w-5 h-5" />
-                  </button>
-
-                  {/* 2. Notes Vault */}
-                  <button
-                    type="button"
-                    onClick={() => handleNavigation('notes')}
-                    className={`transition-all ${
-                      currentView === 'notes'
-                        ? 'bg-white text-[#5f51bd] rounded-2xl w-11 h-11 flex items-center justify-center shadow-md font-bold'
-                        : 'text-white/70 hover:text-white hover:bg-white/10 rounded-2xl w-11 h-11 flex items-center justify-center'
-                    }`}
-                    title="Notes Vault"
-                  >
-                    <FileText className="w-5 h-5" />
-                  </button>
-
-                  {/* 3. Exam Schedule / Stats */}
-                  <button
-                    type="button"
-                    onClick={() => handleNavigation('timetable')}
-                    className={`transition-all ${
-                      currentView === 'timetable'
-                        ? 'bg-white text-[#5f51bd] rounded-2xl w-11 h-11 flex items-center justify-center shadow-md font-bold'
-                        : 'text-white/70 hover:text-white hover:bg-white/10 rounded-2xl w-11 h-11 flex items-center justify-center'
-                    }`}
-                    title="Exam Timetable & Analytics"
-                  >
-                    <BarChart3 className="w-5 h-5" />
-                  </button>
-
-                  {/* 4. Revision Sprint */}
-                  <button
-                    type="button"
-                    onClick={() => handleNavigation('revision')}
-                    className={`transition-all ${
-                      currentView === 'revision'
-                        ? 'bg-white text-[#5f51bd] rounded-2xl w-11 h-11 flex items-center justify-center shadow-md font-bold'
-                        : 'text-white/70 hover:text-white hover:bg-white/10 rounded-2xl w-11 h-11 flex items-center justify-center'
-                    }`}
-                    title="Revision Sprint"
-                  >
-                    <MessageCircle className="w-5 h-5" />
-                  </button>
-
-                  {/* 5. Focus Pomodoro / Play */}
-                  <button
-                    type="button"
-                    onClick={() => setIsFocusModalOpen(true)}
-                    className="text-white/70 hover:text-white hover:bg-white/10 rounded-2xl w-11 h-11 flex items-center justify-center transition-colors"
-                    title="Focus Pomodoro Room"
-                  >
-                    <Play className="w-5 h-5" />
-                  </button>
-                </nav>
-
-                {/* Bottom Logout / Settings / Exit */}
-                <button
-                  type="button"
-                  onClick={() => handleNavigation('settings')}
-                  className={`transition-all ${
-                    currentView === 'settings'
-                      ? 'bg-white text-[#5f51bd] rounded-2xl w-11 h-11 flex items-center justify-center shadow-md font-bold'
-                      : 'text-white/80 hover:text-white bg-white/10 hover:bg-white/20 rounded-2xl w-11 h-11 flex items-center justify-center'
-                  }`}
-                  title="Settings & Reset"
-                >
-                  <LogOut className="w-5 h-5" />
-                </button>
-              </aside>
-
-              {/* ====================================================== */}
-              {/* MAIN CONTENT AREA */}
-              {/* ====================================================== */}
-              <div className="flex-1 min-w-0 flex flex-col justify-between">
-                
-                {/* Views */}
-                <div className="flex-1">
-                  {currentView === 'dashboard' && (
-                    <DosageDashboard
-                      data={safeData}
-                      currentSemester={safeSemester}
-                      onSelectSemester={setCurrentSemester}
-                      onOpenSubject={(subId, modId) => handleOpenSubject(subId, safeSemester, modId)}
-                      onNavigate={handleNavigation}
-                      onOpenFocusModal={() => setIsFocusModalOpen(true)}
-                    />
-                  )}
-
-                  {currentView !== 'dashboard' && (
-                    <div className="space-y-4 animate-in fade-in">
-                      <div className="flex items-center justify-between pb-2 border-b border-gray-200">
+        <ChevronDown size={18}/>
+      </summary>
+      <div className="topics">
+        {m.topics.map(t=>{
+          const totalTopPqs=t.previousQuestions?.length||0;
+          const solvedTopPqs=t.previousQuestions?.filter(q=>q.solved)?.length||0;
+          return (
+            <div className="topic" key={t.id}>
+              <div className="topic-heading">
+                <BookOpen size={17}/>
+                <strong>{t.name}</strong>
+                {totalTopPqs>0&&<span className="topic-pq-counter" title="Solved / Total Previous Year Questions">{solvedTopPqs}/{totalTopPqs} PYQs</span>}
+                <select aria-label={`Status for ${t.name}`} value={t.status||'not-started'} onChange={e=>updateTopic(selected,m,t,{status:e.target.value,subTopics:(t.subTopics||[]).map(st=>({...st,done:['studied','revised'].includes(e.target.value)}))})}>
+                  <option value="not-started">To study</option>
+                  <option value="in-progress">In progress</option>
+                  <option value="studied">Studied</option>
+                  <option value="needs-revision">Needs revision</option>
+                  <option value="revised">Revised</option>
+                </select>
+              </div>
+              {t.subTopics?.map(st=><label className="subtopic" key={st.id}><input type="checkbox" checked={!!st.done} onChange={e=>updateTopic(selected,m,t,{subTopics:t.subTopics.map(x=>x.id===st.id?{...x,done:e.target.checked}:x)})}/>{st.name}</label>)}
+              <details className="topic-details" open={true}>
+                <summary>Notes & previous year questions ({totalTopPqs}) <ChevronDown size={13}/></summary>
+                <label className="field-label">Your topic notes<textarea value={t.notes||''} placeholder="Capture a key concept or formula…" onChange={e=>updateTopic(selected,m,t,{notes:e.target.value})}/></label>
+                {t.previousQuestions?.length>0&&<div className="pq-section-heading"><span>PREVIOUS YEAR EXAM QUESTIONS (2019 - 2026)</span><small>Click question to view model answer · Tick column to mark solved</small></div>}
+                {t.previousQuestions?.map(q=>{
+                  const isExpanded=!!expandedQuestions[q.id];
+                  return (
+                    <div className={'question '+(q.solved?'is-solved ':'')+(isExpanded?'is-expanded':'')} key={q.id}>
+                      <div className="question-header">
+                        <div className="question-badges">
+                          <span className="q-badge year">{q.year} · {q.exam||'KTU Final'}</span>
+                          <span className={'q-badge marks '+(q.marks>=14?'marks-14':q.marks>=7?'marks-7':'marks-3')}>{q.marks} Marks</span>
+                          {q.frequency&&<span className="q-badge freq">{q.frequency}</span>}
+                        </div>
                         <button
                           type="button"
-                          onClick={() => handleNavigation('dashboard')}
-                          className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white text-[#1f2137] border border-gray-200 shadow-xs hover:bg-gray-50 text-xs font-bold transition-all cursor-pointer"
+                          className={'question-tick-col '+(q.solved?'solved':'')}
+                          aria-label={q.solved?'Mark question as unsolved':'Mark question as solved'}
+                          title={q.solved?'Solved! Click to uncheck':'Tick to mark as solved'}
+                          onClick={e=>{e.stopPropagation();toggleQuestionSolved(selected,m,t,q.id);notify(q.solved?'Question marked unsolved.':'Question marked solved! Progress updated.')}}
                         >
-                          <ArrowLeft className="w-4 h-4 text-[#5f51bd]" />
-                          <span>Back to Dashboard</span>
+                          <span className="tick-box">{q.solved?<Check size={14} strokeWidth={3}/>:null}</span>
+                          <span className="tick-label">{q.solved?'Solved':'Mark solved'}</span>
                         </button>
-
-                        <span className="text-xs font-semibold text-[#8b8fa8] uppercase tracking-wider">
-                          {currentView.toUpperCase()} VIEW
-                        </span>
                       </div>
-
-                      {currentView === 'subject' && (
-                        activeSubject ? (
-                          <div className="bg-white rounded-3xl p-4 sm:p-6 shadow-sm border border-gray-100">
-                            <SubjectView
-                              subject={activeSubject}
-                              semesterKey={safeSemester}
-                              onBack={() => {
-                                handleNavigation('dashboard');
-                                setActiveModuleId(null);
-                              }}
-                              onUpdateSubject={handleUpdateSubject}
-                              initialModuleId={activeModuleId}
-                            />
+                      <div className="question-body" onClick={()=>toggleQuestionExpand(q.id)} role="button" tabIndex={0} onKeyDown={e=>{if(e.key==='Enter'||e.key===' ')toggleQuestionExpand(q.id)}} title="Click question to view step-by-step solution & model answer">
+                        <p className="question-text">{q.text}</p>
+                        <div className="click-hint-row">
+                          <span className="click-hint">{isExpanded?'▲ Click to hide step-by-step answer':'▼ Click question to reveal model answer'}</span>
+                        </div>
+                      </div>
+                      {isExpanded&&(
+                        <div className="question-answer-box">
+                          {q.hint&&<div className="q-hint-bar"><strong>Key Concept / Exam Tip:</strong> {q.hint}</div>}
+                          <div className="q-answer-content">
+                            <strong>Step-by-Step Model Answer & Solution:</strong>
+                            <pre className="q-answer-pre">{q.answer||q.hint||'Step-by-step solution compiled for KTU Scheme.'}</pre>
                           </div>
-                        ) : (
-                          <div className="p-8 text-center bg-white rounded-2xl border border-gray-200">
-                            <h3 className="font-bold text-gray-800">No subject selected</h3>
-                            <button
-                              onClick={() => handleNavigation('dashboard')}
-                              className="mt-3 px-4 py-2 bg-[#5f51bd] text-white rounded-xl text-xs font-bold"
-                            >
-                              Return to Dashboard
-                            </button>
-                          </div>
-                        )
-                      )}
-
-                      {currentView === 'timetable' && (
-                        <div className="bg-white rounded-3xl p-4 sm:p-6 shadow-sm border border-gray-100">
-                          <ExamTimetable
-                            data={safeData}
-                            onOpenSubject={(subId) => handleOpenSubject(subId, safeSemester)}
-                          />
-                        </div>
-                      )}
-
-                      {currentView === 'revision' && (
-                        <div className="bg-white rounded-3xl p-4 sm:p-6 shadow-sm border border-gray-100">
-                          <RevisionMode
-                            data={safeData}
-                            onMarkRevised={handleMarkTopicRevised}
-                            onOpenSubject={(subId) => handleOpenSubject(subId, safeSemester)}
-                          />
-                        </div>
-                      )}
-
-                      {currentView === 'notes' && (
-                        <div className="bg-white rounded-3xl p-4 sm:p-6 shadow-sm border border-gray-100">
-                          <NotesVault
-                            data={safeData}
-                            onOpenSubject={(subId) => handleOpenSubject(subId, safeSemester)}
-                          />
-                        </div>
-                      )}
-
-                      {currentView === 'settings' && (
-                        <div className="bg-white rounded-3xl p-4 sm:p-6 shadow-sm border border-gray-100">
-                          <Settings
-                            data={safeData}
-                            onUpdateData={setData}
-                            onResetData={handleResetData}
-                            currentTheme={currentTheme}
-                            onSelectTheme={setCurrentTheme}
-                            currentColorAccent={currentColorAccent}
-                            onSelectColorAccent={setCurrentColorAccent}
-                          />
                         </div>
                       )}
                     </div>
-                  )}
-                </div>
-
-                {/* Bottom Right "dosage" Watermark Matching Mockup */}
-                <div className="flex justify-end pt-4 pr-1 select-none pointer-events-none">
-                  <span className="font-serif text-lg sm:text-xl font-bold text-[#1b1c31]/85 tracking-normal">
-                    dosage
-                  </span>
-                </div>
-
-              </div>
-
+                  );
+                })}
+              </details>
             </div>
-
-          </div>
-        </div>
-
-        {/* Neon Green Footer */}
-        <div className="w-full mt-6 max-w-[1360px]">
-          <Footer 
-            onNavigate={handleNavigation}
-            onOpenFocusModal={() => setIsFocusModalOpen(true)}
-            currentSemester={safeSemester}
-          />
-        </div>
-
-        {/* Modals */}
-        <FocusModal
-          isOpen={isFocusModalOpen}
-          onClose={() => setIsFocusModalOpen(false)}
-          data={safeData}
-        />
-        <ThemeModal
-          isOpen={isThemeModalOpen}
-          onClose={() => setIsThemeModalOpen(false)}
-          currentTheme={currentTheme}
-          onSelectTheme={setCurrentTheme}
-          currentColorAccent={currentColorAccent}
-          onSelectColorAccent={setCurrentColorAccent}
-        />
+          );
+        })}
       </div>
-    );
-  }
-
-  // Base layout class matching clean dark theme
-  const getContainerClass = () => {
-    return 'min-h-screen bg-[#0d1117] text-[#f0f6fc] font-sans flex flex-col lg:flex-row relative selection:bg-[#1f6feb] selection:text-white';
-  };
-
-  return (
-    <div className={getContainerClass()}>
-      {/* Neon Yellow Left Border Laser */}
-      <div className="viewport-neon-left-line" aria-hidden="true" />
-      {/* Tron Model Neon Yellow Right Border Laser */}
-      <div className="viewport-neon-right-tron-line" aria-hidden="true" />
-
-      {/* Skip to Main Content Link for Keyboard Accessibility */}
-      <a 
-        href="#main-content" 
-        className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:px-3 focus:py-1.5 focus:bg-[#58a6ff] focus:text-black focus:font-bold focus:rounded-md focus:shadow-lg focus:outline-none"
-      >
-        Skip to main content
-      </a>
-
-      {/* Render Left Sidebar for all themes EXCEPT Apple Minimalist */}
-      {!isAppleTheme && (
-        <Sidebar
-          currentView={currentView}
-          currentSemester={safeSemester}
-          onSelectSemester={setCurrentSemester}
-          data={safeData}
-          activeSubjectId={activeSubjectId}
-          activeModuleId={activeModuleId}
-          onNavigate={handleNavigation}
-          onOpenSubject={handleOpenSubject}
-          onOpenFocusModal={() => setIsFocusModalOpen(true)}
-          onOpenThemeModal={() => setIsThemeModalOpen(true)}
-          isMobileOpen={isMobileSidebarOpen}
-          onCloseMobile={() => setIsMobileSidebarOpen(false)}
-          currentTheme={currentTheme}
-        />
-      )}
-
-      {/* Main Center Area */}
-      <div className={`flex-1 flex flex-col min-w-0 min-h-screen ${isAppleTheme ? 'w-full' : ''}`}>
-        {/* Top Navbar */}
-        <Navbar
-          currentView={currentView}
-          currentSemester={safeSemester}
-          onSelectSemester={setCurrentSemester}
-          onNavigate={handleNavigation}
-          onOpenFocusModal={() => setIsFocusModalOpen(true)}
-          onOpenThemeModal={() => setIsThemeModalOpen(true)}
-          onToggleMobileSidebar={!isAppleTheme ? () => setIsMobileSidebarOpen(prev => !prev) : null}
-          currentTheme={currentTheme}
-          showFullNav={isAppleTheme}
-        />
-
-        {/* Content View Container */}
-        <main 
-          id="main-content"
-          tabIndex="-1"
-          role="main"
-          className={`w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 flex-1 outline-none ${
-            isAppleTheme ? 'max-w-6xl' : isEcoursieTheme ? 'max-w-5xl' : 'max-w-7xl'
-          }`}
-        >
-          {currentView === 'dashboard' && (
-            <Dashboard
-              data={safeData}
-              currentSemester={safeSemester}
-              onSelectSemester={setCurrentSemester}
-              onOpenSubject={(subId, modId) => handleOpenSubject(subId, safeSemester, modId)}
-              onAddSubject={handleAddSubject}
-              onNavigateToTimetable={() => setCurrentView('timetable')}
-            />
-          )}
-
-          {currentView === 'subject' && (
-            activeSubject ? (
-              <SubjectView
-                subject={activeSubject}
-                semesterKey={safeSemester}
-                onBack={() => {
-                  setCurrentView('dashboard');
-                  setActiveModuleId(null);
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }}
-                onUpdateSubject={handleUpdateSubject}
-                initialModuleId={activeModuleId}
-              />
-            ) : (
-              <div className="p-12 rounded-xl text-center border border-[#30363d] bg-[#161b22] shadow-sm">
-                <h2 className="text-xl font-bold text-[#f0f6fc]">No course selected</h2>
-                <p className="mt-1 text-xs text-[#8b949e]">Select a subject from the sidebar or return to the dashboard.</p>
-                <button
-                  type="button"
-                  onClick={() => setCurrentView('dashboard')}
-                  className="mt-4 px-4 py-2 bg-[#238636] hover:bg-[#2ea043] text-white rounded-lg text-xs font-bold transition-colors"
-                >
-                  Back to Dashboard
-                </button>
-              </div>
-            )
-          )}
-
-          {currentView === 'timetable' && (
-            <ExamTimetable
-              data={safeData}
-              onOpenSubject={(subId) => handleOpenSubject(subId, safeSemester)}
-            />
-          )}
-
-          {currentView === 'revision' && (
-            <RevisionMode
-              data={safeData}
-              onMarkRevised={handleMarkTopicRevised}
-              onOpenSubject={(subId) => handleOpenSubject(subId, safeSemester)}
-            />
-          )}
-
-          {currentView === 'notes' && (
-            <NotesVault
-              data={safeData}
-              onOpenSubject={(subId) => handleOpenSubject(subId, safeSemester)}
-            />
-          )}
-
-          {currentView === 'settings' && (
-            <Settings
-              data={safeData}
-              onUpdateData={setData}
-              onResetData={handleResetData}
-              currentTheme={currentTheme}
-              onSelectTheme={setCurrentTheme}
-              currentColorAccent={currentColorAccent}
-              onSelectColorAccent={setCurrentColorAccent}
-            />
-          )}
-
-          {/* Safe fallback for unrecognized or invalid currentView values */}
-          {!['dashboard', 'subject', 'timetable', 'revision', 'notes', 'settings'].includes(currentView) && (
-            <div className="p-12 rounded-xl border border-[#30363d] bg-[#161b22] text-center my-6">
-              <h2 className="text-xl font-bold text-[#f0f6fc]">View Not Found</h2>
-              <p className="mt-2 text-sm text-[#8b949e]">The view &quot;{String(currentView)}&quot; is not recognized.</p>
-              <button
-                type="button"
-                onClick={() => setCurrentView('dashboard')}
-                className="mt-4 px-4 py-2 bg-[#238636] hover:bg-[#2ea043] text-white rounded-lg text-sm font-semibold transition-colors"
-              >
-                Return to Dashboard
-              </button>
-            </div>
-          )}
-        </main>
-
-        {/* Neon Green Footer */}
-        <Footer 
-          onNavigate={handleNavigation}
-          onOpenFocusModal={() => setIsFocusModalOpen(true)}
-          currentSemester={safeSemester}
-        />
-      </div>
-
-      {/* Right Panel for 3-Column Studio Theme (ēCoursie) */}
-      {isEcoursieTheme && (
-        <div className="hidden xl:flex shrink-0">
-          <RightPanel
-            subjects={currentSemesterSubjects}
-            onOpenFocusModal={() => setIsFocusModalOpen(true)}
-            onOpenSubject={(subId) => handleOpenSubject(subId, safeSemester)}
-          />
-        </div>
-      )}
-
-      {/* Pop-up Focus Room Modal with Ambient Lo-Fi & Custom YouTube & To-dos */}
-      <FocusModal
-        isOpen={isFocusModalOpen}
-        onClose={() => setIsFocusModalOpen(false)}
-        data={safeData}
-      />
-
-      {/* 5-Theme UI & Layout Switcher Modal */}
-      <ThemeModal
-        isOpen={isThemeModalOpen}
-        onClose={() => setIsThemeModalOpen(false)}
-        currentTheme={currentTheme}
-        onSelectTheme={setCurrentTheme}
-        currentColorAccent={currentColorAccent}
-        onSelectColorAccent={setCurrentColorAccent}
-      />
-    </div>
+    </details>
   );
+})}</>}
+{page==='Study planner'&&<><div className="toolbar"><div className="tabs">{['All subjects',...subjects.map(s=>s.short)].map(f=><button className={filter===f?'active':''} key={f} onClick={()=>setFilter(f)}>{f}</button>)}</div><button className="primary" onClick={()=>setModal('task')}><Plus size={16}/> Add task</button></div><section className="panel">{taskList(workspace.tasks.filter(t=>filter==='All subjects'||subjects.find(s=>s.id===t.subjectId)?.short===filter).sort((a,b)=>a.date.localeCompare(b.date)))}</section><div className="section-heading"><div><h2>On the horizon</h2><p>Your saved exam dates · verify with your official timetable</p></div></div><div className="exam-grid">{subjects.map(s=><button className="panel exam-card" key={s.id} onClick={()=>openSubject(s)}><CalendarDays color={s.color}/><h3>{s.short}</h3><p>{s.examDate?new Date(s.examDate).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}):'Set an exam date'}</p><span className="quiet">View syllabus <ArrowUpRight size={14}/></span></button>)}</div></>}
+{page==='Notes library'&&<><div className="toolbar"><label className="search"><Search size={16}/><input placeholder="Search your notes…" value={search} onChange={e=>setSearch(e.target.value)}/></label><button className="primary" onClick={()=>setModal('note')}><Plus size={16}/> New note</button></div><div className="notes-grid">{workspace.notes.filter(n=>(n.title+' '+n.body).toLowerCase().includes(search.toLowerCase())).map(n=><article className="panel note-card" key={n.id}><div className="panel-heading"><small>{subjects.find(s=>s.id===n.subjectId)?.short}</small><button className="icon-button" aria-label={`Delete note ${n.title}`} onClick={()=>setWorkspace(w=>({...w,notes:w.notes.filter(x=>x.id!==n.id)}))}><Trash2 size={15}/></button></div><h3>{n.title}</h3><textarea aria-label={`Edit ${n.title}`} value={n.body} onChange={e=>setWorkspace(w=>({...w,notes:w.notes.map(x=>x.id===n.id?{...x,body:e.target.value}:x)}))}/><small>Saved automatically on this device</small></article>)}</div><div className="section-heading"><div><h2>Syllabus notebook</h2><p>Your existing topic notes, all in one place.</p></div></div><div className="notes-grid">{allTopics.filter(t=>t.notes&&`${t.name} ${t.notes}`.toLowerCase().includes(search.toLowerCase())).map(t=><button className="panel note-card syllabus-note" key={t.id} onClick={()=>openSubject(t.subject)}><small style={{color:t.subject.color}}>{t.subject.short}</small><h3>{t.name}</h3><p>{t.notes}</p><span className="quiet">Open subject <ArrowUpRight size={14}/></span></button>)}</div></>}
+{page==='Revision'&&<><div className="panel revision-intro"><RotateCcw size={26}/><div><h2>Make it stick.</h2><p>Recall a studied topic before revealing your notes. Mark it revised when you’re confident.</p></div></div><div className="notes-grid">{allTopics.filter(t=>['studied','needs-revision'].includes(t.status)).map(t=><article className="panel note-card" key={t.id}><small style={{color:t.subject.color}}>{t.subject.short}</small><h3>{t.name}</h3><details><summary>Reveal study notes</summary><p>{t.notes||'Explain this concept in your own words, then review the syllabus.'}</p></details><button className="small-button" onClick={()=>{updateTopic(t.subject,t.module,t,{status:'revised',subTopics:(t.subTopics||[]).map(s=>({...s,done:true}))});notify('Topic revised. Knowledge reinforced.')}}><Check size={15}/> Mark revised</button></article>)}</div>{!allTopics.some(t=>['studied','needs-revision'].includes(t.status))&&<div className="empty"><CheckCheck/><h3>You’re all caught up.</h3><p>Mark topics studied to add them to your revision queue.</p></div>}</>}
+{page==='Insights'&&<><section className="panel"><div className="panel-heading"><h3>Focus time · Last 7 days</h3><span>{week.reduce((a,d)=>a+d.minutes,0)} minutes</span></div>{chart}</section><div className="section-heading"><h2>Subject by subject</h2></div>{subjectCards}<section className="panel session-history"><h3>Completed focus sessions</h3>{workspace.sessions.length?workspace.sessions.slice().reverse().slice(0,30).map(s=><div className="history-row" key={s.id}><CheckCheck size={17}/><span>{subjects.find(x=>x.id===s.subjectId)?.short}</span><small>{s.date}</small><strong>{s.minutes} min</strong></div>):<div className="empty"><Clock3/><p>Finish your first focus session to start your history.</p></div>}</section></>}
+{page==='Settings'&&<section className="panel settings-panel"><h2>A space that works for you.</h2><p>Your syllabus, notes, tasks and sessions are saved in this browser. Export a backup before clearing browser data or changing devices.</p><label className="field-label">Daily focus goal (minutes)<input type="number" min="15" max="720" value={workspace.goal} onChange={e=>{const v=Number(e.target.value);if(v>=15&&v<=720)setWorkspace(w=>({...w,goal:v}))}}/></label><button className="primary" onClick={exportData}><Download size={16}/> Export study backup</button><label className="field-label">Restore an Orbit backup<input type="file" accept="application/json,.json" onChange={importData}/></label><p className="muted">Your four subjects are fixed to your existing KTU syllabus. Topic notes, study status, subtasks and exam dates are editable inside each subject.</p></section>}
+<footer><span className="footer-brand">orbit<span>.</span></span><span>Made for your focus. Built for your future.</span><span><i/> Your progress stays on this device</span></footer></main></div>
+{immersive&&<div className="immersive"><button className="close-focus icon-button" aria-label="Exit focus mode" onClick={()=>setImmersive(false)}><X size={24}/></button><div className="eyebrow">THE WORLD CAN WAIT.</div><h1>Just you and {focusSubject.short.toLowerCase()}.</h1><div className="panel focus-panel">{timer}</div><p>Take a breath. You only need to do the next thing.</p></div>}
+{typeof modal==='string'&&<Dialog title={modal==='task'?'Make a little progress.':'Save a new idea.'} close={()=>setModal(null)}><form onSubmit={e=>{e.preventDefault();const f=new FormData(e.currentTarget);if(!String(f.get('title')).trim())return;const item={id:crypto.randomUUID(),title:String(f.get('title')).trim(),subjectId:f.get('subjectId')};setWorkspace(w=>modal==='task'?{...w,tasks:[...w.tasks,{...item,date:f.get('date'),minutes:Number(f.get('minutes')),done:false}]}:{...w,notes:[...w.notes,{...item,body:f.get('body')}]});setModal(null);notify(modal==='task'?'Task added to your study plan.':'Note saved to your library.')}}><label className="field-label">{modal==='task'?'What will you work on?':'Note title'}<input autoFocus name="title" required maxLength="160" placeholder={modal==='task'?'e.g. Practice matrix transformations':'e.g. Integration shortcuts'}/></label><label className="field-label">Subject<select name="subjectId">{subjects.map(s=><option key={s.id} value={s.id}>{s.short}</option>)}</select></label>{modal==='task'?<div className="form-row"><label className="field-label">Study date<input type="date" name="date" required defaultValue={today}/></label><label className="field-label">Minutes<input type="number" name="minutes" min="1" max="480" defaultValue="25" required/></label></div>:<label className="field-label">Your thoughts<textarea name="body" rows="5" placeholder="Write something worth remembering…" required/></label>}<button className="primary" type="submit"><Plus size={16}/>{modal==='task'?'Add to my plan':'Save note'}</button></form></Dialog>}
+{modal?.type==='restore'&&<Dialog title="Restore your study backup?" close={()=>setModal(null)}><p className="restore-copy">This replaces the current syllabus progress, notes, tasks and session history. Export your current work first if you want to keep it.</p><div className="restore-actions"><button className="small-button" onClick={exportData}>Export current work</button><button className="primary" onClick={()=>{setData(modal.backup.ledger);setWorkspace({...modal.backup.workspace,goal:Math.max(15,Math.min(720,Number(modal.backup.workspace.goal)||120))});resetTimer();setModal(null);notify('Backup restored successfully.')}}>Restore backup</button></div></Dialog>}
+{toast&&<div className="toast" role="status"><CheckCheck size={18}/>{toast}<button className="icon-button" aria-label="Dismiss notification" onClick={()=>setToast('')}><X size={14}/></button></div>}</div>;
 }
+function Dialog({title,close,children}){const ref=useRef();useEffect(()=>{const previous=document.activeElement;ref.current.showModal();return()=>previous?.focus()},[]);return <dialog ref={ref} className="dialog" onCancel={close} onClick={e=>{if(e.target===ref.current)close()}}><div className="panel-heading"><h2>{title}</h2><button className="icon-button" aria-label="Close dialog" onClick={close}><X size={20}/></button></div>{children}</dialog>}
