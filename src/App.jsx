@@ -5,8 +5,18 @@ import {calculateSubjectProgress,calculateTopicCompletion} from './utils/progres
 import './App.css';
 const dayKey=(d=new Date())=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 const read=(key,fallback)=>{try{return JSON.parse(localStorage.getItem(key))??fallback}catch{return fallback}};
+const STORAGE_KEY='orbit-study-ledger-v3';
+const WORKSPACE_KEY='orbit-workspace-v3';
 const initialLedger=()=>{
-  const saved=read('study-ledger',INITIAL_DATA);
+  const saved=read(STORAGE_KEY,null);
+  if(!saved){
+    try{
+      localStorage.removeItem('study-ledger');
+      localStorage.removeItem('orbit-workspace-v1');
+      localStorage.setItem(STORAGE_KEY,JSON.stringify(INITIAL_DATA));
+    }catch{}
+    return INITIAL_DATA;
+  }
   return Object.fromEntries(['S1','S2'].map(sem=>{
     const semData=INITIAL_DATA[sem];
     const savedSem=saved?.[sem];
@@ -29,15 +39,15 @@ const initialLedger=()=>{
                 if(!savedTop)return freshTop;
                 return {
                   ...freshTop,
-                  status:savedTop.status||freshTop.status,
-                  notes:savedTop.notes!==undefined?savedTop.notes:freshTop.notes,
+                  status:savedTop.status||'not-started',
+                  notes:savedTop.notes!==undefined?savedTop.notes:'',
                   subTopics:freshTop.subTopics?.map(st=>{
                     const savedSt=savedTop.subTopics?.find(x=>x.id===st.id);
-                    return savedSt?{...st,done:savedSt.done}:st;
+                    return savedSt?{...st,done:Boolean(savedSt.done)}:st;
                   })||freshTop.subTopics,
                   previousQuestions:freshTop.previousQuestions?.map(pq=>{
                     const savedPq=savedTop.previousQuestions?.find(q=>q.id===pq.id);
-                    return savedPq?{...pq,solved:savedPq.solved??pq.solved}:pq;
+                    return savedPq?{...pq,solved:Boolean(savedPq.solved)}:pq;
                   })||freshTop.previousQuestions
                 };
               })
@@ -51,7 +61,7 @@ const initialLedger=()=>{
 const meta=[{short:'Mathematics I',label:'Linear algebra & calculus',icon:Sigma,color:'#b5a0fa'},{short:'Chemistry',label:'Engineering chemistry',icon:FlaskConical,color:'#f4bd84'},{short:'Mathematics II',label:'Vector calculus & differential equations',icon:Activity,color:'#8bbdfa'},{short:'Physics',label:'Engineering physics',icon:Atom,color:'#8bd8b6'}];
 const nav=[['Overview',LayoutDashboard],['My subjects',BookOpen],['Study planner',CalendarDays],['Notes library',NotebookPen],['Revision',RotateCcw],['Insights',TrendingUp]];
 export default function App(){
-const [data,setData]=useState(initialLedger);const [workspace,setWorkspace]=useState(()=>({tasks:[],sessions:[],notes:[],goal:120,...read('orbit-workspace-v1',{})}));
+const [data,setData]=useState(initialLedger);const [workspace,setWorkspace]=useState(()=>({tasks:[],sessions:[],notes:[],goal:120,...read(WORKSPACE_KEY,{})}));
 const [page,setPage]=useState('Overview'),[subjectId,setSubjectId]=useState(null),[search,setSearch]=useState(''),[menu,setMenu]=useState(false),[modal,setModal]=useState(null),[toast,setToast]=useState(''),[filter,setFilter]=useState('All subjects'),[expandedQuestions,setExpandedQuestions]=useState({});
 const [savedTimer]=useState(()=>read('orbit-timer-v1',{}));
 const [timerSubject,setTimerSubject]=useState(savedTimer.subjectId||'sub-mat101'),[duration,setDuration]=useState(savedTimer.duration||25),[remaining,setRemaining]=useState(savedTimer.remaining??1500),[running,setRunning]=useState(!!savedTimer.running),[immersive,setImmersive]=useState(false),[timerMode,setTimerMode]=useState(savedTimer.mode||'Focus'),[today,setToday]=useState(dayKey());
@@ -62,7 +72,7 @@ const selected=subjects.find(s=>s.id===subjectId),focusSubject=subjects.find(s=>
 const allTopics=subjects.flatMap(s=>(s.modules||[]).flatMap(m=>(m.topics||[]).map(t=>({...t,subject:s,module:m}))));
 const progress=Math.round(subjects.reduce((sum,s)=>sum+calculateSubjectProgress(s),0)/4*100),todaySessions=workspace.sessions.filter(s=>s.date===today),todayMinutes=todaySessions.reduce((sum,s)=>sum+s.minutes,0),todayTasks=workspace.tasks.filter(t=>t.date===today),completed=allTopics.filter(t=>calculateTopicCompletion(t)===1).length;
 const notify=message=>setToast(message);
-useEffect(()=>{try{localStorage.setItem('study-ledger',JSON.stringify(data));localStorage.setItem('orbit-workspace-v1',JSON.stringify(workspace));}catch{setToast('Browser storage is unavailable. Export a backup to keep your work.')}},[data,workspace]);
+useEffect(()=>{try{localStorage.setItem(STORAGE_KEY,JSON.stringify(data));localStorage.setItem(WORKSPACE_KEY,JSON.stringify(workspace));}catch{setToast('Browser storage is unavailable. Export a backup to keep your work.')}},[data,workspace]);
 useEffect(()=>{if(!toast)return;const id=setTimeout(()=>setToast(''),5000);return()=>clearTimeout(id)},[toast]);
 useEffect(()=>{const id=setInterval(()=>setToday(dayKey()),30000);return()=>clearInterval(id)},[]);
 useEffect(()=>{if(!running)return;const tick=()=>{const left=Math.max(0,Math.ceil((deadline.current-Date.now())/1000));setRemaining(left);if(left===0){setRunning(false);if(timerMode==='Focus'){setWorkspace(w=>w.sessions.some(s=>s.id===sessionId.current)?w:({...w,sessions:[...w.sessions,{id:sessionId.current,date:dayKey(new Date(deadline.current)),subjectId:timerSubject,minutes:duration}]}));notify('Focus session complete. A little closer to your goals.')}else notify('Break complete. Ready for a fresh start.')}};tick();const id=setInterval(tick,250);return()=>clearInterval(id)},[running,duration,timerSubject,timerMode]);
@@ -73,6 +83,18 @@ const openSubject=s=>{setSubjectId(s.id);setPage('My subjects');setMenu(false);s
 const updateTopic=(s,m,t,patch)=>setData(d=>({...d,[s.semester]:{...d[s.semester],subjects:d[s.semester].subjects.map(sub=>sub.id!==s.id?sub:{...sub,modules:sub.modules.map(mod=>mod.id!==m.id?mod:{...mod,topics:mod.topics.map(top=>top.id!==t.id?top:{...top,...patch})})})}}));
 const toggleQuestionExpand=qId=>setExpandedQuestions(prev=>({...prev,[qId]:!prev[qId]}));
 const toggleQuestionSolved=(s,m,t,qId)=>setData(d=>({...d,[s.semester]:{...d[s.semester],subjects:d[s.semester].subjects.map(sub=>sub.id!==s.id?sub:{...sub,modules:sub.modules.map(mod=>mod.id!==m.id?mod:{...mod,topics:mod.topics.map(top=>top.id!==t.id?top:{...top,previousQuestions:(top.previousQuestions||[]).map(q=>q.id===qId?{...q,solved:!q.solved}:q)})})})}}));
+const resetProgress=()=>{
+  setData(INITIAL_DATA);
+  setWorkspace({tasks:[],sessions:[],notes:[],goal:120});
+  try{
+    localStorage.setItem(STORAGE_KEY,JSON.stringify(INITIAL_DATA));
+    localStorage.setItem(WORKSPACE_KEY,JSON.stringify({tasks:[],sessions:[],notes:[],goal:120}));
+    localStorage.removeItem('study-ledger');
+    localStorage.removeItem('orbit-workspace-v1');
+    localStorage.removeItem('orbit-timer-v1');
+  }catch{}
+  notify('All mock data and progress cleared. Clean slate ready.');
+};
 const toggleTask=id=>setWorkspace(w=>({...w,tasks:w.tasks.map(t=>t.id===id?{...t,done:!t.done}:t)}));
 const resetTimer=(minutes=duration,mode=timerMode)=>{setRunning(false);sessionId.current=crypto.randomUUID();setDuration(minutes);setRemaining(minutes*60);setTimerMode(mode)};
 const toggleTimer=()=>{if(running)setRunning(false);else{if(!remaining)sessionId.current=crypto.randomUUID();deadline.current=Date.now()+(remaining||duration*60)*1000;setRunning(true)}};
@@ -110,7 +132,7 @@ return <div className="app-shell"><aside className={'sidebar '+(menu?'open':'')}
                 <BookOpen size={17}/>
                 <strong>{t.name}</strong>
                 {totalTopPqs>0&&<span className="topic-pq-counter" title="Solved / Total Previous Year Questions">{solvedTopPqs}/{totalTopPqs} PYQs</span>}
-                <select aria-label={`Status for ${t.name}`} value={t.status||'not-started'} onChange={e=>updateTopic(selected,m,t,{status:e.target.value,subTopics:(t.subTopics||[]).map(st=>({...st,done:['studied','revised'].includes(e.target.value)}))})}>
+                <select aria-label={`Status for ${t.name}`} value={t.status||'not-started'} onChange={e=>updateTopic(selected,m,t,{status:e.target.value})}>
                   <option value="not-started">To study</option>
                   <option value="in-progress">In progress</option>
                   <option value="studied">Studied</option>
@@ -129,8 +151,10 @@ return <div className="app-shell"><aside className={'sidebar '+(menu?'open':'')}
                     <div className={'question '+(q.solved?'is-solved ':'')+(isExpanded?'is-expanded':'')} key={q.id}>
                       <div className="question-header">
                         <div className="question-badges">
+                          {q.questionNumber&&<span className="q-badge qnum">{q.questionNumber}</span>}
                           <span className="q-badge year">{q.year} · {q.exam||'KTU Final'}</span>
                           <span className={'q-badge marks '+(q.marks>=14?'marks-14':q.marks>=7?'marks-7':'marks-3')}>{q.marks} Marks</span>
+                          {q.source?.status==='verified'&&<span className="q-badge verified-tag">✓ Verified PYQ</span>}
                           {q.frequency&&<span className="q-badge freq">{q.frequency}</span>}
                         </div>
                         <button
@@ -174,7 +198,7 @@ return <div className="app-shell"><aside className={'sidebar '+(menu?'open':'')}
 {page==='Notes library'&&<><div className="toolbar"><label className="search"><Search size={16}/><input placeholder="Search your notes…" value={search} onChange={e=>setSearch(e.target.value)}/></label><button className="primary" onClick={()=>setModal('note')}><Plus size={16}/> New note</button></div><div className="notes-grid">{workspace.notes.filter(n=>(n.title+' '+n.body).toLowerCase().includes(search.toLowerCase())).map(n=><article className="panel note-card" key={n.id}><div className="panel-heading"><small>{subjects.find(s=>s.id===n.subjectId)?.short}</small><button className="icon-button" aria-label={`Delete note ${n.title}`} onClick={()=>setWorkspace(w=>({...w,notes:w.notes.filter(x=>x.id!==n.id)}))}><Trash2 size={15}/></button></div><h3>{n.title}</h3><textarea aria-label={`Edit ${n.title}`} value={n.body} onChange={e=>setWorkspace(w=>({...w,notes:w.notes.map(x=>x.id===n.id?{...x,body:e.target.value}:x)}))}/><small>Saved automatically on this device</small></article>)}</div><div className="section-heading"><div><h2>Syllabus notebook</h2><p>Your existing topic notes, all in one place.</p></div></div><div className="notes-grid">{allTopics.filter(t=>t.notes&&`${t.name} ${t.notes}`.toLowerCase().includes(search.toLowerCase())).map(t=><button className="panel note-card syllabus-note" key={t.id} onClick={()=>openSubject(t.subject)}><small style={{color:t.subject.color}}>{t.subject.short}</small><h3>{t.name}</h3><p>{t.notes}</p><span className="quiet">Open subject <ArrowUpRight size={14}/></span></button>)}</div></>}
 {page==='Revision'&&<><div className="panel revision-intro"><RotateCcw size={26}/><div><h2>Make it stick.</h2><p>Recall a studied topic before revealing your notes. Mark it revised when you’re confident.</p></div></div><div className="notes-grid">{allTopics.filter(t=>['studied','needs-revision'].includes(t.status)).map(t=><article className="panel note-card" key={t.id}><small style={{color:t.subject.color}}>{t.subject.short}</small><h3>{t.name}</h3><details><summary>Reveal study notes</summary><p>{t.notes||'Explain this concept in your own words, then review the syllabus.'}</p></details><button className="small-button" onClick={()=>{updateTopic(t.subject,t.module,t,{status:'revised',subTopics:(t.subTopics||[]).map(s=>({...s,done:true}))});notify('Topic revised. Knowledge reinforced.')}}><Check size={15}/> Mark revised</button></article>)}</div>{!allTopics.some(t=>['studied','needs-revision'].includes(t.status))&&<div className="empty"><CheckCheck/><h3>You’re all caught up.</h3><p>Mark topics studied to add them to your revision queue.</p></div>}</>}
 {page==='Insights'&&<><section className="panel"><div className="panel-heading"><h3>Focus time · Last 7 days</h3><span>{week.reduce((a,d)=>a+d.minutes,0)} minutes</span></div>{chart}</section><div className="section-heading"><h2>Subject by subject</h2></div>{subjectCards}<section className="panel session-history"><h3>Completed focus sessions</h3>{workspace.sessions.length?workspace.sessions.slice().reverse().slice(0,30).map(s=><div className="history-row" key={s.id}><CheckCheck size={17}/><span>{subjects.find(x=>x.id===s.subjectId)?.short}</span><small>{s.date}</small><strong>{s.minutes} min</strong></div>):<div className="empty"><Clock3/><p>Finish your first focus session to start your history.</p></div>}</section></>}
-{page==='Settings'&&<section className="panel settings-panel"><h2>A space that works for you.</h2><p>Your syllabus, notes, tasks and sessions are saved in this browser. Export a backup before clearing browser data or changing devices.</p><label className="field-label">Daily focus goal (minutes)<input type="number" min="15" max="720" value={workspace.goal} onChange={e=>{const v=Number(e.target.value);if(v>=15&&v<=720)setWorkspace(w=>({...w,goal:v}))}}/></label><button className="primary" onClick={exportData}><Download size={16}/> Export study backup</button><label className="field-label">Restore an Orbit backup<input type="file" accept="application/json,.json" onChange={importData}/></label><p className="muted">Your four subjects are fixed to your existing KTU syllabus. Topic notes, study status, subtasks and exam dates are editable inside each subject.</p></section>}
+{page==='Settings'&&<section className="panel settings-panel"><h2>A space that works for you.</h2><p>Your syllabus, notes, tasks and sessions are saved in this browser. Export a backup before clearing browser data or changing devices.</p><label className="field-label">Daily focus goal (minutes)<input type="number" min="15" max="720" value={workspace.goal} onChange={e=>{const v=Number(e.target.value);if(v>=15&&v<=720)setWorkspace(w=>({...w,goal:v}))}}/></label><button className="primary" onClick={exportData}><Download size={16}/> Export study backup</button><label className="field-label">Restore an Orbit backup<input type="file" accept="application/json,.json" onChange={importData}/></label><div style={{marginTop:24,paddingTop:18,borderTop:'1px solid var(--line)'}}><h3 style={{fontSize:13,color:'#e8b4b4',marginBottom:6}}>Reset Progress to 0%</h3><p className="muted">Reset all topic statuses, checklist subtopics, and solved questions to 0% to start fresh.</p><button type="button" className="small-button" style={{borderColor:'#823737',color:'#fba5a5',marginTop:10}} onClick={resetProgress}><RotateCcw size={14}/> Reset all subject progress to 0%</button></div><p className="muted" style={{marginTop:16}}>Your four subjects are fixed to your existing KTU syllabus. Topic notes, study status, subtasks and exam dates are editable inside each subject.</p></section>}
 <footer><span className="footer-brand">orbit<span>.</span></span><span>Made for your focus. Built for your future.</span><span><i/> Your progress stays on this device</span></footer></main></div>
 {immersive&&<div className="immersive"><button className="close-focus icon-button" aria-label="Exit focus mode" onClick={()=>setImmersive(false)}><X size={24}/></button><div className="eyebrow">THE WORLD CAN WAIT.</div><h1>Just you and {focusSubject.short.toLowerCase()}.</h1><div className="panel focus-panel">{timer}</div><p>Take a breath. You only need to do the next thing.</p></div>}
 {typeof modal==='string'&&<Dialog title={modal==='task'?'Make a little progress.':'Save a new idea.'} close={()=>setModal(null)}><form onSubmit={e=>{e.preventDefault();const f=new FormData(e.currentTarget);if(!String(f.get('title')).trim())return;const item={id:crypto.randomUUID(),title:String(f.get('title')).trim(),subjectId:f.get('subjectId')};setWorkspace(w=>modal==='task'?{...w,tasks:[...w.tasks,{...item,date:f.get('date'),minutes:Number(f.get('minutes')),done:false}]}:{...w,notes:[...w.notes,{...item,body:f.get('body')}]});setModal(null);notify(modal==='task'?'Task added to your study plan.':'Note saved to your library.')}}><label className="field-label">{modal==='task'?'What will you work on?':'Note title'}<input autoFocus name="title" required maxLength="160" placeholder={modal==='task'?'e.g. Practice matrix transformations':'e.g. Integration shortcuts'}/></label><label className="field-label">Subject<select name="subjectId">{subjects.map(s=><option key={s.id} value={s.id}>{s.short}</option>)}</select></label>{modal==='task'?<div className="form-row"><label className="field-label">Study date<input type="date" name="date" required defaultValue={today}/></label><label className="field-label">Minutes<input type="number" name="minutes" min="1" max="480" defaultValue="25" required/></label></div>:<label className="field-label">Your thoughts<textarea name="body" rows="5" placeholder="Write something worth remembering…" required/></label>}<button className="primary" type="submit"><Plus size={16}/>{modal==='task'?'Add to my plan':'Save note'}</button></form></Dialog>}

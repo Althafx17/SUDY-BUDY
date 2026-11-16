@@ -218,14 +218,14 @@ import { KTU_PHYSICS_S2 } from './ktuPhysicsS2';
 
 export const INITIAL_DATA = {
   S1: {
-    examWindowDate: '2026-12-10',
+    examWindowDate: '',
     subjects: [
       KTU_MATHS_S1,
       KTU_CHEMISTRY_S1
     ]
   },
   S2: {
-    examWindowDate: '2027-04-10',
+    examWindowDate: '',
     subjects: [
       KTU_MATHS_S2,
       KTU_PHYSICS_S2

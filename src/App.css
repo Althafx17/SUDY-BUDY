@@ -88,6 +88,20 @@
   border: 1px solid #2c4234;
   color: #b7cbbf;
 }
+.q-badge.qnum {
+  background: #172430;
+  border: 1px solid #28445e;
+  color: #7bc3fa;
+  font-weight: 700;
+  font-family: ui-monospace, monospace;
+}
+.q-badge.verified-tag {
+  background: #102619;
+  border: 1px solid #204b2f;
+  color: #8be0a5;
+  font-size: 8px;
+  font-weight: 600;
+}
 .q-badge.marks {
   background: #232230;
   border: 1px solid #3c3a58;
