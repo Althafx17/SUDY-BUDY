@@ -267,6 +267,16 @@
 }
 
 /* ─── Gemini AI Tutor & Question Solving Integration ─── */
+.free-badge {
+  background: #143522;
+  border: 1px solid #2d6b44;
+  color: #7ef5ab;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  padding: 1.5px 6px;
+  border-radius: 4px;
+}
 .gemini-topbar-btn {
   display: inline-flex;
   align-items: center;
