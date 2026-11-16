@@ -3,6 +3,7 @@ import {Activity,ArrowRight,ArrowUpRight,Atom,BookOpen,CalendarDays,Check,CheckC
 import {INITIAL_DATA} from './constants/initialData';
 import {calculateSubjectProgress,calculateTopicCompletion} from './utils/progress';
 import {getGeminiApiKey,saveGeminiApiKey,askGemini} from './services/gemini';
+import FormattedSolution from './components/FormattedSolution';
 import './App.css';
 const dayKey=(d=new Date())=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 const read=(key,fallback)=>{try{return JSON.parse(localStorage.getItem(key))??fallback}catch{return fallback}};
@@ -382,7 +383,7 @@ return <div className="app-shell"><aside className={'sidebar '+(menu?'open':'')}
                                 <span>{q.answer?'Re-solve with Free AI':'Solve with Free AI'}</span>
                               </button>
                             </div>
-                            <pre className="q-answer-pre">{q.answer||q.hint||'Step-by-step solution compiled for KTU Scheme.'}</pre>
+                            <FormattedSolution text={q.answer||q.hint||'Step-by-step solution compiled for KTU Scheme.'}/>
                           </div>
                         </div>
                       )}
@@ -469,7 +470,11 @@ return <div className="app-shell"><aside className={'sidebar '+(menu?'open':'')}
           )}
         </div>
         <div className="gemini-msg-body">
-          <pre className="gemini-text-pre">{msg.text}</pre>
+          {msg.sender==='gemini'?(
+            <FormattedSolution text={msg.text} isCompact={true}/>
+          ):(
+            <p className="gemini-user-text">{msg.text}</p>
+          )}
         </div>
         {msg.sender==='gemini'&&!msg.error&&(
           <div className="gemini-msg-actions">

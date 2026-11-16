@@ -266,6 +266,217 @@
   margin: 0;
 }
 
+/* ─── Human-Readable Formatted Solution Styling ─── */
+.formatted-solution {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 6px;
+  font-size: 11px;
+  line-height: 1.7;
+  color: #cfded5;
+}
+.formatted-solution.is-compact {
+  font-size: 10.5px;
+  gap: 9px;
+}
+
+.solution-hero-banner {
+  background: linear-gradient(135deg, #13241b, #0f1c24);
+  border: 1px solid #284735;
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin-bottom: 4px;
+}
+.solution-hero-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  color: #8be0a6;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.solution-hero-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #e5f6ed;
+  margin: 0 0 6px;
+}
+.solution-hero-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 9.5px;
+  color: #8fa899;
+}
+.solution-meta-item {
+  display: inline-flex;
+  align-items: center;
+}
+
+.solution-card {
+  background: #0d1511;
+  border: 1px solid #1f3527;
+  border-radius: 8px;
+  padding: 13px 15px;
+  transition: border-color 0.15s ease;
+}
+.solution-card:hover {
+  border-color: #2e4d39;
+}
+.formatted-solution.is-compact .solution-card {
+  padding: 10px 12px;
+}
+
+.solution-section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 9px;
+  padding-bottom: 7px;
+  border-bottom: 1px solid #1a2c20;
+}
+.solution-section-title h4 {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  margin: 0;
+  color: #a4e5bb;
+}
+
+.sec-icon {
+  flex-shrink: 0;
+}
+.sec-icon.given-icon { color: #8bc3fa; }
+.sec-icon.formula-icon { color: #f4c284; }
+.sec-icon.step-icon { color: #bca0fa; }
+.sec-icon.answer-icon { color: #6ee79f; }
+.sec-icon.tips-icon { color: #f6a5b8; }
+.sec-icon.header-icon { color: #7de8a9; }
+
+.solution-paragraph {
+  margin: 0 0 7px;
+  color: #c9ded2;
+}
+.solution-paragraph:last-child {
+  margin-bottom: 0;
+}
+
+.solution-bullet-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  margin: 5px 0;
+  color: #cfded5;
+}
+.solution-bullet-item .bullet-dot {
+  width: 4.5px;
+  height: 4.5px;
+  border-radius: 50%;
+  background: #4ecb7b;
+  margin-top: 7px;
+  flex-shrink: 0;
+}
+.bullet-content {
+  flex: 1;
+}
+
+.solution-step-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 10px 0;
+  background: #090f0c;
+  border: 1px solid #1a2b20;
+  border-radius: 7px;
+  padding: 10px 12px;
+}
+.step-pill {
+  display: inline-block;
+  align-self: flex-start;
+  background: #173523;
+  border: 1px solid #2b5d3c;
+  color: #8ee9ad;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  padding: 2.5px 8px;
+  border-radius: 5px;
+  text-transform: uppercase;
+}
+.step-text {
+  color: #d3e7dc;
+  line-height: 1.65;
+}
+
+.solution-matrix-row {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 11px;
+  font-weight: 600;
+  color: #8de3af;
+  background: #060b08;
+  padding: 5px 12px;
+  border-radius: 5px;
+  border-left: 3px solid #37754f;
+  margin: 5px 0;
+  width: fit-content;
+  letter-spacing: 1px;
+}
+
+.final-answer-card {
+  background: linear-gradient(135deg, #11281b, #0e1e16);
+  border: 1.5px solid #32754d;
+  box-shadow: 0 4px 20px rgba(46, 203, 113, 0.12);
+  padding: 14px 16px;
+}
+.final-answer-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #6fe7a0;
+  font-size: 11.5px;
+  font-weight: 750;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.final-answer-body {
+  background: #08110b;
+  border: 1px solid #20452d;
+  border-radius: 6px;
+  padding: 10px 13px;
+}
+.final-answer-text {
+  font-size: 12px;
+  font-weight: 600;
+  color: #ebfaf1;
+  margin: 0;
+  line-height: 1.6;
+}
+
+.solution-bold {
+  color: #f0fbf4;
+  font-weight: 650;
+}
+.solution-inline-code {
+  background: #142219;
+  border: 1px solid #24412e;
+  color: #9fe6c1;
+  font-family: ui-monospace, monospace;
+  font-size: 10px;
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+.gemini-user-text {
+  margin: 0;
+  line-height: 1.65;
+  color: #e5f5ec;
+}
+
 /* ─── Gemini AI Tutor & Question Solving Integration ─── */
 .free-badge {
   background: #143522;
