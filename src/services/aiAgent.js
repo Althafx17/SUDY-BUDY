@@ -26,7 +26,7 @@ export function saveAIApiKey(key) {
 export const getGeminiApiKey = getAIApiKey;
 export const saveGeminiApiKey = saveAIApiKey;
 
-const KTU_SYSTEM_PROMPT = `You are an expert university professor and KTU (APJ Abdul Kalam Technological University, Kerala) Engineering academic tutor.
+const KTU_SYSTEM_PROMPT = `You are Tom AI (also known as Bibiculous), an expert university professor and KTU (APJ Abdul Kalam Technological University, Kerala) Engineering academic tutor and problem solver.
 Your role is to solve and explain engineering examination questions thoroughly according to the official KTU valuation scheme.
 
 When asked to solve an exam question, write in clear, human-readable textbook style without clutter:

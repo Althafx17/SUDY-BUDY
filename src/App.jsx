@@ -5,6 +5,7 @@ import {calculateSubjectProgress,calculateTopicCompletion} from './utils/progres
 import {getGeminiApiKey,saveGeminiApiKey,askGemini} from './services/gemini';
 import {DEVELOPER_INFO} from './constants/developer';
 import FormattedSolution from './components/FormattedSolution';
+import TomWritingSolution from './components/TomWritingSolution';
 import './App.css';
 const dayKey=(d=new Date())=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 const read=(key,fallback)=>{try{return JSON.parse(localStorage.getItem(key))??fallback}catch{return fallback}};
@@ -281,8 +282,9 @@ const [geminiMessages,setGeminiMessages]=useState([
   {
     id:'welcome-msg',
     sender:'gemini',
-    text:"👋 Hello Althaf! I'm your Free KTU Engineering AI Study Agent.\n\n• 100% Free · No paid API key required.\n• Click \"Solve with AI\" on any Previous Year Question to solve it step-by-step and auto-fill the answer right under the question card.\n• Ask any engineering doubt, formula derivation, or matrix calculation directly in this chat!",
-    timestamp:'Ready'
+    text:"🐾 Meow! Hey there! I'm Tom AI, your KTU Engineering Problem Solver & Study Companion.\n\n• 100% Free · Step-by-step KTU model solutions without requiring any paid key.\n• Click \"Solve with Tom AI\" on any Previous Year Question to watch me write out the full step-by-step solution.\n• Ask me any engineering problem, matrix step, or exam concept in this chat!",
+    timestamp:'Ready',
+    animate:false
   }
 ]);
 const [geminiTarget,setGeminiTarget]=useState(null);
@@ -487,6 +489,7 @@ Structure requirements:
       targetQuestionId:question.id,
       targetQuestionText:question.text,
       applied:true,
+      animate:true,
       timestamp:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})
     };
     setGeminiMessages(prev=>[...prev,geminiMsg]);
@@ -498,9 +501,9 @@ Structure requirements:
     });
 
     setExpandedQuestions(prev=>({...prev,[question.id]:true}));
-    notify('Free AI Agent solved & auto-filled answer under the question!');
+    notify('Tom AI solved & auto-filled answer under the question!');
   }catch(err){
-    notify(`AI Agent error: ${err.message}`);
+    notify(`Tom AI error: ${err.message}`);
     setGeminiMessages(prev=>[
       ...prev,
       {
@@ -508,6 +511,7 @@ Structure requirements:
         sender:'gemini',
         text:`⚠️ Error generating answer: ${err.message}\n\nPlease try again or use another prompt.`,
         error:true,
+        animate:false,
         timestamp:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})
       }
     ]);
@@ -550,6 +554,7 @@ const handleSendGeminiChat=async (e,customPrompt)=>{
       targetQuestionId:geminiTarget?.question?.id,
       targetQuestionText:geminiTarget?.question?.text,
       applied:Boolean(geminiTarget),
+      animate:true,
       timestamp:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})
     };
     setGeminiMessages(prev=>[...prev,geminiMsg]);
@@ -565,14 +570,15 @@ const handleSendGeminiChat=async (e,customPrompt)=>{
       notify('Answer filled under the question card!');
     }
   }catch(err){
-    notify(`AI Agent error: ${err.message}`);
+    notify(`Tom AI error: ${err.message}`);
     setGeminiMessages(prev=>[
       ...prev,
       {
         id:crypto.randomUUID(),
         sender:'gemini',
-        text:`⚠️ AI error: ${err.message}`,
+        text:`⚠️ Tom AI error: ${err.message}`,
         error:true,
+        animate:false,
         timestamp:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})
       }
     ]);
@@ -605,7 +611,7 @@ const timer=<><div className="panel-heading"><h3><Focus size={17}/> Focus room</
 const taskList=tasks=>tasks.length?<div className="task-list">{tasks.map(t=>{const s=subjects.find(s=>s.id===t.subjectId);return <div className={'task-row '+(t.done?'done':'')} key={t.id}><button className="checkbox" aria-label={`${t.done?'Reopen':'Complete'} ${t.title}`} aria-pressed={t.done} onClick={()=>toggleTask(t.id)}>{t.done&&<Check size={13}/>}</button><div><strong>{t.title}</strong><small><i style={{background:s?.color}}/>{s?.short} <span>· {t.minutes} min · {t.date===today?'Today':t.date}</span></small></div><button className="icon-button delete-task" aria-label={`Delete ${t.title}`} onClick={()=>setWorkspace(w=>({...w,tasks:w.tasks.filter(x=>x.id!==t.id)}))}><Trash2 size={14}/></button></div>})}</div>:<div className="empty"><CheckCheck size={25}/><strong>A clear day. A fresh start.</strong><p>Add a small, achievable task for one of your subjects.</p><button className="quiet mint" onClick={()=>setModal('task')}>Create your first task <Plus size={14}/></button></div>;
 const subjectCards=<div className="subject-grid">{subjects.filter(s=>`${s.name} ${s.short} ${s.code}`.toLowerCase().includes(search.toLowerCase())&&(filter==='All subjects'||s.semester===filter)).map((s,i)=>{const Icon=s.icon,pct=Math.round(calculateSubjectProgress(s)*100);return <button key={s.id} className="subject-card reveal" style={{'--accent':s.color,transitionDelay:`${i*55}ms`}} onClick={()=>openSubject(s)}><div className="subject-top"><span className="subject-icon"><Icon size={24}/></span><span className="code">{s.code} <ArrowUpRight size={14}/></span></div><h3>{s.short}</h3><p>{s.label}</p><div className="subject-info"><span>{s.modules.length} modules</span><span>{s.semester} · KTU</span></div><div className="progress"><i style={{width:`${pct}%`}}/></div><div className="subject-bottom"><span>Course progress</span><strong>{pct}%</strong></div></button>})}</div>;
 return <div className="app-shell" style={shellStyle}><aside className={'sidebar '+(menu?'open':'')}><a className="brand" href="#" onClick={e=>{e.preventDefault();navigate('Overview')}}><span className="brand-symbol"><img src="/logo.png" alt="Bibiculous Logo" className="brand-logo-img"/></span>orbit<span className="brand-period">.</span></a><div className="workspace-label"><span className="workspace-icon"><GraduationCap size={18}/></span><div>My study space<small>Personal workspace</small></div><ChevronDown size={13}/></div><p className="nav-label">WORKSPACE</p><nav>{nav.map(([name,Icon])=><button key={name} className={page===name?'active':''} onClick={()=>navigate(name)}><Icon size={18}/>{name}{name==='My subjects'&&<span className="nav-count">04</span>}{name==='Revision'&&<span className="tiny-dot"/>}</button>)}</nav><p className="nav-label subjects-label">YOUR SUBJECTS <span>4</span></p><div className="subject-nav">{subjects.map(s=><button key={s.id} onClick={()=>openSubject(s)}><i style={{background:s.color}}/>{s.short}<span>{s.semester}</span></button>)}</div><div className="sidebar-bottom"><div className="sidebar-tip"><Sparkles size={19}/><strong>Small steps. Big futures.</strong><p>Your only competition is<br/>who you were yesterday.</p><span>LET’S MAKE TODAY COUNT <ArrowUpRight size={13}/></span></div><button className="settings-link" onClick={()=>navigate('Settings')}><Settings2 size={18}/> Settings & backup</button><button type="button" className="dev-credit-link" onClick={()=>setDevModal(true)} title="About Developer: Althaf (HalalDev)"><Code2 size={17}/><span>About Developer</span><span className="dev-tag-mini">Althaf</span></button><button type="button" className="profile" onClick={()=>{setUserModal(true);setIsEditingProfile(false);}} title={`Student Profile: ${userProfile.name}`}><span className="avatar-letter">{userProfile.avatar?<img src={userProfile.avatar} alt={userProfile.name} className="profile-avatar-img"/>:<span className="avatar-letter-text">{userProfile.name.charAt(0).toUpperCase()}</span>}</span><div className="profile-user-info"><strong className="profile-name-text">{userProfile.name}</strong><small className="profile-sub-text">{userProfile.program?userProfile.program.replace(/in\s+/i,'').slice(0,19):'KTU Student'}</small></div><span className="online" title="Profile Active"/></button></div></aside>{menu&&<div className="sidebar-scrim" onClick={()=>setMenu(false)}/>}
-<div className="main-shell"><header className="topbar"><div className="breadcrumb"><button className="icon-button mobile-menu" aria-label="Open navigation" onClick={()=>setMenu(true)}><Menu size={20}/></button><span>Workspace</span><span>/</span><strong>{selected?selected.short:page}</strong></div><div className="topbar-right"><div className="timetable-dropdown-anchor" ref={timetableDropdownRef}><button type="button" className={`timetable-topbar-btn ${timetableOpen?'active':''}`} onClick={()=>setTimetableOpen(!timetableOpen)} title="Toggle Revised Exam Timetable & Module Progress" aria-expanded={timetableOpen}><Table size={14}/><span className="timetable-btn-label">Timetable</span><span className="timetable-header-badge">{totalCompletedModules}/20</span><ChevronDown size={12} className={`timetable-chevron ${timetableOpen?'open':''}`}/></button>{timetableOpen&&(<div className="timetable-dropdown-popover"><div className="timetable-popover-header"><div><div className="popover-eyebrow">KTU DEC 2026 · 2019 SCHEME</div><h4>REVISED B.TECH S1,S2 TIME TABLE</h4></div><button type="button" className="icon-button popover-close-btn" onClick={()=>setTimetableOpen(false)} aria-label="Close timetable"><X size={15}/></button></div><div className="popover-subbar"><span className="popover-session-tag">FORENOON (09:30 AM)</span><span className="popover-hour-badge">DAILY 1-3 HOUR</span></div><div className="popover-table-wrapper">{renderTimetableTable(true)}</div><div className="popover-footer"><span className="popover-progress-status"><strong>{totalCompletedModules} of 20</strong> Modules studied ({Math.round(totalCompletedModules/20*100)}%)</span><button type="button" className="popover-overview-jump" onClick={()=>{setTimetableOpen(false);if(page!=='Overview')navigate('Overview');setTimeout(()=>{const el=document.querySelector('.exam-timetable-board-section');el?.scrollIntoView({behavior:'smooth'});},120);}}>View Full Board <ArrowUpRight size={13}/></button></div></div>)}</div><button type="button" className={'gemini-topbar-btn '+(geminiOpen?'active ':'')+(geminiLoading?'loading':'')} onClick={()=>setGeminiOpen(!geminiOpen)} title="Open Free KTU AI Study Agent"><Sparkles size={14}/><span>Free AI Tutor</span><span className="free-badge">FREE</span>{geminiLoading&&<span className="gemini-pulse-dot"/>}</button><span className="local-status"><i/> Local workspace</span><button type="button" className="avatar user-avatar-btn" aria-label="Open Student Profile" onClick={()=>{setUserModal(true);setIsEditingProfile(false);}} title={`Student Profile: ${userProfile.name}`}>{userProfile.avatar?<img src={userProfile.avatar} alt={userProfile.name} className="topbar-avatar-img"/>:<span className="avatar-letter-text">{userProfile.name.charAt(0).toUpperCase()}</span>}</button></div></header><main><div className="page-heading"><div><div className="eyebrow">YOUR PERSONAL LEARNING OS <span>✦</span></div><h1>{selected?selected.short:page==='Overview'?'A little focus. A lot of possibility.':page}</h1><p>{selected?selected.description:page==='Overview'?`Welcome back, ${userProfile.name}. Let’s turn today’s effort into tomorrow’s progress.`:'Four subjects. One clear direction. Keep moving forward.'}</p></div><span className="date-pill"><CalendarDays size={15}/>{new Date(today+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}</span></div>
+<div className="main-shell"><header className="topbar"><div className="breadcrumb"><button className="icon-button mobile-menu" aria-label="Open navigation" onClick={()=>setMenu(true)}><Menu size={20}/></button><span>Workspace</span><span>/</span><strong>{selected?selected.short:page}</strong></div><div className="topbar-right"><div className="timetable-dropdown-anchor" ref={timetableDropdownRef}><button type="button" className={`timetable-topbar-btn ${timetableOpen?'active':''}`} onClick={()=>setTimetableOpen(!timetableOpen)} title="Toggle Revised Exam Timetable & Module Progress" aria-expanded={timetableOpen}><Table size={14}/><span className="timetable-btn-label">Timetable</span><span className="timetable-header-badge">{totalCompletedModules}/20</span><ChevronDown size={12} className={`timetable-chevron ${timetableOpen?'open':''}`}/></button>{timetableOpen&&(<div className="timetable-dropdown-popover"><div className="timetable-popover-header"><div><div className="popover-eyebrow">KTU DEC 2026 · 2019 SCHEME</div><h4>REVISED B.TECH S1,S2 TIME TABLE</h4></div><button type="button" className="icon-button popover-close-btn" onClick={()=>setTimetableOpen(false)} aria-label="Close timetable"><X size={15}/></button></div><div className="popover-subbar"><span className="popover-session-tag">FORENOON (09:30 AM)</span><span className="popover-hour-badge">DAILY 1-3 HOUR</span></div><div className="popover-table-wrapper">{renderTimetableTable(true)}</div><div className="popover-footer"><span className="popover-progress-status"><strong>{totalCompletedModules} of 20</strong> Modules studied ({Math.round(totalCompletedModules/20*100)}%)</span><button type="button" className="popover-overview-jump" onClick={()=>{setTimetableOpen(false);if(page!=='Overview')navigate('Overview');setTimeout(()=>{const el=document.querySelector('.exam-timetable-board-section');el?.scrollIntoView({behavior:'smooth'});},120);}}>View Full Board <ArrowUpRight size={13}/></button></div></div>)}</div><button type="button" className={'gemini-topbar-btn '+(geminiOpen?'active ':'')+(geminiLoading?'loading':'')} onClick={()=>setGeminiOpen(!geminiOpen)} title="Open Tom AI - Free KTU Problem Solver"><img src="/logo.png" alt="Tom AI" className="tom-topbar-avatar"/><span>Tom AI</span><span className="free-badge">FREE</span>{geminiLoading&&<span className="gemini-pulse-dot"/>}</button><span className="local-status"><i/> Local workspace</span><button type="button" className="avatar user-avatar-btn" aria-label="Open Student Profile" onClick={()=>{setUserModal(true);setIsEditingProfile(false);}} title={`Student Profile: ${userProfile.name}`}>{userProfile.avatar?<img src={userProfile.avatar} alt={userProfile.name} className="topbar-avatar-img"/>:<span className="avatar-letter-text">{userProfile.name.charAt(0).toUpperCase()}</span>}</button></div></header><main><div className="page-heading"><div><div className="eyebrow">YOUR PERSONAL LEARNING OS <span>✦</span></div><h1>{selected?selected.short:page==='Overview'?'A little focus. A lot of possibility.':page}</h1><p>{selected?selected.description:page==='Overview'?`Welcome back, ${userProfile.name}. Let’s turn today’s effort into tomorrow’s progress.`:'Four subjects. One clear direction. Keep moving forward.'}</p></div><span className="date-pill"><CalendarDays size={15}/>{new Date(today+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}</span></div>
 {page==='Overview'&&<><section className="exam-timers-section reveal">
   <div className="exam-timers-header">
     <div className="exam-timers-title">
@@ -760,11 +766,11 @@ return <div className="app-shell" style={shellStyle}><aside className={'sidebar 
                           <button
                             type="button"
                             className="q-ask-gemini"
-                            title="Solve with Free AI & auto-fill answer below"
+                            title="Solve with Tom AI & auto-fill answer below"
                             onClick={e=>{e.stopPropagation();handleAskGeminiForQuestion(selected,m,t,q)}}
                           >
-                            <Sparkles size={12}/>
-                            <span>Solve with AI</span>
+                            <NotebookPen size={12}/>
+                            <span>Solve with Tom AI</span>
                           </button>
                           <button
                             type="button"
@@ -795,10 +801,10 @@ return <div className="app-shell" style={shellStyle}><aside className={'sidebar 
                                 type="button"
                                 className="q-reask-gemini"
                                 onClick={()=>handleAskGeminiForQuestion(selected,m,t,q)}
-                                title="Re-solve or enhance with Free AI"
+                                title="Re-solve or enhance with Tom AI"
                               >
-                                <Sparkles size={11}/>
-                                <span>{q.answer?'Re-solve with Free AI':'Solve with Free AI'}</span>
+                                <NotebookPen size={11}/>
+                                <span>{q.answer?'Re-solve with Tom AI':'Solve with Tom AI'}</span>
                               </button>
                             </div>
                             <FormattedSolution text={q.answer||q.hint||'Step-by-step solution compiled for KTU Scheme.'}/>
@@ -921,19 +927,20 @@ return <div className="app-shell" style={shellStyle}><aside className={'sidebar 
   <span><i/> Your progress stays on this device</span>
 </footer>
 </main></div>
-{/* Gemini Sidepanel */}
-<aside className={'gemini-sidepanel '+(geminiOpen?'open':'')} aria-label="Gemini AI Tutor">
+{/* Tom AI Sidepanel */}
+<aside className={'gemini-sidepanel '+(geminiOpen?'open':'')} aria-label="Tom AI Study Companion">
   <div className="gemini-header">
     <div className="gemini-header-title">
-      <div className="gemini-logo-icon">
-        <Sparkles size={16}/>
+      <div className="tom-header-avatar-wrap">
+        <img src="/logo.png" alt="Tom AI" className="tom-header-avatar"/>
+        <span className="tom-status-dot" title="Tom AI Online"/>
       </div>
       <div>
         <div style={{display:'flex',alignItems:'center',gap:6}}>
-          <h3>KTU AI Study Agent</h3>
+          <h3>Tom AI</h3>
           <span className="free-badge">100% FREE</span>
         </div>
-        <small>Step-by-Step KTU Exam Solver · No Paid Key</small>
+        <small>🐾 KTU Engineering Companion · Step-by-Step Solver</small>
       </div>
     </div>
     <div className="gemini-header-actions">
@@ -948,7 +955,7 @@ return <div className="app-shell" style={shellStyle}><aside className={'sidebar 
       <button
         type="button"
         className="icon-button"
-        title="Close AI Panel"
+        title="Close Tom AI Panel"
         onClick={()=>setGeminiOpen(false)}
       >
         <X size={18}/>
@@ -978,7 +985,14 @@ return <div className="app-shell" style={shellStyle}><aside className={'sidebar 
     {geminiMessages.map(msg=>(
       <div key={msg.id} className={'gemini-msg '+msg.sender+(msg.error?' is-error':'')}>
         <div className="gemini-msg-meta">
-          <span className="gemini-sender-label">{msg.sender==='user'?'You':'Gemini Tutor'}</span>
+          {msg.sender==='user'?(
+            <span className="gemini-sender-label">You</span>
+          ):(
+            <div className="tom-msg-author">
+              <img src="/logo.png" alt="Tom AI" className="tom-msg-avatar" />
+              <span className="gemini-sender-label">Tom AI</span>
+            </div>
+          )}
           <span className="gemini-msg-time">{msg.timestamp}</span>
           {msg.applied&&(
             <span className="gemini-applied-tag" title="Answer is filled under the question card">
@@ -988,7 +1002,12 @@ return <div className="app-shell" style={shellStyle}><aside className={'sidebar 
         </div>
         <div className="gemini-msg-body">
           {msg.sender==='gemini'?(
-            <FormattedSolution text={msg.text} isCompact={true}/>
+            <TomWritingSolution
+              text={msg.text}
+              animate={msg.animate ?? false}
+              isCompact={true}
+              onComplete={()=>chatEndRef.current?.scrollIntoView({behavior:'smooth'})}
+            />
           ):(
             <p className="gemini-user-text">{msg.text}</p>
           )}
@@ -1021,12 +1040,29 @@ return <div className="app-shell" style={shellStyle}><aside className={'sidebar 
     {geminiLoading&&(
       <div className="gemini-msg gemini is-loading">
         <div className="gemini-msg-meta">
-          <span className="gemini-sender-label">Gemini Tutor</span>
-          <span className="gemini-pulse-text">Solving step-by-step...</span>
+          <div className="tom-msg-author">
+            <img src="/logo.png" alt="Tom AI" className="tom-msg-avatar" />
+            <span className="gemini-sender-label">Tom AI</span>
+          </div>
+          <span className="gemini-pulse-text">Writing answer...</span>
         </div>
-        <div className="gemini-loading-indicator">
-          <Sparkles size={16} className="gemini-spin-icon"/>
-          <span>Generating mathematically rigorous KTU solution...</span>
+        <div className="tom-loading-card">
+          <div className="tom-writing-avatar-pulse">
+            <img src="/logo.png" alt="Tom AI" className="tom-loading-avatar" />
+            <span className="pencil-wiggle">✍️</span>
+          </div>
+          <div className="tom-loading-content">
+            <div className="tom-loading-title-row">
+              <strong>Tom is formulating your KTU answer...</strong>
+              <span className="tom-pulse-dot" />
+            </div>
+            <small>Deriving steps, computing values, and structuring marking points</small>
+            <div className="tom-loading-lines">
+              <span className="loading-line l-1" />
+              <span className="loading-line l-2" />
+              <span className="loading-line l-3" />
+            </div>
+          </div>
         </div>
       </div>
     )}
@@ -1067,14 +1103,14 @@ return <div className="app-shell" style={shellStyle}><aside className={'sidebar 
           handleSendGeminiChat(e);
         }
       }}
-      placeholder={geminiTarget?"Ask follow-up or instructions for this question... (Ctrl+Enter)":"Ask any KTU engineering question or doubt... (Ctrl+Enter)"}
+      placeholder={geminiTarget?"Ask Tom follow-up or instructions for this question... (Ctrl+Enter)":"Ask Tom AI any KTU engineering question or doubt... (Ctrl+Enter)"}
       rows={2}
     />
     <button
       type="submit"
       className="gemini-send-btn primary"
       disabled={geminiLoading||!geminiInput.trim()}
-      title="Send prompt to Gemini"
+      title="Send prompt to Tom AI"
     >
       <Send size={15}/>
     </button>
@@ -1082,14 +1118,14 @@ return <div className="app-shell" style={shellStyle}><aside className={'sidebar 
 </aside>
 {geminiOpen&&<div className="gemini-scrim" onClick={()=>setGeminiOpen(false)}/>}
 {apiKeyModal&&(
-  <Dialog title="AI Study Agent Settings" close={()=>setApiKeyModal(false)}>
+  <Dialog title="Tom AI Settings" close={()=>setApiKeyModal(false)}>
     <div className="gemini-modal-content">
       <div style={{background:'#16281d',border:'1px solid #2f5a3e',borderRadius:8,padding:'12px 14px',marginBottom:14}}>
         <strong style={{color:'#88eeb0',fontSize:12,display:'flex',alignItems:'center',gap:6}}>
-          <Sparkles size={14}/> 100% Free AI Agent Active
+          <img src="/logo.png" alt="Tom AI" style={{width:16,height:16,borderRadius:'50%'}} /> 100% Free Tom AI Active
         </strong>
         <p style={{fontSize:10.5,color:'#bfe3ce',marginTop:4,lineHeight:1.6}}>
-          You do not need a paid API key or subscription. The Built-in KTU Academic AI Agent generates step-by-step model answers and fills question cards completely free!
+          You do not need a paid API key or subscription. Tom AI generates step-by-step model answers and fills question cards completely free!
         </p>
       </div>
       <p style={{fontSize:11,color:'#9bb3a4',lineHeight:1.7,marginBottom:10}}>
