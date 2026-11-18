@@ -1,5 +1,5 @@
 import React,{useEffect,useRef,useState} from 'react';
-import {Activity,ArrowRight,ArrowUpRight,Atom,BookOpen,CalendarDays,Check,CheckCheck,ChevronDown,Clock3,Download,FlaskConical,Focus,GraduationCap,LayoutDashboard,Menu,Pause,Play,Plus,RotateCcw,Search,Settings2,Sparkles,Target,Trash2,TrendingUp,X,Zap,Sigma,NotebookPen,Key,Send,MessageSquare,Palette,Code2,FolderGit2,ExternalLink,User,Terminal} from 'lucide-react';
+import {Activity,ArrowRight,ArrowUpRight,Atom,BookOpen,CalendarDays,Check,CheckCheck,ChevronDown,Clock3,Download,FlaskConical,Focus,GraduationCap,LayoutDashboard,Menu,Pause,Play,Plus,RotateCcw,Search,Settings2,Sparkles,Target,Trash2,TrendingUp,X,Zap,Sigma,NotebookPen,Key,Send,MessageSquare,Palette,Code2,FolderGit2,ExternalLink,User,Terminal,Table} from 'lucide-react';
 import {INITIAL_DATA} from './constants/initialData';
 import {calculateSubjectProgress,calculateTopicCompletion} from './utils/progress';
 import {getGeminiApiKey,saveGeminiApiKey,askGemini} from './services/gemini';
@@ -11,11 +11,21 @@ const read=(key,fallback)=>{try{return JSON.parse(localStorage.getItem(key))??fa
 const STORAGE_KEY='orbit-study-ledger-v3';
 const WORKSPACE_KEY='orbit-workspace-v3';
 const DEFAULT_EXAM_DATES={
-  'sub-mat101':'2026-12-14T09:30',
-  'sub-cyt100':'2026-12-18T09:30',
-  'sub-mat102':'2027-01-08T09:30',
-  'sub-pht100':'2027-01-15T09:30',
+  'sub-mat101':'2026-12-15T09:30',
+  'sub-mat102':'2026-12-17T09:30',
+  'sub-pht100':'2026-12-28T09:30',
+  'sub-cyt100':'2026-12-30T09:30',
 };
+const INITIAL_STUDIED_MODULES={
+  'sub-mat101':[1, 2], // M2 (index 1), M3 (index 2)
+  'sub-mat102':[1, 3], // M2 (index 1), M4 (index 3)
+};
+const TIMETABLE_CONFIG=[
+  {subjectId:'sub-mat101',code:'MAT-S1',name:'Linear Algebra and Calculus',semester:'S1',dateStr:'15-12-2026',day:'TUESDAY',rawDate:'2026-12-15T09:30'},
+  {subjectId:'sub-mat102',code:'MAT-S2',name:'Vector Calculus, DE & Transforms',semester:'S2',dateStr:'17-12-2026',day:'THURSDAY',rawDate:'2026-12-17T09:30'},
+  {subjectId:'sub-pht100',code:'PHYSICS',name:'Engineering Physics',semester:'S2',dateStr:'28-12-2026',day:'MONDAY',rawDate:'2026-12-28T09:30'},
+  {subjectId:'sub-cyt100',code:'CHEMISTRY',name:'Engineering Chemistry',semester:'S1',dateStr:'30-12-2026',day:'WEDNESDAY',rawDate:'2026-12-30T09:30'},
+];
 const getLiveCountdown=(examDateStr,now)=>{
   if(!examDateStr)return{isPast:true,days:0,hours:0,minutes:0,seconds:0,label:'Date not set'};
   const target=new Date(examDateStr).getTime();
@@ -41,41 +51,40 @@ const getLiveCountdown=(examDateStr,now)=>{
 };
 const initialLedger=()=>{
   const saved=read(STORAGE_KEY,null);
-  if(!saved){
-    try{
-      localStorage.removeItem('study-ledger');
-      localStorage.removeItem('orbit-workspace-v1');
-      localStorage.setItem(STORAGE_KEY,JSON.stringify(INITIAL_DATA));
-    }catch{}
-    return INITIAL_DATA;
-  }
-  return Object.fromEntries(['S1','S2'].map(sem=>{
+  const buildSemData=(sem,savedSem)=>{
     const semData=INITIAL_DATA[sem];
-    const savedSem=saved?.[sem];
-    return [sem,{
+    return {
       ...semData,
       ...savedSem,
       subjects:semData.subjects.map(freshSub=>{
         const savedSub=savedSem?.subjects?.find(x=>x.id===freshSub.id);
-        if(!savedSub)return {...freshSub,examDate:freshSub.examDate||DEFAULT_EXAM_DATES[freshSub.id]};
+        const examDate=DEFAULT_EXAM_DATES[freshSub.id]||savedSub?.examDate||freshSub.examDate;
         return {
           ...freshSub,
-          examDate:savedSub.examDate||freshSub.examDate||DEFAULT_EXAM_DATES[freshSub.id],
-          modules:freshSub.modules.map(freshMod=>{
-            const savedMod=savedSub.modules?.find(m=>m.id===freshMod.id);
-            if(!savedMod)return freshMod;
+          examDate,
+          modules:freshSub.modules.map((freshMod,modIdx)=>{
+            const savedMod=savedSub?.modules?.find(m=>m.id===freshMod.id);
+            const isInitialStudied=Boolean(INITIAL_STUDIED_MODULES[freshSub.id]?.includes(modIdx));
+            const isCompleted=savedMod?.completed!==undefined?Boolean(savedMod.completed):isInitialStudied;
             return {
               ...freshMod,
+              completed:isCompleted,
               topics:freshMod.topics.map(freshTop=>{
-                const savedTop=savedMod.topics?.find(t=>t.id===freshTop.id);
-                if(!savedTop)return freshTop;
+                const savedTop=savedMod?.topics?.find(t=>t.id===freshTop.id);
+                if(!savedTop){
+                  return {
+                    ...freshTop,
+                    status:isCompleted?'studied':'not-started',
+                    subTopics:freshTop.subTopics?.map(st=>({...st,done:isCompleted?true:st.done}))||freshTop.subTopics
+                  };
+                }
                 return {
                   ...freshTop,
-                  status:savedTop.status||'not-started',
+                  status:savedTop.status||(isCompleted?'studied':'not-started'),
                   notes:savedTop.notes!==undefined?savedTop.notes:'',
                   subTopics:freshTop.subTopics?.map(st=>{
                     const savedSt=savedTop.subTopics?.find(x=>x.id===st.id);
-                    return savedSt?{...st,done:Boolean(savedSt.done)}:st;
+                    return savedSt?{...st,done:Boolean(savedSt.done)}:(isCompleted?{...st,done:true}:st);
                   })||freshTop.subTopics,
                   previousQuestions:freshTop.previousQuestions?.map(pq=>{
                     const savedPq=savedTop.previousQuestions?.find(q=>q.id===pq.id);
@@ -87,8 +96,25 @@ const initialLedger=()=>{
           })
         };
       })
-    }];
-  }));
+    };
+  };
+
+  if(!saved){
+    try{
+      localStorage.removeItem('study-ledger');
+      localStorage.removeItem('orbit-workspace-v1');
+      const fresh={S1:buildSemData('S1',null),S2:buildSemData('S2',null)};
+      localStorage.setItem(STORAGE_KEY,JSON.stringify(fresh));
+      return fresh;
+    }catch{
+      return {S1:buildSemData('S1',null),S2:buildSemData('S2',null)};
+    }
+  }
+
+  return {
+    S1:buildSemData('S1',saved.S1),
+    S2:buildSemData('S2',saved.S2)
+  };
 };
 const meta=[{short:'Mathematics I',label:'Linear algebra & calculus',icon:Sigma,color:'#b5a0fa'},{short:'Chemistry',label:'Engineering chemistry',icon:FlaskConical,color:'#f4bd84'},{short:'Mathematics II',label:'Vector calculus & differential equations',icon:Activity,color:'#8bbdfa'},{short:'Physics',label:'Engineering physics',icon:Atom,color:'#8bd8b6'}];
 const nav=[['Overview',LayoutDashboard],['My subjects',BookOpen],['Study planner',CalendarDays],['Notes library',NotebookPen],['Revision',RotateCcw],['Insights',TrendingUp]];
@@ -129,7 +155,20 @@ const [page,setPage]=useState('Overview'),[subjectId,setSubjectId]=useState(null
 const [devModal,setDevModal]=useState(false);
 const [currentTime,setCurrentTime]=useState(()=>Date.now());
 const [editExamModal,setEditExamModal]=useState(null);
+const [timetableOpen,setTimetableOpen]=useState(false);
+const timetableDropdownRef=useRef(null);
 useEffect(()=>{const timerId=setInterval(()=>setCurrentTime(Date.now()),1000);return()=>clearInterval(timerId)},[]);
+useEffect(()=>{
+  const handleOutsideClick=e=>{
+    if(timetableDropdownRef.current&&!timetableDropdownRef.current.contains(e.target)){
+      setTimetableOpen(false);
+    }
+  };
+  if(timetableOpen){
+    document.addEventListener('mousedown',handleOutsideClick);
+  }
+  return ()=>document.removeEventListener('mousedown',handleOutsideClick);
+},[timetableOpen]);
 const [theme,setTheme]=useState(()=>({...DEFAULT_THEME,...read(THEME_STORAGE_KEY,{})}));
 useEffect(()=>{
   if(typeof window!=='undefined'){
@@ -210,12 +249,121 @@ useEffect(()=>{if(!toast)return;const id=setTimeout(()=>setToast(''),5000);retur
 useEffect(()=>{const id=setInterval(()=>setToday(dayKey()),30000);return()=>clearInterval(id)},[]);
 useEffect(()=>{if(!running)return;const tick=()=>{const left=Math.max(0,Math.ceil((deadline.current-Date.now())/1000));setRemaining(left);if(left===0){setRunning(false);if(timerMode==='Focus'){setWorkspace(w=>w.sessions.some(s=>s.id===sessionId.current)?w:({...w,sessions:[...w.sessions,{id:sessionId.current,date:dayKey(new Date(deadline.current)),subjectId:timerSubject,minutes:duration}]}));notify('Focus session complete. A little closer to your goals.')}else notify('Break complete. Ready for a fresh start.')}};tick();const id=setInterval(tick,250);return()=>clearInterval(id)},[running,duration,timerSubject,timerMode]);
 useEffect(()=>{const observer=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('revealed');observer.unobserve(e.target)}}),{threshold:.06});document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));return()=>observer.disconnect()},[page,subjectId,filter]);
-useEffect(()=>{const key=e=>{if(e.key==='Escape'){setModal(null);setImmersive(false);setMenu(false)}};window.addEventListener('keydown',key);return()=>window.removeEventListener('keydown',key)},[]);
+useEffect(()=>{const key=e=>{if(e.key==='Escape'){setModal(null);setImmersive(false);setMenu(false);setTimetableOpen(false);}};window.addEventListener('keydown',key);return()=>window.removeEventListener('keydown',key)},[]);
 const navigate=p=>{setPage(p);setSubjectId(null);setMenu(false);setSearch('');setFilter('All subjects');window.scrollTo({top:0,behavior:'smooth'})};
 const openSubject=s=>{setSubjectId(s.id);setPage('My subjects');setMenu(false);setSearch('');window.scrollTo({top:0,behavior:'smooth'})};
 const updateTopic=(s,m,t,patch)=>setData(d=>({...d,[s.semester]:{...d[s.semester],subjects:d[s.semester].subjects.map(sub=>sub.id!==s.id?sub:{...sub,modules:sub.modules.map(mod=>mod.id!==m.id?mod:{...mod,topics:mod.topics.map(top=>top.id!==t.id?top:{...top,...patch})})})}}));
 const toggleQuestionExpand=qId=>setExpandedQuestions(prev=>({...prev,[qId]:!prev[qId]}));
 const toggleQuestionSolved=(s,m,t,qId)=>setData(d=>({...d,[s.semester]:{...d[s.semester],subjects:d[s.semester].subjects.map(sub=>sub.id!==s.id?sub:{...sub,modules:sub.modules.map(mod=>mod.id!==m.id?mod:{...mod,topics:mod.topics.map(top=>top.id!==t.id?top:{...top,previousQuestions:(top.previousQuestions||[]).map(q=>q.id===qId?{...q,solved:!q.solved}:q)})})})}}));
+const toggleModuleCompletion=(targetSubId,targetSem,modIdx)=>{
+  let newStatus=false;
+  let subName='';
+  setData(prev=>{
+    const semData=prev[targetSem];
+    if(!semData)return prev;
+    const updatedSubs=semData.subjects.map(s=>{
+      if(s.id!==targetSubId)return s;
+      subName=s.short||s.name;
+      const updatedMods=(s.modules||[]).map((m,idx)=>{
+        if(idx!==modIdx)return m;
+        newStatus=!m.completed;
+        return {
+          ...m,
+          completed:newStatus,
+          topics:(m.topics||[]).map(t=>({
+            ...t,
+            status:newStatus?'studied':'not-started',
+            subTopics:t.subTopics?.map(st=>({...st,done:newStatus}))||t.subTopics
+          }))
+        };
+      });
+      return {...s,modules:updatedMods};
+    });
+    return {...prev,[targetSem]:{...semData,subjects:updatedSubs}};
+  });
+  notify(newStatus?`Marked ${subName} Module ${modIdx+1} as completed! ✔`:`Unmarked ${subName} Module ${modIdx+1}`);
+};
+const totalCompletedModules=TIMETABLE_CONFIG.reduce((acc,row)=>{
+  const sub=subjects.find(s=>s.id===row.subjectId);
+  return acc+((sub?.modules||[]).filter(m=>m.completed).length);
+},0);
+const renderTimetableTable=(isCompact=false)=>{
+  return (
+    <div className={`timetable-table-container ${isCompact?'compact':''}`}>
+      <table className="official-timetable">
+        <thead>
+          <tr>
+            <th className="col-date">DATE</th>
+            <th className="col-code">COURSE CODE</th>
+            <th className="col-mod">M1</th>
+            <th className="col-mod">M2</th>
+            <th className="col-mod">M3</th>
+            <th className="col-mod">M4</th>
+            <th className="col-mod">M5</th>
+            <th className="col-day">DAY</th>
+          </tr>
+        </thead>
+        <tbody>
+          {TIMETABLE_CONFIG.map(item=>{
+            const sub=subjects.find(s=>s.id===item.subjectId);
+            const modules=sub?.modules||[];
+            return (
+              <tr key={item.subjectId} className="timetable-row">
+                <td className="cell-date">{item.dateStr}</td>
+                <td className="cell-code">
+                  <button
+                    type="button"
+                    className="course-code-btn"
+                    onClick={()=>{
+                      if(sub){
+                        openSubject(sub);
+                        if(isCompact)setTimetableOpen(false);
+                      }
+                    }}
+                    title={`Open ${sub?.short||item.code} syllabus & PYQs`}
+                  >
+                    <span>{item.code}</span>
+                    <ArrowUpRight size={11} className="code-jump-icon"/>
+                  </button>
+                </td>
+                {[0,1,2,3,4].map(modIdx=>{
+                  const mod=modules[modIdx];
+                  const isDone=Boolean(mod?.completed);
+                  return (
+                    <td key={modIdx} className="cell-mod">
+                      <button
+                        type="button"
+                        className={`module-check-cell ${isDone?'checked':''}`}
+                        onClick={()=>toggleModuleCompletion(item.subjectId,item.semester,modIdx)}
+                        title={`Module ${modIdx+1}: ${isDone?'Completed (Click to unmark)':'Click to mark completed'}`}
+                        aria-label={`${item.code} Module ${modIdx+1} ${isDone?'completed':'incomplete'}`}
+                      >
+                        {isDone?(
+                          <svg viewBox="0 0 24 24" fill="none" className="curved-checkmark-svg" aria-hidden="true">
+                            <path
+                              d="M4 12.5 C6.2 14.8, 8.5 17.5, 9.8 19.5 C13 14, 17 8.5, 21.5 5"
+                              stroke="#2bd467"
+                              strokeWidth="3.4"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                        ):(
+                          <span className="mod-cell-hover-hint">M{modIdx+1}</span>
+                        )}
+                      </button>
+                    </td>
+                  );
+                })}
+                <td className="cell-day">{item.day}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  );
+};
 const resetProgress=()=>{
   setData(INITIAL_DATA);
   setWorkspace({tasks:[],sessions:[],notes:[],goal:120});
@@ -402,7 +550,7 @@ const timer=<><div className="panel-heading"><h3><Focus size={17}/> Focus room</
 const taskList=tasks=>tasks.length?<div className="task-list">{tasks.map(t=>{const s=subjects.find(s=>s.id===t.subjectId);return <div className={'task-row '+(t.done?'done':'')} key={t.id}><button className="checkbox" aria-label={`${t.done?'Reopen':'Complete'} ${t.title}`} aria-pressed={t.done} onClick={()=>toggleTask(t.id)}>{t.done&&<Check size={13}/>}</button><div><strong>{t.title}</strong><small><i style={{background:s?.color}}/>{s?.short} <span>· {t.minutes} min · {t.date===today?'Today':t.date}</span></small></div><button className="icon-button delete-task" aria-label={`Delete ${t.title}`} onClick={()=>setWorkspace(w=>({...w,tasks:w.tasks.filter(x=>x.id!==t.id)}))}><Trash2 size={14}/></button></div>})}</div>:<div className="empty"><CheckCheck size={25}/><strong>A clear day. A fresh start.</strong><p>Add a small, achievable task for one of your subjects.</p><button className="quiet mint" onClick={()=>setModal('task')}>Create your first task <Plus size={14}/></button></div>;
 const subjectCards=<div className="subject-grid">{subjects.filter(s=>`${s.name} ${s.short} ${s.code}`.toLowerCase().includes(search.toLowerCase())&&(filter==='All subjects'||s.semester===filter)).map((s,i)=>{const Icon=s.icon,pct=Math.round(calculateSubjectProgress(s)*100);return <button key={s.id} className="subject-card reveal" style={{'--accent':s.color,transitionDelay:`${i*55}ms`}} onClick={()=>openSubject(s)}><div className="subject-top"><span className="subject-icon"><Icon size={24}/></span><span className="code">{s.code} <ArrowUpRight size={14}/></span></div><h3>{s.short}</h3><p>{s.label}</p><div className="subject-info"><span>{s.modules.length} modules</span><span>{s.semester} · KTU</span></div><div className="progress"><i style={{width:`${pct}%`}}/></div><div className="subject-bottom"><span>Course progress</span><strong>{pct}%</strong></div></button>})}</div>;
 return <div className="app-shell" style={shellStyle}><aside className={'sidebar '+(menu?'open':'')}><a className="brand" href="#" onClick={e=>{e.preventDefault();navigate('Overview')}}><span className="brand-symbol"><Atom size={26}/></span>orbit<span className="brand-period">.</span></a><div className="workspace-label"><span className="workspace-icon"><GraduationCap size={18}/></span><div>My study space<small>Personal workspace</small></div><ChevronDown size={13}/></div><p className="nav-label">WORKSPACE</p><nav>{nav.map(([name,Icon])=><button key={name} className={page===name?'active':''} onClick={()=>navigate(name)}><Icon size={18}/>{name}{name==='My subjects'&&<span className="nav-count">04</span>}{name==='Revision'&&<span className="tiny-dot"/>}</button>)}</nav><p className="nav-label subjects-label">YOUR SUBJECTS <span>4</span></p><div className="subject-nav">{subjects.map(s=><button key={s.id} onClick={()=>openSubject(s)}><i style={{background:s.color}}/>{s.short}<span>{s.semester}</span></button>)}</div><div className="sidebar-bottom"><div className="sidebar-tip"><Sparkles size={19}/><strong>Small steps. Big futures.</strong><p>Your only competition is<br/>who you were yesterday.</p><span>LET’S MAKE TODAY COUNT <ArrowUpRight size={13}/></span></div><button className="settings-link" onClick={()=>navigate('Settings')}><Settings2 size={18}/> Settings & backup</button><button type="button" className="profile" onClick={()=>setDevModal(true)} title="View Developer Details (Althaf)"><span className="avatar-letter">A</span><div>{DEVELOPER_INFO.name}<small>{DEVELOPER_INFO.alias} · Lead Dev</small></div><span className="online"/></button></div></aside>{menu&&<div className="sidebar-scrim" onClick={()=>setMenu(false)}/>}
-<div className="main-shell"><header className="topbar"><div className="breadcrumb"><button className="icon-button mobile-menu" aria-label="Open navigation" onClick={()=>setMenu(true)}><Menu size={20}/></button><span>Workspace</span><span>/</span><strong>{selected?selected.short:page}</strong></div><div className="topbar-right"><button type="button" className={'gemini-topbar-btn '+(geminiOpen?'active ':'')+(geminiLoading?'loading':'')} onClick={()=>setGeminiOpen(!geminiOpen)} title="Open Free KTU AI Study Agent"><Sparkles size={14}/><span>Free AI Tutor</span><span className="free-badge">FREE</span>{geminiLoading&&<span className="gemini-pulse-dot"/>}</button><span className="local-status"><i/> Local workspace</span><button className="avatar" aria-label="Open Developer Details" onClick={()=>setDevModal(true)} title="Developer Details: Althaf">A</button></div></header><main><div className="page-heading"><div><div className="eyebrow">YOUR PERSONAL LEARNING OS <span>✦</span></div><h1>{selected?selected.short:page==='Overview'?'A little focus. A lot of possibility.':page}</h1><p>{selected?selected.description:page==='Overview'?'Welcome back, Althaf. Let’s turn today’s effort into tomorrow’s progress.':'Four subjects. One clear direction. Keep moving forward.'}</p></div><span className="date-pill"><CalendarDays size={15}/>{new Date(today+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}</span></div>
+<div className="main-shell"><header className="topbar"><div className="breadcrumb"><button className="icon-button mobile-menu" aria-label="Open navigation" onClick={()=>setMenu(true)}><Menu size={20}/></button><span>Workspace</span><span>/</span><strong>{selected?selected.short:page}</strong></div><div className="topbar-right"><div className="timetable-dropdown-anchor" ref={timetableDropdownRef}><button type="button" className={`timetable-topbar-btn ${timetableOpen?'active':''}`} onClick={()=>setTimetableOpen(!timetableOpen)} title="Toggle Revised Exam Timetable & Module Progress" aria-expanded={timetableOpen}><Table size={14}/><span className="timetable-btn-label">Timetable</span><span className="timetable-header-badge">{totalCompletedModules}/20</span><ChevronDown size={12} className={`timetable-chevron ${timetableOpen?'open':''}`}/></button>{timetableOpen&&(<div className="timetable-dropdown-popover"><div className="timetable-popover-header"><div><div className="popover-eyebrow">KTU DEC 2026 · 2019 SCHEME</div><h4>REVISED B.TECH S1,S2 TIME TABLE</h4></div><button type="button" className="icon-button popover-close-btn" onClick={()=>setTimetableOpen(false)} aria-label="Close timetable"><X size={15}/></button></div><div className="popover-subbar"><span className="popover-session-tag">FORENOON (09:30 AM)</span><span className="popover-hour-badge">DAILY 1-3 HOUR</span></div><div className="popover-table-wrapper">{renderTimetableTable(true)}</div><div className="popover-footer"><span className="popover-progress-status"><strong>{totalCompletedModules} of 20</strong> Modules studied ({Math.round(totalCompletedModules/20*100)}%)</span><button type="button" className="popover-overview-jump" onClick={()=>{setTimetableOpen(false);if(page!=='Overview')navigate('Overview');setTimeout(()=>{const el=document.querySelector('.exam-timetable-board-section');el?.scrollIntoView({behavior:'smooth'});},120);}}>View Full Board <ArrowUpRight size={13}/></button></div></div>)}</div><button type="button" className={'gemini-topbar-btn '+(geminiOpen?'active ':'')+(geminiLoading?'loading':'')} onClick={()=>setGeminiOpen(!geminiOpen)} title="Open Free KTU AI Study Agent"><Sparkles size={14}/><span>Free AI Tutor</span><span className="free-badge">FREE</span>{geminiLoading&&<span className="gemini-pulse-dot"/>}</button><span className="local-status"><i/> Local workspace</span><button className="avatar" aria-label="Open Developer Details" onClick={()=>setDevModal(true)} title="Developer Details: Althaf">A</button></div></header><main><div className="page-heading"><div><div className="eyebrow">YOUR PERSONAL LEARNING OS <span>✦</span></div><h1>{selected?selected.short:page==='Overview'?'A little focus. A lot of possibility.':page}</h1><p>{selected?selected.description:page==='Overview'?'Welcome back, Althaf. Let’s turn today’s effort into tomorrow’s progress.':'Four subjects. One clear direction. Keep moving forward.'}</p></div><span className="date-pill"><CalendarDays size={15}/>{new Date(today+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}</span></div>
 {page==='Overview'&&<><section className="exam-timers-section reveal">
   <div className="exam-timers-header">
     <div className="exam-timers-title">
@@ -490,7 +638,7 @@ return <div className="app-shell" style={shellStyle}><aside className={'sidebar 
     })}
   </div>
 </section>
-<section className="hero reveal"><div className="hero-copy"><span className="hero-badge"><span/> BUILT FOR YOUR NEXT BREAKTHROUGH</span><h2>Your future is in focus.<br/><span>Let’s get you there.</span></h2><p>One topic, one session, one step closer.<br/>Your four-subject journey starts right here.</p><div className="hero-actions"><button className="primary" onClick={()=>setImmersive(true)}><Play size={15} fill="currentColor"/> Let’s focus <ArrowUpRight size={16}/></button><button className="quiet" onClick={()=>navigate('Study planner')}>View study plan <ArrowRight size={16}/></button></div></div><div className="orbital" aria-hidden="true"><div className="orbital-grid"/><div className="orbit orbit-one"/><div className="orbit orbit-two"/><div className="orbit orbit-three"/><div className="planet"><Atom size={64}/></div><span className="satellite satellite-a"><Sigma size={25}/></span><span className="satellite satellite-b"><Atom size={23}/></span><span className="satellite satellite-c"><FlaskConical size={22}/></span><span className="star star-a">+</span><span className="star star-b">+</span><span className="orbital-caption">LESS NOISE. MORE KNOWLEDGE.</span></div></section><section className="stats-grid reveal">{[[Clock3,'Focus time today',`${todayMinutes}m`,'Every minute is an investment'],[BookOpen,'Topics completed',`${completed}`,`of ${allTopics.length} syllabus topics`],[Target,'Overall progress',`${progress}%`,'Across your four subjects'],[Zap,'Sessions today',`${todaySessions.length}`,'Build your daily momentum']].map(([Icon,label,value,sub])=><div className="stat" key={label}><div><span>{label}</span><Icon size={17}/></div><strong>{value}</strong><small>{sub}</small></div>)}</section><div className="dashboard-columns"><div className="dashboard-main"><section><div className="section-heading"><div><h2>Your learning universe <span>04</span></h2><p>Four subjects. Endless possibilities.</p></div><button className="quiet" onClick={()=>navigate('My subjects')}>View all <ArrowUpRight size={15}/></button></div>{subjectCards}</section><section className="panel planner-panel reveal"><div className="panel-heading"><div><h3>Today’s game plan <span className="count-pill">{todayTasks.filter(t=>t.done).length}/{todayTasks.length}</span></h3><p>Make room for what matters.</p></div><button className="small-button" onClick={()=>setModal('task')}><Plus size={14}/> Add task</button></div>{taskList(todayTasks)}</section><section className="panel activity-panel reveal"><div className="panel-heading"><div><h3>Consistency is your superpower</h3><p>Your focus time over the last 7 days</p></div><span className="mint"><TrendingUp size={20}/></span></div>{chart}</section></div><aside className="right-rail"><section className="panel focus-panel reveal">{timer}</section><section className="panel goal-panel reveal"><div className="panel-heading"><h3><Target size={17}/> Daily goal</h3><button className="quiet" onClick={()=>navigate('Settings')}>Edit</button></div><div className="goal-numbers"><strong>{todayMinutes}<span> / {workspace.goal} min</span></strong><span>{Math.min(100,Math.round(todayMinutes/workspace.goal*100))}%</span></div><div className="progress"><i style={{width:`${Math.min(100,todayMinutes/workspace.goal*100)}%`}}/></div><p>{todayMinutes>=workspace.goal?'Goal reached. You showed up for yourself.':'Progress, not perfection. You’ve got this.'} <Sparkles size={13}/></p></section><section className="quote-card reveal"><span>✦</span><blockquote>“The secret of getting<br/>ahead is getting started.”</blockquote><small>A LITTLE REMINDER FOR TODAY</small></section></aside></div></>}
+<section className="hero reveal"><div className="hero-copy"><span className="hero-badge"><span/> BUILT FOR YOUR NEXT BREAKTHROUGH</span><h2>Your future is in focus.<br/><span>Let’s get you there.</span></h2><p>One topic, one session, one step closer.<br/>Your four-subject journey starts right here.</p><div className="hero-actions"><button className="primary" onClick={()=>setImmersive(true)}><Play size={15} fill="currentColor"/> Let’s focus <ArrowUpRight size={16}/></button><button className="quiet" onClick={()=>navigate('Study planner')}>View study plan <ArrowRight size={16}/></button></div></div><div className="orbital" aria-hidden="true"><div className="orbital-grid"/><div className="orbit orbit-one"/><div className="orbit orbit-two"/><div className="orbit orbit-three"/><div className="planet"><Atom size={64}/></div><span className="satellite satellite-a"><Sigma size={25}/></span><span className="satellite satellite-b"><Atom size={23}/></span><span className="satellite satellite-c"><FlaskConical size={22}/></span><span className="star star-a">+</span><span className="star star-b">+</span><span className="orbital-caption">LESS NOISE. MORE KNOWLEDGE.</span></div></section><section className="stats-grid reveal">{[[Clock3,'Focus time today',`${todayMinutes}m`,'Every minute is an investment'],[BookOpen,'Topics completed',`${completed}`,`of ${allTopics.length} syllabus topics`],[Target,'Overall progress',`${progress}%`,'Across your four subjects'],[Zap,'Sessions today',`${todaySessions.length}`,'Build your daily momentum']].map(([Icon,label,value,sub])=><div className="stat" key={label}><div><span>{label}</span><Icon size={17}/></div><strong>{value}</strong><small>{sub}</small></div>)}</section><div className="dashboard-columns"><div className="dashboard-main"><section><div className="section-heading"><div><h2>Your learning universe <span>04</span></h2><p>Four subjects. Endless possibilities.</p></div><button className="quiet" onClick={()=>navigate('My subjects')}>View all <ArrowUpRight size={15}/></button></div>{subjectCards}</section><section className="panel planner-panel reveal"><div className="panel-heading"><div><h3>Today’s game plan <span className="count-pill">{todayTasks.filter(t=>t.done).length}/{todayTasks.length}</span></h3><p>Make room for what matters.</p></div><button className="small-button" onClick={()=>setModal('task')}><Plus size={14}/> Add task</button></div>{taskList(todayTasks)}</section><section className="panel activity-panel reveal"><div className="panel-heading"><div><h3>Consistency is your superpower</h3><p>Your focus time over the last 7 days</p></div><span className="mint"><TrendingUp size={20}/></span></div>{chart}</section></div><aside className="right-rail"><section className="panel focus-panel reveal">{timer}</section><section className="panel goal-panel reveal"><div className="panel-heading"><h3><Target size={17}/> Daily goal</h3><button className="quiet" onClick={()=>navigate('Settings')}>Edit</button></div><div className="goal-numbers"><strong>{todayMinutes}<span> / {workspace.goal} min</span></strong><span>{Math.min(100,Math.round(todayMinutes/workspace.goal*100))}%</span></div><div className="progress"><i style={{width:`${Math.min(100,todayMinutes/workspace.goal*100)}%`}}/></div><p>{todayMinutes>=workspace.goal?'Goal reached. You showed up for yourself.':'Progress, not perfection. You’ve got this.'} <Sparkles size={13}/></p></section><section className="quote-card reveal"><span>✦</span><blockquote>“The secret of getting<br/>ahead is getting started.”</blockquote><small>A LITTLE REMINDER FOR TODAY</small></section></aside></div><section className="exam-timetable-board-section reveal"><div className="timetable-board-card"><div className="timetable-board-glow-line"/><div className="timetable-board-header"><h2 className="timetable-board-title">REVISED B.TECH S1,S2 (S,FE) EXAM TIME TABLE DEC 2026 (2019 SCHEME)</h2><div className="timetable-board-subbar"><div className="session-tag"><span className="session-dot"/><span>EXAM SESSION : FORENOON</span><span className="session-time">(09:30 AM – 12:30 PM)</span></div><div className="timetable-subbar-right"><span className="timetable-modules-progress-pill"><span className="pill-dot"/><strong>{totalCompletedModules} / 20</strong> Modules Completed</span><div className="daily-hour-badge"><span>DAILY 1-3 HOUR</span></div></div></div></div>{renderTimetableTable(false)}<div className="timetable-board-footer"><div className="desktop-folders-group"><button type="button" className="desktop-folder-chip" onClick={()=>navigate('Notes library')} title="Open Notes Library & Syllabus"><span className="folder-icon-wrap folder-amber">📁</span><span className="folder-label">Study Material</span></button><button type="button" className="desktop-folder-chip" onClick={()=>navigate('Revision')} title="Open Revision & Solved Question Papers"><span className="folder-icon-wrap folder-doc">📄</span><span className="folder-label">Research Papers</span></button><button type="button" className="desktop-folder-chip" onClick={()=>notify('KTU Portal: Exam registration fee verified. Hall ticket clearance confirmed.')} title="KTU Examination Fee & Hall Ticket Clearance"><span className="folder-icon-wrap folder-amber">📁</span><span className="folder-label">University Dues</span></button></div><div className="timetable-hint-text"><span>✦ Interactive Tracker: Click any module box (M1 – M5) to mark completion. Syncs live with your syllabus progress.</span></div></div></div></section></>}
 {page==='My subjects'&&!selected&&<><div className="toolbar"><div className="tabs">{['All subjects','S1','S2'].map(f=><button key={f} className={filter===f?'active':''} onClick={()=>setFilter(f)}>{f}</button>)}</div><label className="search"><Search size={16}/><input placeholder="Find a subject…" value={search} onChange={e=>setSearch(e.target.value)}/></label></div>{subjectCards}</>}
 {selected&&<><div className="toolbar"><button className="quiet" onClick={()=>setSubjectId(null)}>← All subjects</button><button className="primary" onClick={()=>{if(!running)setTimerSubject(selected.id);setImmersive(true)}}><Focus size={16}/> Focus on this subject</button></div><div className="subject-summary panel"><span style={{color:selected.color}}>{selected.code} · {selected.semester}</span><strong>{Math.round(calculateSubjectProgress(selected)*100)}% complete</strong><div className="progress"><i style={{width:`${calculateSubjectProgress(selected)*100}%`,background:selected.color}}/></div><label>Exam date <input type="datetime-local" value={selected.examDate||''} onChange={e=>setData(d=>({...d,[selected.semester]:{...d[selected.semester],subjects:d[selected.semester].subjects.map(s=>s.id===selected.id?{...s,examDate:e.target.value}:s)}}))}/></label><small>Dates come from your saved syllabus. Confirm them with your official timetable.</small></div>{selected.modules.map((m,i)=>{
   const totalModPqs=m.topics.reduce((acc,top)=>acc+(top.previousQuestions?.length||0),0);
