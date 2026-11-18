@@ -1594,3 +1594,297 @@ button.profile:hover {
   font-family: monospace;
   font-size: 9.5px;
 }
+
+/* ─── Live Exam Timers Section on Home Page ─── */
+.exam-timers-section {
+  margin: 0 0 28px;
+  padding: 22px 24px;
+  border-radius: 14px;
+  background: radial-gradient(ellipse at 85% 0%, color-mix(in srgb, var(--mint) 8%, transparent), transparent 60%), var(--panel, #121619);
+  border: 1px solid var(--line, #252b2d);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.28);
+}
+
+.exam-timers-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.exam-timers-title {
+  max-width: 680px;
+}
+
+.live-pulse-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: var(--mint);
+  background: color-mix(in srgb, var(--mint) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--mint) 35%, transparent);
+  padding: 3px 9px;
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+
+.live-dot-pulse {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--mint);
+  box-shadow: 0 0 8px var(--mint);
+  animation: pulse-dot 1.8s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.35;
+    transform: scale(0.8);
+  }
+}
+
+.exam-timers-title h3 {
+  font-size: 17px;
+  font-weight: 650;
+  letter-spacing: -0.3px;
+  color: #eff7f2;
+  margin: 0 0 5px;
+}
+
+.exam-timers-title p {
+  font-size: 10.5px;
+  color: #8fa597;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.exam-timers-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.exam-count-badge {
+  font-size: 9.5px;
+  font-weight: 600;
+  color: #a7c1b2;
+  background: #141e18;
+  border: 1px solid #283e31;
+  padding: 5px 12px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+.exam-timers-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.exam-timer-card {
+  background: #0d1411;
+  border: 1px solid var(--line, #223429);
+  border-radius: 11px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.exam-timer-card:hover {
+  border-color: color-mix(in srgb, var(--card-accent, var(--mint)) 60%, transparent);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
+}
+
+.timer-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 11px;
+}
+
+.timer-subject-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 9.5px;
+  font-weight: 700;
+  border: 1px solid;
+}
+
+.timer-code {
+  letter-spacing: 0.5px;
+}
+
+.timer-sem {
+  opacity: 0.75;
+  font-weight: 500;
+}
+
+.timer-edit-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 9px;
+  color: #829a8d;
+  background: #121c17;
+  border: 1px solid #263c30;
+  padding: 3px 8px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.timer-edit-btn:hover {
+  color: #eaf5ee;
+  border-color: var(--mint);
+  background: #192a20;
+}
+
+.timer-subject-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #e5ede7;
+  margin: 0 0 8px;
+  line-height: 1.45;
+  cursor: pointer;
+  transition: color 0.18s ease;
+  min-height: 38px;
+}
+
+.timer-subject-name:hover {
+  color: var(--card-accent, var(--mint));
+}
+
+.timer-date-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 9.5px;
+  color: #8ca395;
+  margin-bottom: 14px;
+}
+
+.countdown-digits-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  background: #080d0a;
+  border: 1px solid #1a2a20;
+  border-radius: 8px;
+  padding: 8px 10px;
+  margin-bottom: 14px;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+.digit-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+
+.digit-num {
+  font-size: 18px;
+  font-weight: 750;
+  letter-spacing: -0.5px;
+  color: #f1f8f3;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+}
+
+.digit-unit {
+  font-size: 7px;
+  letter-spacing: 0.8px;
+  color: #6d8677;
+  font-weight: 600;
+  margin-top: 3px;
+}
+
+.digit-sep {
+  font-size: 15px;
+  font-weight: 700;
+  color: #334a3c;
+  align-self: flex-start;
+  padding-top: 2px;
+}
+
+.timer-completed-box {
+  background: #112217;
+  border: 1px solid #234d33;
+  border-radius: 8px;
+  padding: 12px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #8cefb0;
+  font-size: 11px;
+  font-weight: 600;
+  margin-bottom: 14px;
+}
+
+.timer-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px solid #19271e;
+}
+
+.timer-urgency-pill {
+  font-size: 8.5px;
+  font-weight: 600;
+  color: #829a8d;
+}
+
+.timer-open-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 9.5px;
+  font-weight: 600;
+  color: var(--card-accent, var(--mint));
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  transition: transform 0.15s ease;
+}
+
+.timer-open-link:hover {
+  text-decoration: underline;
+  transform: translateX(1px);
+}
+
+@media (max-width: 1200px) {
+  .exam-timers-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 650px) {
+  .exam-timers-grid {
+    grid-template-columns: 1fr;
+  }
+  .exam-timers-section {
+    padding: 16px;
+  }
+}

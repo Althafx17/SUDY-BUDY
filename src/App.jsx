@@ -10,6 +10,35 @@ const dayKey=(d=new Date())=>`${d.getFullYear()}-${String(d.getMonth()+1).padSta
 const read=(key,fallback)=>{try{return JSON.parse(localStorage.getItem(key))??fallback}catch{return fallback}};
 const STORAGE_KEY='orbit-study-ledger-v3';
 const WORKSPACE_KEY='orbit-workspace-v3';
+const DEFAULT_EXAM_DATES={
+  'sub-mat101':'2026-12-14T09:30',
+  'sub-cyt100':'2026-12-18T09:30',
+  'sub-mat102':'2027-01-08T09:30',
+  'sub-pht100':'2027-01-15T09:30',
+};
+const getLiveCountdown=(examDateStr,now)=>{
+  if(!examDateStr)return{isPast:true,days:0,hours:0,minutes:0,seconds:0,label:'Date not set'};
+  const target=new Date(examDateStr).getTime();
+  if(isNaN(target))return{isPast:true,days:0,hours:0,minutes:0,seconds:0,label:'Invalid date'};
+  const diff=target-now;
+  if(diff<=0){
+    const elapsed=Math.abs(diff);
+    const elapsedDays=Math.floor(elapsed/(1000*60*60*24));
+    return{
+      isPast:true,
+      days:0,
+      hours:0,
+      minutes:0,
+      seconds:0,
+      label:elapsedDays===0?'Exam In Session Today':`Exam Finished (${elapsedDays}d ago)`
+    };
+  }
+  const days=Math.floor(diff/(1000*60*60*24));
+  const hours=Math.floor((diff%(1000*60*60*24))/(1000*60*60));
+  const minutes=Math.floor((diff%(1000*60*60))/(1000*60));
+  const seconds=Math.floor((diff%(1000*60))/1000);
+  return{isPast:false,days,hours,minutes,seconds,diff};
+};
 const initialLedger=()=>{
   const saved=read(STORAGE_KEY,null);
   if(!saved){
@@ -28,10 +57,10 @@ const initialLedger=()=>{
       ...savedSem,
       subjects:semData.subjects.map(freshSub=>{
         const savedSub=savedSem?.subjects?.find(x=>x.id===freshSub.id);
-        if(!savedSub)return freshSub;
+        if(!savedSub)return {...freshSub,examDate:freshSub.examDate||DEFAULT_EXAM_DATES[freshSub.id]};
         return {
           ...freshSub,
-          examDate:savedSub.examDate||freshSub.examDate,
+          examDate:savedSub.examDate||freshSub.examDate||DEFAULT_EXAM_DATES[freshSub.id],
           modules:freshSub.modules.map(freshMod=>{
             const savedMod=savedSub.modules?.find(m=>m.id===freshMod.id);
             if(!savedMod)return freshMod;
@@ -98,6 +127,9 @@ export default function App(){
 const [data,setData]=useState(initialLedger);const [workspace,setWorkspace]=useState(()=>({tasks:[],sessions:[],notes:[],goal:120,...read(WORKSPACE_KEY,{})}));
 const [page,setPage]=useState('Overview'),[subjectId,setSubjectId]=useState(null),[search,setSearch]=useState(''),[menu,setMenu]=useState(false),[modal,setModal]=useState(null),[toast,setToast]=useState(''),[filter,setFilter]=useState('All subjects'),[expandedQuestions,setExpandedQuestions]=useState({});
 const [devModal,setDevModal]=useState(false);
+const [currentTime,setCurrentTime]=useState(()=>Date.now());
+const [editExamModal,setEditExamModal]=useState(null);
+useEffect(()=>{const timerId=setInterval(()=>setCurrentTime(Date.now()),1000);return()=>clearInterval(timerId)},[]);
 const [theme,setTheme]=useState(()=>({...DEFAULT_THEME,...read(THEME_STORAGE_KEY,{})}));
 useEffect(()=>{
   if(typeof window!=='undefined'){
@@ -168,7 +200,7 @@ const [savedTimer]=useState(()=>read('orbit-timer-v1',{}));
 const [timerSubject,setTimerSubject]=useState(savedTimer.subjectId||'sub-mat101'),[duration,setDuration]=useState(savedTimer.duration||25),[remaining,setRemaining]=useState(savedTimer.remaining??1500),[running,setRunning]=useState(!!savedTimer.running),[immersive,setImmersive]=useState(false),[timerMode,setTimerMode]=useState(savedTimer.mode||'Focus'),[today,setToday]=useState(dayKey());
 const deadline=useRef(savedTimer.deadline||null),sessionId=useRef(savedTimer.id||crypto.randomUUID());
 useEffect(()=>{try{localStorage.setItem('orbit-timer-v1',JSON.stringify({id:sessionId.current,subjectId:timerSubject,duration,remaining,running,mode:timerMode,deadline:deadline.current}));}catch{}},[timerSubject,duration,remaining,running,timerMode]);
-const subjects=['S1','S2'].flatMap(sem=>data[sem].subjects.map(s=>({...s,semester:sem}))).map((s,i)=>({...s,...meta[i]}));
+const subjects=['S1','S2'].flatMap(sem=>data[sem].subjects.map(s=>({...s,semester:sem,examDate:s.examDate||DEFAULT_EXAM_DATES[s.id]||''}))).map((s,i)=>({...s,...meta[i]}));
 const selected=subjects.find(s=>s.id===subjectId),focusSubject=subjects.find(s=>s.id===timerSubject)||subjects[0];
 const allTopics=subjects.flatMap(s=>(s.modules||[]).flatMap(m=>(m.topics||[]).map(t=>({...t,subject:s,module:m}))));
 const progress=Math.round(subjects.reduce((sum,s)=>sum+calculateSubjectProgress(s),0)/4*100),todaySessions=workspace.sessions.filter(s=>s.date===today),todayMinutes=todaySessions.reduce((sum,s)=>sum+s.minutes,0),todayTasks=workspace.tasks.filter(t=>t.date===today),completed=allTopics.filter(t=>calculateTopicCompletion(t)===1).length;
@@ -371,7 +403,94 @@ const taskList=tasks=>tasks.length?<div className="task-list">{tasks.map(t=>{con
 const subjectCards=<div className="subject-grid">{subjects.filter(s=>`${s.name} ${s.short} ${s.code}`.toLowerCase().includes(search.toLowerCase())&&(filter==='All subjects'||s.semester===filter)).map((s,i)=>{const Icon=s.icon,pct=Math.round(calculateSubjectProgress(s)*100);return <button key={s.id} className="subject-card reveal" style={{'--accent':s.color,transitionDelay:`${i*55}ms`}} onClick={()=>openSubject(s)}><div className="subject-top"><span className="subject-icon"><Icon size={24}/></span><span className="code">{s.code} <ArrowUpRight size={14}/></span></div><h3>{s.short}</h3><p>{s.label}</p><div className="subject-info"><span>{s.modules.length} modules</span><span>{s.semester} · KTU</span></div><div className="progress"><i style={{width:`${pct}%`}}/></div><div className="subject-bottom"><span>Course progress</span><strong>{pct}%</strong></div></button>})}</div>;
 return <div className="app-shell" style={shellStyle}><aside className={'sidebar '+(menu?'open':'')}><a className="brand" href="#" onClick={e=>{e.preventDefault();navigate('Overview')}}><span className="brand-symbol"><Atom size={26}/></span>orbit<span className="brand-period">.</span></a><div className="workspace-label"><span className="workspace-icon"><GraduationCap size={18}/></span><div>My study space<small>Personal workspace</small></div><ChevronDown size={13}/></div><p className="nav-label">WORKSPACE</p><nav>{nav.map(([name,Icon])=><button key={name} className={page===name?'active':''} onClick={()=>navigate(name)}><Icon size={18}/>{name}{name==='My subjects'&&<span className="nav-count">04</span>}{name==='Revision'&&<span className="tiny-dot"/>}</button>)}</nav><p className="nav-label subjects-label">YOUR SUBJECTS <span>4</span></p><div className="subject-nav">{subjects.map(s=><button key={s.id} onClick={()=>openSubject(s)}><i style={{background:s.color}}/>{s.short}<span>{s.semester}</span></button>)}</div><div className="sidebar-bottom"><div className="sidebar-tip"><Sparkles size={19}/><strong>Small steps. Big futures.</strong><p>Your only competition is<br/>who you were yesterday.</p><span>LET’S MAKE TODAY COUNT <ArrowUpRight size={13}/></span></div><button className="settings-link" onClick={()=>navigate('Settings')}><Settings2 size={18}/> Settings & backup</button><button type="button" className="profile" onClick={()=>setDevModal(true)} title="View Developer Details (Althaf)"><span className="avatar-letter">A</span><div>{DEVELOPER_INFO.name}<small>{DEVELOPER_INFO.alias} · Lead Dev</small></div><span className="online"/></button></div></aside>{menu&&<div className="sidebar-scrim" onClick={()=>setMenu(false)}/>}
 <div className="main-shell"><header className="topbar"><div className="breadcrumb"><button className="icon-button mobile-menu" aria-label="Open navigation" onClick={()=>setMenu(true)}><Menu size={20}/></button><span>Workspace</span><span>/</span><strong>{selected?selected.short:page}</strong></div><div className="topbar-right"><button type="button" className={'gemini-topbar-btn '+(geminiOpen?'active ':'')+(geminiLoading?'loading':'')} onClick={()=>setGeminiOpen(!geminiOpen)} title="Open Free KTU AI Study Agent"><Sparkles size={14}/><span>Free AI Tutor</span><span className="free-badge">FREE</span>{geminiLoading&&<span className="gemini-pulse-dot"/>}</button><span className="local-status"><i/> Local workspace</span><button className="avatar" aria-label="Open Developer Details" onClick={()=>setDevModal(true)} title="Developer Details: Althaf">A</button></div></header><main><div className="page-heading"><div><div className="eyebrow">YOUR PERSONAL LEARNING OS <span>✦</span></div><h1>{selected?selected.short:page==='Overview'?'A little focus. A lot of possibility.':page}</h1><p>{selected?selected.description:page==='Overview'?'Welcome back, Althaf. Let’s turn today’s effort into tomorrow’s progress.':'Four subjects. One clear direction. Keep moving forward.'}</p></div><span className="date-pill"><CalendarDays size={15}/>{new Date(today+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}</span></div>
-{page==='Overview'&&<><section className="hero reveal"><div className="hero-copy"><span className="hero-badge"><span/> BUILT FOR YOUR NEXT BREAKTHROUGH</span><h2>Your future is in focus.<br/><span>Let’s get you there.</span></h2><p>One topic, one session, one step closer.<br/>Your four-subject journey starts right here.</p><div className="hero-actions"><button className="primary" onClick={()=>setImmersive(true)}><Play size={15} fill="currentColor"/> Let’s focus <ArrowUpRight size={16}/></button><button className="quiet" onClick={()=>navigate('Study planner')}>View study plan <ArrowRight size={16}/></button></div></div><div className="orbital" aria-hidden="true"><div className="orbital-grid"/><div className="orbit orbit-one"/><div className="orbit orbit-two"/><div className="orbit orbit-three"/><div className="planet"><Atom size={64}/></div><span className="satellite satellite-a"><Sigma size={25}/></span><span className="satellite satellite-b"><Atom size={23}/></span><span className="satellite satellite-c"><FlaskConical size={22}/></span><span className="star star-a">+</span><span className="star star-b">+</span><span className="orbital-caption">LESS NOISE. MORE KNOWLEDGE.</span></div></section><section className="stats-grid reveal">{[[Clock3,'Focus time today',`${todayMinutes}m`,'Every minute is an investment'],[BookOpen,'Topics completed',`${completed}`,`of ${allTopics.length} syllabus topics`],[Target,'Overall progress',`${progress}%`,'Across your four subjects'],[Zap,'Sessions today',`${todaySessions.length}`,'Build your daily momentum']].map(([Icon,label,value,sub])=><div className="stat" key={label}><div><span>{label}</span><Icon size={17}/></div><strong>{value}</strong><small>{sub}</small></div>)}</section><div className="dashboard-columns"><div className="dashboard-main"><section><div className="section-heading"><div><h2>Your learning universe <span>04</span></h2><p>Four subjects. Endless possibilities.</p></div><button className="quiet" onClick={()=>navigate('My subjects')}>View all <ArrowUpRight size={15}/></button></div>{subjectCards}</section><section className="panel planner-panel reveal"><div className="panel-heading"><div><h3>Today’s game plan <span className="count-pill">{todayTasks.filter(t=>t.done).length}/{todayTasks.length}</span></h3><p>Make room for what matters.</p></div><button className="small-button" onClick={()=>setModal('task')}><Plus size={14}/> Add task</button></div>{taskList(todayTasks)}</section><section className="panel activity-panel reveal"><div className="panel-heading"><div><h3>Consistency is your superpower</h3><p>Your focus time over the last 7 days</p></div><span className="mint"><TrendingUp size={20}/></span></div>{chart}</section></div><aside className="right-rail"><section className="panel focus-panel reveal">{timer}</section><section className="panel goal-panel reveal"><div className="panel-heading"><h3><Target size={17}/> Daily goal</h3><button className="quiet" onClick={()=>navigate('Settings')}>Edit</button></div><div className="goal-numbers"><strong>{todayMinutes}<span> / {workspace.goal} min</span></strong><span>{Math.min(100,Math.round(todayMinutes/workspace.goal*100))}%</span></div><div className="progress"><i style={{width:`${Math.min(100,todayMinutes/workspace.goal*100)}%`}}/></div><p>{todayMinutes>=workspace.goal?'Goal reached. You showed up for yourself.':'Progress, not perfection. You’ve got this.'} <Sparkles size={13}/></p></section><section className="quote-card reveal"><span>✦</span><blockquote>“The secret of getting<br/>ahead is getting started.”</blockquote><small>A LITTLE REMINDER FOR TODAY</small></section></aside></div></>}
+{page==='Overview'&&<><section className="exam-timers-section reveal">
+  <div className="exam-timers-header">
+    <div className="exam-timers-title">
+      <span className="live-pulse-badge"><span className="live-dot-pulse"/> LIVE EXAM TIMERS</span>
+      <h3>Upcoming KTU Examination Countdown</h3>
+      <p>Precision live countdown for all your semester papers. Track time remaining and keep your preparation on schedule.</p>
+    </div>
+    <div className="exam-timers-actions">
+      <span className="exam-count-badge">4 Papers Scheduled</span>
+    </div>
+  </div>
+  <div className="exam-timers-grid">
+    {subjects.map(s=>{
+      const examDate=s.examDate||DEFAULT_EXAM_DATES[s.id];
+      const countdown=getLiveCountdown(examDate,currentTime);
+      const formattedDate=examDate?new Date(examDate).toLocaleString('en-GB',{
+        day:'numeric',
+        month:'short',
+        year:'numeric',
+        hour:'2-digit',
+        minute:'2-digit',
+        hour12:true
+      }):'Not Scheduled';
+      return (
+        <div key={s.id} className="exam-timer-card" style={{'--card-accent':s.color}}>
+          <div className="timer-card-top">
+            <div className="timer-subject-pill" style={{background:`${s.color}22`,borderColor:`${s.color}66`,color:s.color}}>
+              <span className="timer-code">{s.code}</span>
+              <span className="timer-sem">{s.semester}</span>
+            </div>
+            <button
+              type="button"
+              className="timer-edit-btn"
+              onClick={()=>setEditExamModal({subjectId:s.id,semester:s.semester,short:s.short,code:s.code,date:examDate})}
+              title={`Edit exam date for ${s.short}`}
+            >
+              <CalendarDays size={12}/> Edit
+            </button>
+          </div>
+          <h4 className="timer-subject-name" onClick={()=>openSubject(s)} title="Open subject syllabus & PYQs">
+            {s.name}
+          </h4>
+          <div className="timer-date-row">
+            <Clock3 size={12} style={{color:s.color}}/>
+            <span>{formattedDate}</span>
+          </div>
+          {countdown.isPast?(
+            <div className="timer-completed-box">
+              <Check size={14}/>
+              <span>{countdown.label}</span>
+            </div>
+          ):(
+            <div className="countdown-digits-row">
+              <div className="digit-box">
+                <span className="digit-num">{String(countdown.days).padStart(2,'0')}</span>
+                <span className="digit-unit">DAYS</span>
+              </div>
+              <span className="digit-sep">:</span>
+              <div className="digit-box">
+                <span className="digit-num">{String(countdown.hours).padStart(2,'0')}</span>
+                <span className="digit-unit">HOURS</span>
+              </div>
+              <span className="digit-sep">:</span>
+              <div className="digit-box">
+                <span className="digit-num">{String(countdown.minutes).padStart(2,'0')}</span>
+                <span className="digit-unit">MINS</span>
+              </div>
+              <span className="digit-sep">:</span>
+              <div className="digit-box digit-sec">
+                <span className="digit-num" style={{color:s.color}}>{String(countdown.seconds).padStart(2,'0')}</span>
+                <span className="digit-unit">SECS</span>
+              </div>
+            </div>
+          )}
+          <div className="timer-card-footer">
+            <span className="timer-urgency-pill">
+              {countdown.isPast?'Archived':countdown.days<=10?'🔥 Final Sprint':countdown.days<=30?'⚡ Peak Prep':'📚 Systematic Study'}
+            </span>
+            <button type="button" className="timer-open-link" onClick={()=>openSubject(s)}>
+              Study PYQs <ArrowUpRight size={12}/>
+            </button>
+          </div>
+        </div>
+      );
+    })}
+  </div>
+</section>
+<section className="hero reveal"><div className="hero-copy"><span className="hero-badge"><span/> BUILT FOR YOUR NEXT BREAKTHROUGH</span><h2>Your future is in focus.<br/><span>Let’s get you there.</span></h2><p>One topic, one session, one step closer.<br/>Your four-subject journey starts right here.</p><div className="hero-actions"><button className="primary" onClick={()=>setImmersive(true)}><Play size={15} fill="currentColor"/> Let’s focus <ArrowUpRight size={16}/></button><button className="quiet" onClick={()=>navigate('Study planner')}>View study plan <ArrowRight size={16}/></button></div></div><div className="orbital" aria-hidden="true"><div className="orbital-grid"/><div className="orbit orbit-one"/><div className="orbit orbit-two"/><div className="orbit orbit-three"/><div className="planet"><Atom size={64}/></div><span className="satellite satellite-a"><Sigma size={25}/></span><span className="satellite satellite-b"><Atom size={23}/></span><span className="satellite satellite-c"><FlaskConical size={22}/></span><span className="star star-a">+</span><span className="star star-b">+</span><span className="orbital-caption">LESS NOISE. MORE KNOWLEDGE.</span></div></section><section className="stats-grid reveal">{[[Clock3,'Focus time today',`${todayMinutes}m`,'Every minute is an investment'],[BookOpen,'Topics completed',`${completed}`,`of ${allTopics.length} syllabus topics`],[Target,'Overall progress',`${progress}%`,'Across your four subjects'],[Zap,'Sessions today',`${todaySessions.length}`,'Build your daily momentum']].map(([Icon,label,value,sub])=><div className="stat" key={label}><div><span>{label}</span><Icon size={17}/></div><strong>{value}</strong><small>{sub}</small></div>)}</section><div className="dashboard-columns"><div className="dashboard-main"><section><div className="section-heading"><div><h2>Your learning universe <span>04</span></h2><p>Four subjects. Endless possibilities.</p></div><button className="quiet" onClick={()=>navigate('My subjects')}>View all <ArrowUpRight size={15}/></button></div>{subjectCards}</section><section className="panel planner-panel reveal"><div className="panel-heading"><div><h3>Today’s game plan <span className="count-pill">{todayTasks.filter(t=>t.done).length}/{todayTasks.length}</span></h3><p>Make room for what matters.</p></div><button className="small-button" onClick={()=>setModal('task')}><Plus size={14}/> Add task</button></div>{taskList(todayTasks)}</section><section className="panel activity-panel reveal"><div className="panel-heading"><div><h3>Consistency is your superpower</h3><p>Your focus time over the last 7 days</p></div><span className="mint"><TrendingUp size={20}/></span></div>{chart}</section></div><aside className="right-rail"><section className="panel focus-panel reveal">{timer}</section><section className="panel goal-panel reveal"><div className="panel-heading"><h3><Target size={17}/> Daily goal</h3><button className="quiet" onClick={()=>navigate('Settings')}>Edit</button></div><div className="goal-numbers"><strong>{todayMinutes}<span> / {workspace.goal} min</span></strong><span>{Math.min(100,Math.round(todayMinutes/workspace.goal*100))}%</span></div><div className="progress"><i style={{width:`${Math.min(100,todayMinutes/workspace.goal*100)}%`}}/></div><p>{todayMinutes>=workspace.goal?'Goal reached. You showed up for yourself.':'Progress, not perfection. You’ve got this.'} <Sparkles size={13}/></p></section><section className="quote-card reveal"><span>✦</span><blockquote>“The secret of getting<br/>ahead is getting started.”</blockquote><small>A LITTLE REMINDER FOR TODAY</small></section></aside></div></>}
 {page==='My subjects'&&!selected&&<><div className="toolbar"><div className="tabs">{['All subjects','S1','S2'].map(f=><button key={f} className={filter===f?'active':''} onClick={()=>setFilter(f)}>{f}</button>)}</div><label className="search"><Search size={16}/><input placeholder="Find a subject…" value={search} onChange={e=>setSearch(e.target.value)}/></label></div>{subjectCards}</>}
 {selected&&<><div className="toolbar"><button className="quiet" onClick={()=>setSubjectId(null)}>← All subjects</button><button className="primary" onClick={()=>{if(!running)setTimerSubject(selected.id);setImmersive(true)}}><Focus size={16}/> Focus on this subject</button></div><div className="subject-summary panel"><span style={{color:selected.color}}>{selected.code} · {selected.semester}</span><strong>{Math.round(calculateSubjectProgress(selected)*100)}% complete</strong><div className="progress"><i style={{width:`${calculateSubjectProgress(selected)*100}%`,background:selected.color}}/></div><label>Exam date <input type="datetime-local" value={selected.examDate||''} onChange={e=>setData(d=>({...d,[selected.semester]:{...d[selected.semester],subjects:d[selected.semester].subjects.map(s=>s.id===selected.id?{...s,examDate:e.target.value}:s)}}))}/></label><small>Dates come from your saved syllabus. Confirm them with your official timetable.</small></div>{selected.modules.map((m,i)=>{
   const totalModPqs=m.topics.reduce((acc,top)=>acc+(top.previousQuestions?.length||0),0);
@@ -850,6 +969,37 @@ return <div className="app-shell" style={shellStyle}><aside className={'sidebar 
         <span>Inside code console: run <code>window.aboutDeveloper()</code> or inspect <code>window.__DEVELOPER__</code></span>
       </div>
     </div>
+  </Dialog>
+)}
+{editExamModal&&(
+  <Dialog title={`Set Exam Date · ${editExamModal.code} (${editExamModal.short})`} close={()=>setEditExamModal(null)}>
+    <form onSubmit={e=>{
+      e.preventDefault();
+      const val=new FormData(e.currentTarget).get('examDate');
+      if(val){
+        setData(d=>({
+          ...d,
+          [editExamModal.semester]:{
+            ...d[editExamModal.semester],
+            subjects:d[editExamModal.semester].subjects.map(s=>s.id===editExamModal.subjectId?{...s,examDate:String(val)}:s)
+          }
+        }));
+        notify(`Exam date updated for ${editExamModal.code}! Live countdown adjusted.`);
+        setEditExamModal(null);
+      }
+    }}>
+      <label className="field-label">
+        Official KTU Examination Date & Time
+        <input type="datetime-local" name="examDate" defaultValue={editExamModal.date} required autoFocus/>
+      </label>
+      <p style={{fontSize:10.5,color:'#889f91',lineHeight:1.6,marginTop:-8,marginBottom:16}}>
+        Select your university timetable date and session. The live timer will update instantly across the entire application.
+      </p>
+      <div style={{display:'flex',gap:10}}>
+        <button type="button" className="small-button" onClick={()=>setEditExamModal(null)}>Cancel</button>
+        <button type="submit" className="primary" style={{flex:1}}>Save & Update Countdown</button>
+      </div>
+    </form>
   </Dialog>
 )}
 {immersive&&<div className="immersive"><button className="close-focus icon-button" aria-label="Exit focus mode" onClick={()=>setImmersive(false)}><X size={24}/></button><div className="eyebrow">THE WORLD CAN WAIT.</div><h1>Just you and {focusSubject.short.toLowerCase()}.</h1><div className="panel focus-panel">{timer}</div><p>Take a breath. You only need to do the next thing.</p></div>}
