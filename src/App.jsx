@@ -649,6 +649,7 @@ return <div className="app-shell" style={shellStyle}><aside className={'sidebar 
       const examDate=s.examDate||DEFAULT_EXAM_DATES[s.id];
       const countdown=getLiveCountdown(examDate,currentTime);
       const stage=getExamStage(countdown);
+      const isImportant=stage.key === 'fire' || (!countdown.isPast && countdown.days <= 30);
       const formattedDate=examDate?new Date(examDate).toLocaleString('en-GB',{
         day:'numeric',
         month:'short',
@@ -658,7 +659,7 @@ return <div className="app-shell" style={shellStyle}><aside className={'sidebar 
         hour12:true
       }):'Not Scheduled';
       return (
-        <div key={s.id} className={`exam-timer-card stage-${stage.key}`} style={{'--card-accent':s.color}}>
+        <div key={s.id} className={`exam-timer-card stage-${stage.key} ${isImportant ? 'is-important-exam' : ''}`} style={{'--card-accent':s.color}}>
           <div className="card-animated-bg-layer" aria-hidden="true">
             {stage.key === 'fire' ? (
               <FireCanvas />
@@ -668,6 +669,23 @@ return <div className="app-shell" style={shellStyle}><aside className={'sidebar 
             <div className="card-bg-gradient-scrim" />
             <div className={`card-bg-ambient-glow glow-${stage.key}`} />
           </div>
+          {isImportant && (
+            <div className="earthquake-debris-layer" aria-hidden="true">
+              <div className="seismic-fissure-crack" />
+              <span className="falling-shard shard-slab-1" />
+              <span className="falling-shard shard-slab-2" />
+              <span className="falling-shard shard-slab-3" />
+              <span className="falling-shard shard-rock-1" />
+              <span className="falling-shard shard-rock-2" />
+              <span className="falling-shard shard-rock-3" />
+              <span className="falling-shard shard-rock-4" />
+              <span className="falling-shard shard-rock-5" />
+              <span className="falling-shard shard-dust-1" />
+              <span className="falling-shard shard-dust-2" />
+              <span className="falling-shard shard-dust-3" />
+              <span className="falling-shard shard-dust-4" />
+            </div>
+          )}
           <div className="timer-card-content">
             <div className="timer-card-top">
               <div className="timer-subject-pill" style={{background:`${s.color}22`,borderColor:`${s.color}66`,color:s.color}}>

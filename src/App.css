@@ -2228,6 +2228,560 @@ button.profile:hover {
   }
 }
 
+/* ========================================================
+   EARTHQUAKE SEISMIC HOVER & FALLING DEBRIS ANIMATIONS
+   (Active on hover for Important / Near Exam Timer Cards)
+   ======================================================== */
+
+.exam-timer-card.is-important-exam {
+  position: relative;
+}
+
+/* 1. Card Seismic Earthquake Tremor */
+.exam-timer-card.is-important-exam:hover {
+  border-color: #ff5722 !important;
+  box-shadow: 0 16px 45px rgba(0, 0, 0, 0.85), 0 0 42px rgba(249, 115, 22, 0.55), 0 0 15px rgba(239, 68, 68, 0.4) !important;
+  animation: cardEarthquake 0.72s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+@keyframes cardEarthquake {
+  0% {
+    transform: translateY(-4px) translate(0, 0) rotate(0deg);
+  }
+  8% {
+    transform: translateY(-4px) translate(-3.5px, 2px) rotate(-0.9deg);
+  }
+  16% {
+    transform: translateY(-4px) translate(4px, -2.5px) rotate(1.1deg);
+  }
+  24% {
+    transform: translateY(-4px) translate(-4.5px, -1.5px) rotate(-1deg);
+  }
+  32% {
+    transform: translateY(-4px) translate(4px, 2px) rotate(0.8deg);
+  }
+  40% {
+    transform: translateY(-4px) translate(-3px, 1px) rotate(-0.6deg);
+  }
+  48% {
+    transform: translateY(-4px) translate(3px, -2px) rotate(0.6deg);
+  }
+  56% {
+    transform: translateY(-4px) translate(-2px, 1.5px) rotate(-0.4deg);
+  }
+  64% {
+    transform: translateY(-4px) translate(2px, -1px) rotate(0.4deg);
+  }
+  72% {
+    transform: translateY(-4px) translate(-1.5px, 1px) rotate(-0.2deg);
+  }
+  80% {
+    transform: translateY(-4px) translate(1px, -0.5px) rotate(0.2deg);
+  }
+  90% {
+    transform: translateY(-4px) translate(-0.5px, 0.5px) rotate(-0.1deg);
+  }
+  100% {
+    transform: translateY(-4px) translate(0, 0) rotate(0deg);
+  }
+}
+
+/* 2. Text Pieces Earthquake Wobble & Rattling */
+.exam-timer-card.is-important-exam:hover .timer-subject-name {
+  animation: textQuakeMain 0.7s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+@keyframes textQuakeMain {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.95);
+  }
+  10% {
+    transform: translate(-3px, 1.5px) rotate(-0.8deg);
+    text-shadow: -2.5px 0 6px rgba(239, 68, 68, 0.9), 2.5px 0 6px rgba(249, 115, 22, 0.9);
+  }
+  22% {
+    transform: translate(3px, -2px) rotate(1deg);
+    text-shadow: 2.5px 0 6px rgba(239, 68, 68, 0.9), -2.5px 0 6px rgba(249, 115, 22, 0.9);
+  }
+  34% {
+    transform: translate(-3.5px, -1px) rotate(-0.7deg);
+    text-shadow: -2px 0 5px rgba(239, 68, 68, 0.8), 2px 0 5px rgba(249, 115, 22, 0.8);
+  }
+  46% {
+    transform: translate(2.5px, 1.5px) rotate(0.5deg);
+    text-shadow: 2px 0 4px rgba(239, 68, 68, 0.7), -2px 0 4px rgba(249, 115, 22, 0.7);
+  }
+  58% {
+    transform: translate(-2px, 1px) rotate(-0.3deg);
+    text-shadow: -1.5px 0 3px rgba(239, 68, 68, 0.5), 1.5px 0 3px rgba(249, 115, 22, 0.5);
+  }
+  72% {
+    transform: translate(1.5px, -1px) rotate(0.2deg);
+    text-shadow: 1px 0 3px rgba(239, 68, 68, 0.4), -1px 0 3px rgba(249, 115, 22, 0.4);
+  }
+  86% {
+    transform: translate(-1px, 0.5px);
+    text-shadow: -0.5px 0 2px rgba(239, 68, 68, 0.3);
+  }
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.95);
+  }
+}
+
+.exam-timer-card.is-important-exam:hover .timer-subject-pill {
+  animation: pillQuake 0.65s 0.03s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+@keyframes pillQuake {
+  0% { transform: translate(0, 0) scale(1); }
+  12% { transform: translate(2px, -1.5px) rotate(1deg) scale(1.02); }
+  25% { transform: translate(-2.5px, 1.5px) rotate(-1.2deg) scale(0.98); }
+  40% { transform: translate(2px, 1px) rotate(0.8deg); }
+  55% { transform: translate(-1.5px, -1px) rotate(-0.5deg); }
+  70% { transform: translate(1px, 0.5px) rotate(0.3deg); }
+  85% { transform: translate(-0.5px, -0.5px); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+
+.exam-timer-card.is-important-exam:hover .timer-date-row {
+  animation: dateQuake 0.62s 0.06s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+@keyframes dateQuake {
+  0% { transform: translate(0, 0); }
+  15% { transform: translate(-2px, 1px); }
+  30% { transform: translate(2.5px, -1px); }
+  45% { transform: translate(-1.5px, 0.5px); }
+  60% { transform: translate(1.5px, -0.5px); }
+  78% { transform: translate(-0.8px, 0.3px); }
+  100% { transform: translate(0, 0); }
+}
+
+.exam-timer-card.is-important-exam:hover .countdown-digits-row {
+  border-color: rgba(249, 115, 22, 0.45);
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.6), 0 4px 18px rgba(249, 115, 22, 0.25);
+  animation: countdownRowQuake 0.68s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+@keyframes countdownRowQuake {
+  0% { transform: translate(0, 0); }
+  12% { transform: translate(2px, -1.5px); }
+  24% { transform: translate(-2.5px, 1.5px); }
+  38% { transform: translate(2px, 1px); }
+  52% { transform: translate(-1.5px, -1px); }
+  68% { transform: translate(1px, 0.5px); }
+  84% { transform: translate(-0.5px, -0.5px); }
+  100% { transform: translate(0, 0); }
+}
+
+.exam-timer-card.is-important-exam:hover .countdown-digits-row .digit-box:nth-of-type(1) {
+  animation: digitQuakeA 0.64s 0.02s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+.exam-timer-card.is-important-exam:hover .countdown-digits-row .digit-box:nth-of-type(2) {
+  animation: digitQuakeB 0.64s 0.07s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+.exam-timer-card.is-important-exam:hover .countdown-digits-row .digit-box:nth-of-type(3) {
+  animation: digitQuakeA 0.64s 0.12s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+.exam-timer-card.is-important-exam:hover .countdown-digits-row .digit-box:nth-of-type(4) {
+  animation: digitQuakeB 0.64s 0.17s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+@keyframes digitQuakeA {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  14% { transform: translate(-2.5px, 2px) rotate(-1.5deg); }
+  28% { transform: translate(2.5px, -2px) rotate(1.2deg); }
+  44% { transform: translate(-2px, -1px) rotate(-0.8deg); }
+  60% { transform: translate(1.5px, 1.5px) rotate(0.6deg); }
+  76% { transform: translate(-1px, -0.5px) rotate(-0.3deg); }
+  100% { transform: translate(0, 0) rotate(0deg); }
+}
+
+@keyframes digitQuakeB {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  14% { transform: translate(2.5px, -2px) rotate(1.5deg); }
+  28% { transform: translate(-2.5px, 2px) rotate(-1.2deg); }
+  44% { transform: translate(2px, 1px) rotate(0.8deg); }
+  60% { transform: translate(-1.5px, -1.5px) rotate(-0.6deg); }
+  76% { transform: translate(1px, 0.5px) rotate(0.3deg); }
+  100% { transform: translate(0, 0) rotate(0deg); }
+}
+
+.exam-timer-card.is-important-exam:hover .digit-sep {
+  animation: digitSepQuake 0.58s 0.05s ease-in-out both;
+}
+
+@keyframes digitSepQuake {
+  0%, 100% { transform: translateY(0); color: #94a3b8; }
+  20% { transform: translateY(-3px) scale(1.15); color: #f97316; }
+  40% { transform: translateY(3px) scale(0.9); color: #ef4444; }
+  60% { transform: translateY(-2px); color: #f97316; }
+  80% { transform: translateY(1px); }
+}
+
+.exam-timer-card.is-important-exam:hover .timer-urgency-pill {
+  animation: urgencyQuake 0.65s 0.05s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+@keyframes urgencyQuake {
+  0% { transform: scale(1) translate(0, 0); }
+  15% { transform: scale(1.06) translate(-2px, 1px); }
+  30% { transform: scale(0.98) translate(2px, -1px); }
+  48% { transform: scale(1.03) translate(-1.5px, 0.5px); }
+  65% { transform: scale(0.99) translate(1px, -0.5px); }
+  82% { transform: scale(1.01) translate(-0.5px, 0); }
+  100% { transform: scale(1) translate(0, 0); }
+}
+
+/* 3. Falling Debris & Mini Cards Inside the Card */
+.earthquake-debris-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  border-radius: inherit;
+  z-index: 1;
+}
+
+.falling-shard {
+  position: absolute;
+  top: -30px;
+  opacity: 0;
+  pointer-events: none;
+  transform-origin: center center;
+}
+
+/* Mini cracked card fragments falling inside */
+.shard-slab-1 {
+  left: 18%;
+  width: 28px;
+  height: 16px;
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.98));
+  border: 1px solid rgba(249, 115, 22, 0.75);
+  border-radius: 4px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.8), inset 0 0 6px rgba(249, 115, 22, 0.4);
+}
+
+.shard-slab-2 {
+  left: 64%;
+  width: 32px;
+  height: 18px;
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.98));
+  border: 1px solid rgba(239, 68, 68, 0.75);
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.8), inset 0 0 6px rgba(239, 68, 68, 0.4);
+}
+
+.shard-slab-3 {
+  left: 42%;
+  width: 22px;
+  height: 14px;
+  background: linear-gradient(135deg, rgba(24, 24, 27, 0.95), rgba(9, 9, 11, 0.98));
+  border: 1px solid rgba(251, 146, 60, 0.7);
+  border-radius: 3px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.8);
+}
+
+/* Jagged rock & masonry fragments */
+.shard-rock-1 {
+  left: 10%;
+  width: 14px;
+  height: 14px;
+  background: #27272a;
+  clip-path: polygon(30% 0%, 100% 25%, 75% 100%, 0% 80%);
+  box-shadow: 0 0 8px rgba(249, 115, 22, 0.5);
+}
+
+.shard-rock-2 {
+  left: 50%;
+  width: 17px;
+  height: 15px;
+  background: #3f3f46;
+  clip-path: polygon(50% 0%, 100% 40%, 80% 100%, 20% 90%, 0% 30%);
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.6);
+}
+
+.shard-rock-3 {
+  left: 82%;
+  width: 13px;
+  height: 14px;
+  background: #27272a;
+  clip-path: polygon(20% 0%, 90% 10%, 100% 80%, 30% 100%, 0% 50%);
+}
+
+.shard-rock-4 {
+  left: 30%;
+  width: 15px;
+  height: 15px;
+  background: #18181b;
+  border: 1px solid rgba(251, 146, 60, 0.6);
+  clip-path: polygon(40% 0%, 100% 35%, 70% 100%, 10% 75%);
+}
+
+.shard-rock-5 {
+  left: 74%;
+  width: 11px;
+  height: 11px;
+  background: #3f3f46;
+  clip-path: polygon(10% 20%, 80% 0%, 100% 70%, 40% 100%, 0% 60%);
+}
+
+/* Ember dust specs */
+.shard-dust-1 {
+  left: 20%;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(251, 146, 60, 0.75);
+  filter: blur(1px);
+}
+
+.shard-dust-2 {
+  left: 45%;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(239, 68, 68, 0.7);
+  filter: blur(1px);
+}
+
+.shard-dust-3 {
+  left: 70%;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(253, 186, 116, 0.8);
+  filter: blur(0.5px);
+}
+
+.shard-dust-4 {
+  left: 88%;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(249, 115, 22, 0.75);
+  filter: blur(1px);
+}
+
+/* Trigger tumbling fall on hover */
+.exam-timer-card.is-important-exam:hover .shard-slab-1 {
+  animation: fallSlabA 1.05s 0.02s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.exam-timer-card.is-important-exam:hover .shard-slab-2 {
+  animation: fallSlabB 1.15s 0.12s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.exam-timer-card.is-important-exam:hover .shard-slab-3 {
+  animation: fallSlabC 0.98s 0.22s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.exam-timer-card.is-important-exam:hover .shard-rock-1 {
+  animation: fallRockA 0.92s 0.04s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.exam-timer-card.is-important-exam:hover .shard-rock-2 {
+  animation: fallRockB 1.02s 0.10s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.exam-timer-card.is-important-exam:hover .shard-rock-3 {
+  animation: fallRockC 0.95s 0.18s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.exam-timer-card.is-important-exam:hover .shard-rock-4 {
+  animation: fallRockA 1.08s 0.26s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.exam-timer-card.is-important-exam:hover .shard-rock-5 {
+  animation: fallRockB 0.94s 0.34s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.exam-timer-card.is-important-exam:hover .shard-dust-1 {
+  animation: fallDustA 1.25s 0.04s ease-out forwards;
+}
+
+.exam-timer-card.is-important-exam:hover .shard-dust-2 {
+  animation: fallDustB 1.35s 0.14s ease-out forwards;
+}
+
+.exam-timer-card.is-important-exam:hover .shard-dust-3 {
+  animation: fallDustA 1.30s 0.24s ease-out forwards;
+}
+
+.exam-timer-card.is-important-exam:hover .shard-dust-4 {
+  animation: fallDustB 1.40s 0.32s ease-out forwards;
+}
+
+@keyframes fallSlabA {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px) translateX(0) rotate(0deg) scale(0.7);
+  }
+  15% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(270px) translateX(-24px) rotate(320deg) scale(1.05);
+  }
+}
+
+@keyframes fallSlabB {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px) translateX(0) rotate(0deg) scale(0.8);
+  }
+  15% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(275px) translateX(26px) rotate(-340deg) scale(1.02);
+  }
+}
+
+@keyframes fallSlabC {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px) translateX(0) rotate(0deg) scale(0.75);
+  }
+  15% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 0.85;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(265px) translateX(-14px) rotate(220deg) scale(0.95);
+  }
+}
+
+@keyframes fallRockA {
+  0% {
+    opacity: 0;
+    transform: translateY(-15px) translateX(0) rotate(0deg) scale(0.6);
+  }
+  12% {
+    opacity: 1;
+  }
+  75% {
+    opacity: 0.85;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(280px) translateX(-18px) rotate(430deg) scale(1);
+  }
+}
+
+@keyframes fallRockB {
+  0% {
+    opacity: 0;
+    transform: translateY(-15px) translateX(0) rotate(0deg) scale(0.65);
+  }
+  12% {
+    opacity: 1;
+  }
+  75% {
+    opacity: 0.85;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(285px) translateX(20px) rotate(-460deg) scale(0.95);
+  }
+}
+
+@keyframes fallRockC {
+  0% {
+    opacity: 0;
+    transform: translateY(-15px) translateX(0) rotate(0deg) scale(0.5);
+  }
+  12% {
+    opacity: 1;
+  }
+  75% {
+    opacity: 0.85;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(275px) translateX(8px) rotate(520deg) scale(0.9);
+  }
+}
+
+@keyframes fallDustA {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px) translateX(0);
+  }
+  20% {
+    opacity: 0.85;
+  }
+  80% {
+    opacity: 0.55;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(260px) translateX(16px);
+  }
+}
+
+@keyframes fallDustB {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px) translateX(0);
+  }
+  20% {
+    opacity: 0.85;
+  }
+  80% {
+    opacity: 0.55;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(260px) translateX(-14px);
+  }
+}
+
+/* Seismic Fissure Crack Glow */
+.seismic-fissure-crack {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent 4%, #ef4444 20%, #f97316 50%, #ef4444 80%, transparent 96%);
+  box-shadow: 0 0 12px rgba(249, 115, 22, 0.9), 0 0 24px rgba(239, 68, 68, 0.7);
+  opacity: 0;
+  transform: scaleX(0.2);
+  transition: all 0.35s ease;
+  pointer-events: none;
+}
+
+.exam-timer-card.is-important-exam:hover .seismic-fissure-crack {
+  opacity: 1;
+  transform: scaleX(1);
+  animation: fissurePulse 0.65s ease-in-out infinite alternate;
+}
+
+@keyframes fissurePulse {
+  0% {
+    opacity: 0.75;
+    box-shadow: 0 0 8px rgba(249, 115, 22, 0.7), 0 0 18px rgba(239, 68, 68, 0.5);
+  }
+  100% {
+    opacity: 1;
+    box-shadow: 0 0 16px rgba(249, 115, 22, 1), 0 0 30px rgba(239, 68, 68, 0.9);
+  }
+}
+
 
 /* ========================================================
    REVISED B.TECH EXAM TIMETABLE & MODULE COMPLETION BOARD
