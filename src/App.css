@@ -2090,6 +2090,14 @@ button.profile:hover {
   padding: 9px 10px;
   margin-bottom: 14px;
   box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.6), 0 4px 16px rgba(0, 0, 0, 0.5);
+  position: relative;
+  overflow: hidden;
+}
+
+.countdown-digits-row .digit-box,
+.countdown-digits-row .digit-sep {
+  position: relative;
+  z-index: 2;
 }
 
 .digit-box {
@@ -2230,146 +2238,63 @@ button.profile:hover {
 
 /* ========================================================
    EARTHQUAKE SEISMIC HOVER & FALLING DEBRIS ANIMATIONS
-   (Active on hover for Important / Near Exam Timer Cards)
+   (Active on hover: ONLY the countdown timer inside shakes)
    ======================================================== */
 
 .exam-timer-card.is-important-exam {
   position: relative;
 }
 
-/* 1. Card Seismic Earthquake Tremor (Slower, heavier rolling tectonic rumble) */
+/* Outer Card stays solid & steady: NO cardEarthquake animation! */
 .exam-timer-card.is-important-exam:hover {
-  border-color: #ff5722 !important;
-  box-shadow: 0 16px 45px rgba(0, 0, 0, 0.85), 0 0 42px rgba(249, 115, 22, 0.55), 0 0 15px rgba(239, 68, 68, 0.4) !important;
-  animation: cardEarthquake 1.45s cubic-bezier(0.25, 0.1, 0.25, 1) both;
+  border-color: rgba(249, 115, 22, 0.85) !important;
+  box-shadow: 0 16px 45px rgba(0, 0, 0, 0.85), 0 0 32px rgba(249, 115, 22, 0.35) !important;
 }
 
-@keyframes cardEarthquake {
+/* 1. Timer Module Earthquake Tremor (Only the timer inside the card shakes) */
+.exam-timer-card.is-important-exam:hover .countdown-digits-row {
+  border-color: #ff5722 !important;
+  box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.7), 0 0 26px rgba(249, 115, 22, 0.55), 0 0 12px rgba(239, 68, 68, 0.45) !important;
+  animation: timerEarthquake 1.45s cubic-bezier(0.25, 0.1, 0.25, 1) both;
+}
+
+@keyframes timerEarthquake {
   0% {
-    transform: translateY(-4px) translate(0, 0) rotate(0deg);
+    transform: translate(0, 0) rotate(0deg);
   }
   6% {
-    transform: translateY(-4px) translate(-4px, 2px) rotate(-1.2deg);
+    transform: translate(-4px, 2px) rotate(-1.2deg);
   }
   14% {
-    transform: translateY(-4px) translate(4.5px, -2.5px) rotate(1.4deg);
+    transform: translate(4.5px, -2px) rotate(1.4deg);
   }
   22% {
-    transform: translateY(-4px) translate(-5px, -1.8px) rotate(-1.1deg);
+    transform: translate(-5px, -1.5px) rotate(-1.1deg);
   }
   32% {
-    transform: translateY(-4px) translate(4.5px, 2px) rotate(0.9deg);
+    transform: translate(4px, 1.8px) rotate(0.9deg);
   }
   42% {
-    transform: translateY(-4px) translate(-3.5px, 1.5px) rotate(-0.7deg);
+    transform: translate(-3.5px, 1.2px) rotate(-0.7deg);
   }
   54% {
-    transform: translateY(-4px) translate(3px, -2px) rotate(0.6deg);
+    transform: translate(3px, -1.5px) rotate(0.6deg);
   }
   66% {
-    transform: translateY(-4px) translate(-2.5px, 1.5px) rotate(-0.4deg);
+    transform: translate(-2px, 1.2px) rotate(-0.4deg);
   }
   78% {
-    transform: translateY(-4px) translate(2px, -1px) rotate(0.3deg);
+    transform: translate(1.8px, -0.8px) rotate(0.3deg);
   }
   88% {
-    transform: translateY(-4px) translate(-1px, 0.5px) rotate(-0.1deg);
-  }
-  100% {
-    transform: translateY(-4px) translate(0, 0) rotate(0deg);
-  }
-}
-
-/* 2. Text Pieces Earthquake Wobble & Rattling (Slower, visible structural wobble) */
-.exam-timer-card.is-important-exam:hover .timer-subject-name {
-  animation: textQuakeMain 1.4s cubic-bezier(0.25, 0.1, 0.25, 1) both;
-}
-
-@keyframes textQuakeMain {
-  0% {
-    transform: translate(0, 0) rotate(0deg);
-    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.95);
-  }
-  8% {
-    transform: translate(-3.5px, 2px) rotate(-1deg);
-    text-shadow: -3px 0 8px rgba(239, 68, 68, 0.95), 3px 0 8px rgba(249, 115, 22, 0.95);
-  }
-  18% {
-    transform: translate(3.5px, -2.5px) rotate(1.2deg);
-    text-shadow: 3px 0 8px rgba(239, 68, 68, 0.95), -3px 0 8px rgba(249, 115, 22, 0.95);
-  }
-  30% {
-    transform: translate(-4px, -1.5px) rotate(-0.9deg);
-    text-shadow: -2.5px 0 6px rgba(239, 68, 68, 0.85), 2.5px 0 6px rgba(249, 115, 22, 0.85);
-  }
-  44% {
-    transform: translate(3px, 2px) rotate(0.7deg);
-    text-shadow: 2px 0 5px rgba(239, 68, 68, 0.75), -2px 0 5px rgba(249, 115, 22, 0.75);
-  }
-  58% {
-    transform: translate(-2.5px, 1.2px) rotate(-0.4deg);
-    text-shadow: -2px 0 4px rgba(239, 68, 68, 0.6), 2px 0 4px rgba(249, 115, 22, 0.6);
-  }
-  72% {
-    transform: translate(2px, -1px) rotate(0.3deg);
-    text-shadow: 1.5px 0 3px rgba(239, 68, 68, 0.5), -1.5px 0 3px rgba(249, 115, 22, 0.5);
-  }
-  86% {
-    transform: translate(-1px, 0.5px);
-    text-shadow: -0.8px 0 2px rgba(239, 68, 68, 0.3);
+    transform: translate(-1px, 0.4px) rotate(-0.1deg);
   }
   100% {
     transform: translate(0, 0) rotate(0deg);
-    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.95);
   }
 }
 
-.exam-timer-card.is-important-exam:hover .timer-subject-pill {
-  animation: pillQuake 1.35s 0.05s cubic-bezier(0.25, 0.1, 0.25, 1) both;
-}
-
-@keyframes pillQuake {
-  0% { transform: translate(0, 0) scale(1); }
-  12% { transform: translate(2.5px, -1.8px) rotate(1.2deg) scale(1.02); }
-  26% { transform: translate(-3px, 1.8px) rotate(-1.4deg) scale(0.98); }
-  42% { transform: translate(2.5px, 1.2px) rotate(0.9deg); }
-  58% { transform: translate(-2px, -1.2px) rotate(-0.6deg); }
-  74% { transform: translate(1.5px, 0.6px) rotate(0.3deg); }
-  88% { transform: translate(-0.8px, -0.6px); }
-  100% { transform: translate(0, 0) scale(1); }
-}
-
-.exam-timer-card.is-important-exam:hover .timer-date-row {
-  animation: dateQuake 1.3s 0.08s cubic-bezier(0.25, 0.1, 0.25, 1) both;
-}
-
-@keyframes dateQuake {
-  0% { transform: translate(0, 0); }
-  15% { transform: translate(-2.5px, 1.2px); }
-  32% { transform: translate(3px, -1.2px); }
-  48% { transform: translate(-2px, 0.8px); }
-  64% { transform: translate(2px, -0.6px); }
-  80% { transform: translate(-1px, 0.4px); }
-  100% { transform: translate(0, 0); }
-}
-
-.exam-timer-card.is-important-exam:hover .countdown-digits-row {
-  border-color: rgba(249, 115, 22, 0.45);
-  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.6), 0 4px 18px rgba(249, 115, 22, 0.25);
-  animation: countdownRowQuake 1.4s cubic-bezier(0.25, 0.1, 0.25, 1) both;
-}
-
-@keyframes countdownRowQuake {
-  0% { transform: translate(0, 0); }
-  12% { transform: translate(2.5px, -1.8px); }
-  26% { transform: translate(-3px, 1.8px); }
-  42% { transform: translate(2.5px, 1.2px); }
-  58% { transform: translate(-2px, -1.2px); }
-  74% { transform: translate(1.5px, 0.6px); }
-  88% { transform: translate(-0.8px, -0.6px); }
-  100% { transform: translate(0, 0); }
-}
-
+/* 2. Timer Digits and Units Rattling Inside the Timer */
 .exam-timer-card.is-important-exam:hover .countdown-digits-row .digit-box:nth-of-type(1) {
   animation: digitQuakeA 1.35s 0.04s cubic-bezier(0.25, 0.1, 0.25, 1) both;
 }
@@ -2385,25 +2310,25 @@ button.profile:hover {
 
 @keyframes digitQuakeA {
   0% { transform: translate(0, 0) rotate(0deg); }
-  14% { transform: translate(-3px, 2.5px) rotate(-1.8deg); }
-  30% { transform: translate(3px, -2.5px) rotate(1.5deg); }
-  48% { transform: translate(-2.5px, -1.2px) rotate(-1deg); }
-  65% { transform: translate(2px, 1.8px) rotate(0.8deg); }
-  80% { transform: translate(-1.2px, -0.6px) rotate(-0.4deg); }
+  14% { transform: translate(-3px, 2px) rotate(-1.5deg); }
+  30% { transform: translate(3px, -2px) rotate(1.3deg); }
+  48% { transform: translate(-2.5px, -1px) rotate(-0.9deg); }
+  65% { transform: translate(2px, 1.5px) rotate(0.7deg); }
+  80% { transform: translate(-1.2px, -0.5px) rotate(-0.3deg); }
   100% { transform: translate(0, 0) rotate(0deg); }
 }
 
 @keyframes digitQuakeB {
   0% { transform: translate(0, 0) rotate(0deg); }
-  14% { transform: translate(3px, -2.5px) rotate(1.8deg); }
-  30% { transform: translate(-3px, 2.5px) rotate(-1.5deg); }
-  48% { transform: translate(2.5px, 1.2px) rotate(1deg); }
-  65% { transform: translate(-2px, -1.8px) rotate(-0.8deg); }
-  80% { transform: translate(1.2px, 0.6px) rotate(0.4deg); }
+  14% { transform: translate(3px, -2px) rotate(1.5deg); }
+  30% { transform: translate(-3px, 2px) rotate(-1.3deg); }
+  48% { transform: translate(2.5px, 1px) rotate(0.9deg); }
+  65% { transform: translate(-2px, -1.5px) rotate(-0.7deg); }
+  80% { transform: translate(1.2px, 0.5px) rotate(0.3deg); }
   100% { transform: translate(0, 0) rotate(0deg); }
 }
 
-.exam-timer-card.is-important-exam:hover .digit-sep {
+.exam-timer-card.is-important-exam:hover .countdown-digits-row .digit-sep {
   animation: digitSepQuake 1.25s 0.08s ease-in-out both;
 }
 
@@ -2415,22 +2340,8 @@ button.profile:hover {
   82% { transform: translateY(1.2px); }
 }
 
-.exam-timer-card.is-important-exam:hover .timer-urgency-pill {
-  animation: urgencyQuake 1.35s 0.08s cubic-bezier(0.25, 0.1, 0.25, 1) both;
-}
-
-@keyframes urgencyQuake {
-  0% { transform: scale(1) translate(0, 0); }
-  16% { transform: scale(1.08) translate(-2.5px, 1.2px); }
-  34% { transform: scale(0.96) translate(2.5px, -1.2px); }
-  52% { transform: scale(1.04) translate(-2px, 0.6px); }
-  70% { transform: scale(0.98) translate(1.2px, -0.6px); }
-  85% { transform: scale(1.02) translate(-0.6px, 0); }
-  100% { transform: scale(1) translate(0, 0); }
-}
-
-/* 3. Falling Debris & Mini Cards Inside the Card (Slower, cinematic tumble) */
-.earthquake-debris-layer {
+/* 3. Falling Debris Inside the Timer Chamber */
+.timer-earthquake-debris-layer {
   position: absolute;
   inset: 0;
   pointer-events: none;
@@ -2439,232 +2350,189 @@ button.profile:hover {
   z-index: 1;
 }
 
-.falling-shard {
+.timer-shard {
   position: absolute;
-  top: -30px;
+  top: -18px;
   opacity: 0;
   pointer-events: none;
   transform-origin: center center;
 }
 
-/* Mini cracked card fragments falling inside */
+/* Mini cracked timer fragments falling inside */
 .shard-slab-1 {
-  left: 18%;
-  width: 28px;
-  height: 16px;
+  left: 15%;
+  width: 20px;
+  height: 12px;
   background: linear-gradient(135deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.98));
   border: 1px solid rgba(249, 115, 22, 0.75);
-  border-radius: 4px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.8), inset 0 0 6px rgba(249, 115, 22, 0.4);
+  border-radius: 3px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.8), inset 0 0 4px rgba(249, 115, 22, 0.4);
 }
 
 .shard-slab-2 {
-  left: 64%;
-  width: 32px;
-  height: 18px;
+  left: 60%;
+  width: 24px;
+  height: 13px;
   background: linear-gradient(135deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.98));
   border: 1px solid rgba(239, 68, 68, 0.75);
-  border-radius: 4px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.8), inset 0 0 6px rgba(239, 68, 68, 0.4);
+  border-radius: 3px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.8), inset 0 0 4px rgba(239, 68, 68, 0.4);
 }
 
 .shard-slab-3 {
-  left: 42%;
-  width: 22px;
-  height: 14px;
+  left: 38%;
+  width: 17px;
+  height: 10px;
   background: linear-gradient(135deg, rgba(24, 24, 27, 0.95), rgba(9, 9, 11, 0.98));
   border: 1px solid rgba(251, 146, 60, 0.7);
-  border-radius: 3px;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.8);
+  border-radius: 2px;
 }
 
 /* Jagged rock & masonry fragments */
 .shard-rock-1 {
   left: 10%;
-  width: 14px;
-  height: 14px;
+  width: 10px;
+  height: 10px;
   background: #27272a;
   clip-path: polygon(30% 0%, 100% 25%, 75% 100%, 0% 80%);
-  box-shadow: 0 0 8px rgba(249, 115, 22, 0.5);
+  box-shadow: 0 0 6px rgba(249, 115, 22, 0.5);
 }
 
 .shard-rock-2 {
-  left: 50%;
-  width: 17px;
-  height: 15px;
+  left: 48%;
+  width: 12px;
+  height: 11px;
   background: #3f3f46;
   clip-path: polygon(50% 0%, 100% 40%, 80% 100%, 20% 90%, 0% 30%);
-  box-shadow: 0 0 10px rgba(239, 68, 68, 0.6);
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.6);
 }
 
 .shard-rock-3 {
   left: 82%;
-  width: 13px;
-  height: 14px;
+  width: 9px;
+  height: 10px;
   background: #27272a;
   clip-path: polygon(20% 0%, 90% 10%, 100% 80%, 30% 100%, 0% 50%);
 }
 
 .shard-rock-4 {
-  left: 30%;
-  width: 15px;
-  height: 15px;
+  left: 28%;
+  width: 11px;
+  height: 11px;
   background: #18181b;
   border: 1px solid rgba(251, 146, 60, 0.6);
   clip-path: polygon(40% 0%, 100% 35%, 70% 100%, 10% 75%);
 }
 
-.shard-rock-5 {
-  left: 74%;
-  width: 11px;
-  height: 11px;
-  background: #3f3f46;
-  clip-path: polygon(10% 20%, 80% 0%, 100% 70%, 40% 100%, 0% 60%);
-}
-
 /* Ember dust specs */
 .shard-dust-1 {
   left: 20%;
-  width: 5px;
-  height: 5px;
+  width: 4px;
+  height: 4px;
   border-radius: 50%;
   background: rgba(251, 146, 60, 0.75);
-  filter: blur(1px);
+  filter: blur(0.8px);
 }
 
 .shard-dust-2 {
-  left: 45%;
-  width: 6px;
-  height: 6px;
+  left: 52%;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
   background: rgba(239, 68, 68, 0.7);
-  filter: blur(1px);
+  filter: blur(0.8px);
 }
 
 .shard-dust-3 {
-  left: 70%;
-  width: 4px;
-  height: 4px;
+  left: 75%;
+  width: 3.5px;
+  height: 3.5px;
   border-radius: 50%;
   background: rgba(253, 186, 116, 0.8);
   filter: blur(0.5px);
 }
 
-.shard-dust-4 {
-  left: 88%;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: rgba(249, 115, 22, 0.75);
-  filter: blur(1px);
-}
-
-/* Trigger slower tumbling fall on hover (2.1s - 3.0s) */
+/* Trigger tumbling fall inside timer on hover (2.0s - 2.8s) */
 .exam-timer-card.is-important-exam:hover .shard-slab-1 {
-  animation: fallSlabA 2.3s 0.05s cubic-bezier(0.33, 1, 0.68, 1) forwards;
+  animation: timerFallSlabA 2.3s 0.05s cubic-bezier(0.33, 1, 0.68, 1) forwards;
 }
 
 .exam-timer-card.is-important-exam:hover .shard-slab-2 {
-  animation: fallSlabB 2.5s 0.2s cubic-bezier(0.33, 1, 0.68, 1) forwards;
+  animation: timerFallSlabB 2.5s 0.18s cubic-bezier(0.33, 1, 0.68, 1) forwards;
 }
 
 .exam-timer-card.is-important-exam:hover .shard-slab-3 {
-  animation: fallSlabC 2.2s 0.35s cubic-bezier(0.33, 1, 0.68, 1) forwards;
+  animation: timerFallSlabA 2.2s 0.32s cubic-bezier(0.33, 1, 0.68, 1) forwards;
 }
 
 .exam-timer-card.is-important-exam:hover .shard-rock-1 {
-  animation: fallRockA 2.1s 0.08s cubic-bezier(0.33, 1, 0.68, 1) forwards;
+  animation: timerFallRockA 2.1s 0.08s cubic-bezier(0.33, 1, 0.68, 1) forwards;
 }
 
 .exam-timer-card.is-important-exam:hover .shard-rock-2 {
-  animation: fallRockB 2.4s 0.18s cubic-bezier(0.33, 1, 0.68, 1) forwards;
+  animation: timerFallRockB 2.4s 0.16s cubic-bezier(0.33, 1, 0.68, 1) forwards;
 }
 
 .exam-timer-card.is-important-exam:hover .shard-rock-3 {
-  animation: fallRockC 2.25s 0.3s cubic-bezier(0.33, 1, 0.68, 1) forwards;
+  animation: timerFallRockA 2.25s 0.28s cubic-bezier(0.33, 1, 0.68, 1) forwards;
 }
 
 .exam-timer-card.is-important-exam:hover .shard-rock-4 {
-  animation: fallRockA 2.45s 0.42s cubic-bezier(0.33, 1, 0.68, 1) forwards;
-}
-
-.exam-timer-card.is-important-exam:hover .shard-rock-5 {
-  animation: fallRockB 2.15s 0.52s cubic-bezier(0.33, 1, 0.68, 1) forwards;
+  animation: timerFallRockB 2.45s 0.38s cubic-bezier(0.33, 1, 0.68, 1) forwards;
 }
 
 .exam-timer-card.is-important-exam:hover .shard-dust-1 {
-  animation: fallDustA 2.7s 0.08s ease-out forwards;
+  animation: timerFallDust 2.6s 0.08s ease-out forwards;
 }
 
 .exam-timer-card.is-important-exam:hover .shard-dust-2 {
-  animation: fallDustB 2.9s 0.22s ease-out forwards;
+  animation: timerFallDust 2.8s 0.22s ease-out forwards;
 }
 
 .exam-timer-card.is-important-exam:hover .shard-dust-3 {
-  animation: fallDustA 2.8s 0.38s ease-out forwards;
+  animation: timerFallDust 2.7s 0.36s ease-out forwards;
 }
 
-.exam-timer-card.is-important-exam:hover .shard-dust-4 {
-  animation: fallDustB 3.0s 0.48s ease-out forwards;
-}
-
-@keyframes fallSlabA {
+@keyframes timerFallSlabA {
   0% {
     opacity: 0;
-    transform: translateY(-20px) translateX(0) rotate(0deg) scale(0.7);
+    transform: translateY(-16px) translateX(0) rotate(0deg) scale(0.7);
   }
-  15% {
-    opacity: 1;
+  16% {
+    opacity: 0.95;
   }
-  85% {
+  82% {
     opacity: 0.9;
   }
   100% {
     opacity: 0;
-    transform: translateY(270px) translateX(-24px) rotate(320deg) scale(1.05);
+    transform: translateY(72px) translateX(-15px) rotate(260deg) scale(1);
   }
 }
 
-@keyframes fallSlabB {
+@keyframes timerFallSlabB {
   0% {
     opacity: 0;
-    transform: translateY(-20px) translateX(0) rotate(0deg) scale(0.8);
+    transform: translateY(-16px) translateX(0) rotate(0deg) scale(0.75);
   }
-  15% {
-    opacity: 1;
+  16% {
+    opacity: 0.95;
   }
-  85% {
+  82% {
     opacity: 0.9;
   }
   100% {
     opacity: 0;
-    transform: translateY(275px) translateX(26px) rotate(-340deg) scale(1.02);
+    transform: translateY(72px) translateX(16px) rotate(-280deg) scale(0.95);
   }
 }
 
-@keyframes fallSlabC {
+@keyframes timerFallRockA {
   0% {
     opacity: 0;
-    transform: translateY(-20px) translateX(0) rotate(0deg) scale(0.75);
+    transform: translateY(-12px) translateX(0) rotate(0deg) scale(0.6);
   }
-  15% {
-    opacity: 1;
-  }
-  85% {
-    opacity: 0.85;
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(265px) translateX(-14px) rotate(220deg) scale(0.95);
-  }
-}
-
-@keyframes fallRockA {
-  0% {
-    opacity: 0;
-    transform: translateY(-15px) translateX(0) rotate(0deg) scale(0.6);
-  }
-  12% {
+  14% {
     opacity: 1;
   }
   80% {
@@ -2672,16 +2540,16 @@ button.profile:hover {
   }
   100% {
     opacity: 0;
-    transform: translateY(280px) translateX(-18px) rotate(430deg) scale(1);
+    transform: translateY(70px) translateX(-10px) rotate(340deg) scale(0.9);
   }
 }
 
-@keyframes fallRockB {
+@keyframes timerFallRockB {
   0% {
     opacity: 0;
-    transform: translateY(-15px) translateX(0) rotate(0deg) scale(0.65);
+    transform: translateY(-12px) translateX(0) rotate(0deg) scale(0.65);
   }
-  12% {
+  14% {
     opacity: 1;
   }
   80% {
@@ -2689,77 +2557,44 @@ button.profile:hover {
   }
   100% {
     opacity: 0;
-    transform: translateY(285px) translateX(20px) rotate(-460deg) scale(0.95);
+    transform: translateY(70px) translateX(12px) rotate(-360deg) scale(0.85);
   }
 }
 
-@keyframes fallRockC {
+@keyframes timerFallDust {
   0% {
     opacity: 0;
-    transform: translateY(-15px) translateX(0) rotate(0deg) scale(0.5);
+    transform: translateY(-8px) translateX(0);
   }
-  12% {
-    opacity: 1;
+  18% {
+    opacity: 0.85;
   }
   80% {
-    opacity: 0.85;
+    opacity: 0.5;
   }
   100% {
     opacity: 0;
-    transform: translateY(275px) translateX(8px) rotate(520deg) scale(0.9);
+    transform: translateY(68px) translateX(8px);
   }
 }
 
-@keyframes fallDustA {
-  0% {
-    opacity: 0;
-    transform: translateY(-10px) translateX(0);
-  }
-  20% {
-    opacity: 0.85;
-  }
-  82% {
-    opacity: 0.55;
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(260px) translateX(16px);
-  }
-}
-
-@keyframes fallDustB {
-  0% {
-    opacity: 0;
-    transform: translateY(-10px) translateX(0);
-  }
-  20% {
-    opacity: 0.85;
-  }
-  82% {
-    opacity: 0.55;
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(260px) translateX(-14px);
-  }
-}
-
-/* Seismic Fissure Crack Glow */
-.seismic-fissure-crack {
+/* Seismic Fissure Crack Glow at Bottom of Timer */
+.timer-fissure-crack {
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, transparent 4%, #ef4444 20%, #f97316 50%, #ef4444 80%, transparent 96%);
-  box-shadow: 0 0 12px rgba(249, 115, 22, 0.9), 0 0 24px rgba(239, 68, 68, 0.7);
+  height: 2.5px;
+  background: linear-gradient(90deg, transparent 5%, #ef4444 20%, #f97316 50%, #ef4444 80%, transparent 95%);
+  box-shadow: 0 0 10px rgba(249, 115, 22, 0.9), 0 0 20px rgba(239, 68, 68, 0.7);
   opacity: 0;
   transform: scaleX(0.2);
   transition: all 0.35s ease;
   pointer-events: none;
+  z-index: 3;
 }
 
-.exam-timer-card.is-important-exam:hover .seismic-fissure-crack {
+.exam-timer-card.is-important-exam:hover .timer-fissure-crack {
   opacity: 1;
   transform: scaleX(1);
   animation: fissurePulse 0.9s ease-in-out infinite alternate;

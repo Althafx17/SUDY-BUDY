@@ -669,23 +669,6 @@ return <div className="app-shell" style={shellStyle}><aside className={'sidebar 
             <div className="card-bg-gradient-scrim" />
             <div className={`card-bg-ambient-glow glow-${stage.key}`} />
           </div>
-          {isImportant && (
-            <div className="earthquake-debris-layer" aria-hidden="true">
-              <div className="seismic-fissure-crack" />
-              <span className="falling-shard shard-slab-1" />
-              <span className="falling-shard shard-slab-2" />
-              <span className="falling-shard shard-slab-3" />
-              <span className="falling-shard shard-rock-1" />
-              <span className="falling-shard shard-rock-2" />
-              <span className="falling-shard shard-rock-3" />
-              <span className="falling-shard shard-rock-4" />
-              <span className="falling-shard shard-rock-5" />
-              <span className="falling-shard shard-dust-1" />
-              <span className="falling-shard shard-dust-2" />
-              <span className="falling-shard shard-dust-3" />
-              <span className="falling-shard shard-dust-4" />
-            </div>
-          )}
           <div className="timer-card-content">
             <div className="timer-card-top">
               <div className="timer-subject-pill" style={{background:`${s.color}22`,borderColor:`${s.color}66`,color:s.color}}>
@@ -715,6 +698,21 @@ return <div className="app-shell" style={shellStyle}><aside className={'sidebar 
               </div>
             ):(
               <div className="countdown-digits-row">
+                {isImportant && (
+                  <div className="timer-earthquake-debris-layer" aria-hidden="true">
+                    <div className="timer-fissure-crack" />
+                    <span className="timer-shard shard-slab-1" />
+                    <span className="timer-shard shard-slab-2" />
+                    <span className="timer-shard shard-slab-3" />
+                    <span className="timer-shard shard-rock-1" />
+                    <span className="timer-shard shard-rock-2" />
+                    <span className="timer-shard shard-rock-3" />
+                    <span className="timer-shard shard-rock-4" />
+                    <span className="timer-shard shard-dust-1" />
+                    <span className="timer-shard shard-dust-2" />
+                    <span className="timer-shard shard-dust-3" />
+                  </div>
+                )}
                 <div className="digit-box">
                   <span className="digit-num">{String(countdown.days).padStart(2,'0')}</span>
                   <span className="digit-unit">DAYS</span>
