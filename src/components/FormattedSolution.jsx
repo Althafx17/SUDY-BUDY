@@ -268,3 +268,4 @@ export default function FormattedSolution({ text, isCompact = false }) {
     </div>
   );
 }
+
