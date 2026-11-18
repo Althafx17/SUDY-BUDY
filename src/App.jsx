@@ -60,6 +60,43 @@ const getLiveCountdown=(examDateStr,now)=>{
   const seconds=Math.floor((diff%(1000*60))/1000);
   return{isPast:false,days,hours,minutes,seconds,diff};
 };
+const getExamStage=(countdown)=>{
+  if(countdown.isPast){
+    return{
+      key:'archived',
+      label:countdown.label||'Exam Finished',
+      icon:'✅',
+      badgeClass:'badge-archived',
+      importance:'Concluded'
+    };
+  }
+  const days=countdown.days;
+  if(days<=30){
+    return{
+      key:'fire',
+      label:days<=10?'🔥 Final Sprint':`🔥 Near Exam (${days}d)`,
+      icon:'🔥',
+      badgeClass:'badge-fire',
+      importance:'Critical Sprint'
+    };
+  }
+  if(days<=45){
+    return{
+      key:'electric',
+      label:`⚡ Peak Prep (${days}d)`,
+      icon:'⚡',
+      badgeClass:'badge-electric',
+      importance:'High Focus Zone'
+    };
+  }
+  return{
+    key:'cosmic',
+    label:`📚 Systematic Study (${days}d)`,
+    icon:'🌌',
+    badgeClass:'badge-cosmic',
+    importance:'Steady Trajectory'
+  };
+};
 const initialLedger=()=>{
   const saved=read(STORAGE_KEY,null);
   const buildSemData=(sem,savedSem)=>{
@@ -574,9 +611,14 @@ return <div className="app-shell" style={shellStyle}><aside className={'sidebar 
     <div className="exam-timers-title">
       <span className="live-pulse-badge"><span className="live-dot-pulse"/> LIVE EXAM TIMERS</span>
       <h3>Upcoming KTU Examination Countdown</h3>
-      <p>Precision live countdown for all your semester papers. Track time remaining and keep your preparation on schedule.</p>
+      <p>Dynamic urgency tracker. Imminent papers ignite with high-intensity fire, transitioning to electric focus and cosmic trajectory as horizons expand.</p>
     </div>
     <div className="exam-timers-actions">
+      <div className="stage-legend-chips">
+        <span className="legend-chip chip-fire">🔥 Imminent (&le;30d)</span>
+        <span className="legend-chip chip-electric">⚡ Peak Prep (31-45d)</span>
+        <span className="legend-chip chip-cosmic">🌌 Systematic (&gt;45d)</span>
+      </div>
       <span className="exam-count-badge">4 Papers Scheduled</span>
     </div>
   </div>
@@ -584,6 +626,7 @@ return <div className="app-shell" style={shellStyle}><aside className={'sidebar 
     {subjects.map(s=>{
       const examDate=s.examDate||DEFAULT_EXAM_DATES[s.id];
       const countdown=getLiveCountdown(examDate,currentTime);
+      const stage=getExamStage(countdown);
       const formattedDate=examDate?new Date(examDate).toLocaleString('en-GB',{
         day:'numeric',
         month:'short',
@@ -593,63 +636,70 @@ return <div className="app-shell" style={shellStyle}><aside className={'sidebar 
         hour12:true
       }):'Not Scheduled';
       return (
-        <div key={s.id} className="exam-timer-card" style={{'--card-accent':s.color}}>
-          <div className="timer-card-top">
-            <div className="timer-subject-pill" style={{background:`${s.color}22`,borderColor:`${s.color}66`,color:s.color}}>
-              <span className="timer-code">{s.code}</span>
-              <span className="timer-sem">{s.semester}</span>
-            </div>
-            <button
-              type="button"
-              className="timer-edit-btn"
-              onClick={()=>setEditExamModal({subjectId:s.id,semester:s.semester,short:s.short,code:s.code,date:examDate})}
-              title={`Edit exam date for ${s.short}`}
-            >
-              <CalendarDays size={12}/> Edit
-            </button>
+        <div key={s.id} className={`exam-timer-card stage-${stage.key}`} style={{'--card-accent':s.color}}>
+          <div className="card-animated-bg-layer" aria-hidden="true">
+            <div className={`card-bg-animation card-bg-${stage.key}`} />
+            <div className="card-bg-gradient-scrim" />
+            <div className={`card-bg-ambient-glow glow-${stage.key}`} />
           </div>
-          <h4 className="timer-subject-name" onClick={()=>openSubject(s)} title="Open subject syllabus & PYQs">
-            {s.name}
-          </h4>
-          <div className="timer-date-row">
-            <Clock3 size={12} style={{color:s.color}}/>
-            <span>{formattedDate}</span>
-          </div>
-          {countdown.isPast?(
-            <div className="timer-completed-box">
-              <Check size={14}/>
-              <span>{countdown.label}</span>
+          <div className="timer-card-content">
+            <div className="timer-card-top">
+              <div className="timer-subject-pill" style={{background:`${s.color}22`,borderColor:`${s.color}66`,color:s.color}}>
+                <span className="timer-code">{s.code}</span>
+                <span className="timer-sem">{s.semester}</span>
+              </div>
+              <button
+                type="button"
+                className="timer-edit-btn"
+                onClick={()=>setEditExamModal({subjectId:s.id,semester:s.semester,short:s.short,code:s.code,date:examDate})}
+                title={`Edit exam date for ${s.short}`}
+              >
+                <CalendarDays size={12}/> Edit
+              </button>
             </div>
-          ):(
-            <div className="countdown-digits-row">
-              <div className="digit-box">
-                <span className="digit-num">{String(countdown.days).padStart(2,'0')}</span>
-                <span className="digit-unit">DAYS</span>
-              </div>
-              <span className="digit-sep">:</span>
-              <div className="digit-box">
-                <span className="digit-num">{String(countdown.hours).padStart(2,'0')}</span>
-                <span className="digit-unit">HOURS</span>
-              </div>
-              <span className="digit-sep">:</span>
-              <div className="digit-box">
-                <span className="digit-num">{String(countdown.minutes).padStart(2,'0')}</span>
-                <span className="digit-unit">MINS</span>
-              </div>
-              <span className="digit-sep">:</span>
-              <div className="digit-box digit-sec">
-                <span className="digit-num" style={{color:s.color}}>{String(countdown.seconds).padStart(2,'0')}</span>
-                <span className="digit-unit">SECS</span>
-              </div>
+            <h4 className="timer-subject-name" onClick={()=>openSubject(s)} title="Open subject syllabus & PYQs">
+              {s.name}
+            </h4>
+            <div className="timer-date-row">
+              <Clock3 size={12} style={{color:s.color}}/>
+              <span>{formattedDate}</span>
             </div>
-          )}
-          <div className="timer-card-footer">
-            <span className="timer-urgency-pill">
-              {countdown.isPast?'Archived':countdown.days<=10?'🔥 Final Sprint':countdown.days<=30?'⚡ Peak Prep':'📚 Systematic Study'}
-            </span>
-            <button type="button" className="timer-open-link" onClick={()=>openSubject(s)}>
-              Study PYQs <ArrowUpRight size={12}/>
-            </button>
+            {countdown.isPast?(
+              <div className="timer-completed-box">
+                <Check size={14}/>
+                <span>{countdown.label}</span>
+              </div>
+            ):(
+              <div className="countdown-digits-row">
+                <div className="digit-box">
+                  <span className="digit-num">{String(countdown.days).padStart(2,'0')}</span>
+                  <span className="digit-unit">DAYS</span>
+                </div>
+                <span className="digit-sep">:</span>
+                <div className="digit-box">
+                  <span className="digit-num">{String(countdown.hours).padStart(2,'0')}</span>
+                  <span className="digit-unit">HOURS</span>
+                </div>
+                <span className="digit-sep">:</span>
+                <div className="digit-box">
+                  <span className="digit-num">{String(countdown.minutes).padStart(2,'0')}</span>
+                  <span className="digit-unit">MINS</span>
+                </div>
+                <span className="digit-sep">:</span>
+                <div className="digit-box digit-sec">
+                  <span className="digit-num" style={{color:s.color}}>{String(countdown.seconds).padStart(2,'0')}</span>
+                  <span className="digit-unit">SECS</span>
+                </div>
+              </div>
+            )}
+            <div className="timer-card-footer">
+              <span className={`timer-urgency-pill ${stage.badgeClass}`}>
+                {stage.label}
+              </span>
+              <button type="button" className="timer-open-link" onClick={()=>openSubject(s)}>
+                Study PYQs <ArrowUpRight size={12}/>
+              </button>
+            </div>
           </div>
         </div>
       );
