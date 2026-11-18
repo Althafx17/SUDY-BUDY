@@ -1815,30 +1815,30 @@ button.profile:hover {
 
 .flame-tongue {
   position: absolute;
-  bottom: -8px;
+  bottom: -4px;
   width: 100%;
   height: 100%;
   background-repeat: repeat-x;
-  background-size: 130px 100%;
-  filter: blur(1.5px);
+  background-size: 110px 100%;
+  filter: blur(1px);
 }
 
 .flame-tongue.tongue-back {
-  background-image: radial-gradient(ellipse 45px 95px at 50% 100%, rgba(220, 25, 0, 0.75) 0%, rgba(220, 25, 0, 0) 70%);
-  animation: flameTongueMove 2.4s ease-in-out infinite alternate;
-  opacity: 0.7;
+  background-image: radial-gradient(ellipse 48px 105px at 50% 100%, rgba(220, 25, 0, 0.8) 0%, rgba(220, 25, 0, 0) 72%);
+  animation: flameTongueMove 2.6s ease-in-out infinite alternate;
+  opacity: 0.75;
 }
 
 .flame-tongue.tongue-mid {
-  background-image: radial-gradient(ellipse 34px 80px at 50% 100%, rgba(255, 95, 0, 0.85) 0%, rgba(255, 95, 0, 0) 70%);
-  animation: flameTongueMove 1.8s ease-in-out infinite alternate-reverse;
-  opacity: 0.85;
+  background-image: radial-gradient(ellipse 36px 90px at 50% 100%, rgba(255, 105, 0, 0.9) 0%, rgba(255, 105, 0, 0) 70%);
+  animation: flameTongueMove 1.9s ease-in-out infinite alternate-reverse;
+  opacity: 0.88;
 }
 
 .flame-tongue.tongue-front {
-  background-image: radial-gradient(ellipse 22px 65px at 50% 100%, rgba(255, 205, 30, 0.95) 0%, rgba(255, 205, 30, 0) 75%);
-  animation: flameTongueMove 1.3s ease-in-out infinite alternate;
-  opacity: 0.92;
+  background-image: radial-gradient(ellipse 24px 72px at 50% 100%, rgba(255, 220, 45, 0.98) 0%, rgba(255, 220, 45, 0) 76%);
+  animation: flameTongueMove 1.4s ease-in-out infinite alternate;
+  opacity: 0.96;
 }
 
 @keyframes flameTongueMove {
@@ -2237,58 +2237,52 @@ button.profile:hover {
   position: relative;
 }
 
-/* 1. Card Seismic Earthquake Tremor */
+/* 1. Card Seismic Earthquake Tremor (Slower, heavier rolling tectonic rumble) */
 .exam-timer-card.is-important-exam:hover {
   border-color: #ff5722 !important;
   box-shadow: 0 16px 45px rgba(0, 0, 0, 0.85), 0 0 42px rgba(249, 115, 22, 0.55), 0 0 15px rgba(239, 68, 68, 0.4) !important;
-  animation: cardEarthquake 0.72s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+  animation: cardEarthquake 1.45s cubic-bezier(0.25, 0.1, 0.25, 1) both;
 }
 
 @keyframes cardEarthquake {
   0% {
     transform: translateY(-4px) translate(0, 0) rotate(0deg);
   }
-  8% {
-    transform: translateY(-4px) translate(-3.5px, 2px) rotate(-0.9deg);
+  6% {
+    transform: translateY(-4px) translate(-4px, 2px) rotate(-1.2deg);
   }
-  16% {
-    transform: translateY(-4px) translate(4px, -2.5px) rotate(1.1deg);
+  14% {
+    transform: translateY(-4px) translate(4.5px, -2.5px) rotate(1.4deg);
   }
-  24% {
-    transform: translateY(-4px) translate(-4.5px, -1.5px) rotate(-1deg);
+  22% {
+    transform: translateY(-4px) translate(-5px, -1.8px) rotate(-1.1deg);
   }
   32% {
-    transform: translateY(-4px) translate(4px, 2px) rotate(0.8deg);
+    transform: translateY(-4px) translate(4.5px, 2px) rotate(0.9deg);
   }
-  40% {
-    transform: translateY(-4px) translate(-3px, 1px) rotate(-0.6deg);
+  42% {
+    transform: translateY(-4px) translate(-3.5px, 1.5px) rotate(-0.7deg);
   }
-  48% {
+  54% {
     transform: translateY(-4px) translate(3px, -2px) rotate(0.6deg);
   }
-  56% {
-    transform: translateY(-4px) translate(-2px, 1.5px) rotate(-0.4deg);
+  66% {
+    transform: translateY(-4px) translate(-2.5px, 1.5px) rotate(-0.4deg);
   }
-  64% {
-    transform: translateY(-4px) translate(2px, -1px) rotate(0.4deg);
+  78% {
+    transform: translateY(-4px) translate(2px, -1px) rotate(0.3deg);
   }
-  72% {
-    transform: translateY(-4px) translate(-1.5px, 1px) rotate(-0.2deg);
-  }
-  80% {
-    transform: translateY(-4px) translate(1px, -0.5px) rotate(0.2deg);
-  }
-  90% {
-    transform: translateY(-4px) translate(-0.5px, 0.5px) rotate(-0.1deg);
+  88% {
+    transform: translateY(-4px) translate(-1px, 0.5px) rotate(-0.1deg);
   }
   100% {
     transform: translateY(-4px) translate(0, 0) rotate(0deg);
   }
 }
 
-/* 2. Text Pieces Earthquake Wobble & Rattling */
+/* 2. Text Pieces Earthquake Wobble & Rattling (Slower, visible structural wobble) */
 .exam-timer-card.is-important-exam:hover .timer-subject-name {
-  animation: textQuakeMain 0.7s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+  animation: textQuakeMain 1.4s cubic-bezier(0.25, 0.1, 0.25, 1) both;
 }
 
 @keyframes textQuakeMain {
@@ -2296,33 +2290,33 @@ button.profile:hover {
     transform: translate(0, 0) rotate(0deg);
     text-shadow: 0 1px 4px rgba(0, 0, 0, 0.95);
   }
-  10% {
-    transform: translate(-3px, 1.5px) rotate(-0.8deg);
-    text-shadow: -2.5px 0 6px rgba(239, 68, 68, 0.9), 2.5px 0 6px rgba(249, 115, 22, 0.9);
+  8% {
+    transform: translate(-3.5px, 2px) rotate(-1deg);
+    text-shadow: -3px 0 8px rgba(239, 68, 68, 0.95), 3px 0 8px rgba(249, 115, 22, 0.95);
   }
-  22% {
-    transform: translate(3px, -2px) rotate(1deg);
-    text-shadow: 2.5px 0 6px rgba(239, 68, 68, 0.9), -2.5px 0 6px rgba(249, 115, 22, 0.9);
+  18% {
+    transform: translate(3.5px, -2.5px) rotate(1.2deg);
+    text-shadow: 3px 0 8px rgba(239, 68, 68, 0.95), -3px 0 8px rgba(249, 115, 22, 0.95);
   }
-  34% {
-    transform: translate(-3.5px, -1px) rotate(-0.7deg);
-    text-shadow: -2px 0 5px rgba(239, 68, 68, 0.8), 2px 0 5px rgba(249, 115, 22, 0.8);
+  30% {
+    transform: translate(-4px, -1.5px) rotate(-0.9deg);
+    text-shadow: -2.5px 0 6px rgba(239, 68, 68, 0.85), 2.5px 0 6px rgba(249, 115, 22, 0.85);
   }
-  46% {
-    transform: translate(2.5px, 1.5px) rotate(0.5deg);
-    text-shadow: 2px 0 4px rgba(239, 68, 68, 0.7), -2px 0 4px rgba(249, 115, 22, 0.7);
+  44% {
+    transform: translate(3px, 2px) rotate(0.7deg);
+    text-shadow: 2px 0 5px rgba(239, 68, 68, 0.75), -2px 0 5px rgba(249, 115, 22, 0.75);
   }
   58% {
-    transform: translate(-2px, 1px) rotate(-0.3deg);
-    text-shadow: -1.5px 0 3px rgba(239, 68, 68, 0.5), 1.5px 0 3px rgba(249, 115, 22, 0.5);
+    transform: translate(-2.5px, 1.2px) rotate(-0.4deg);
+    text-shadow: -2px 0 4px rgba(239, 68, 68, 0.6), 2px 0 4px rgba(249, 115, 22, 0.6);
   }
   72% {
-    transform: translate(1.5px, -1px) rotate(0.2deg);
-    text-shadow: 1px 0 3px rgba(239, 68, 68, 0.4), -1px 0 3px rgba(249, 115, 22, 0.4);
+    transform: translate(2px, -1px) rotate(0.3deg);
+    text-shadow: 1.5px 0 3px rgba(239, 68, 68, 0.5), -1.5px 0 3px rgba(249, 115, 22, 0.5);
   }
   86% {
     transform: translate(-1px, 0.5px);
-    text-shadow: -0.5px 0 2px rgba(239, 68, 68, 0.3);
+    text-shadow: -0.8px 0 2px rgba(239, 68, 68, 0.3);
   }
   100% {
     transform: translate(0, 0) rotate(0deg);
@@ -2331,111 +2325,111 @@ button.profile:hover {
 }
 
 .exam-timer-card.is-important-exam:hover .timer-subject-pill {
-  animation: pillQuake 0.65s 0.03s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+  animation: pillQuake 1.35s 0.05s cubic-bezier(0.25, 0.1, 0.25, 1) both;
 }
 
 @keyframes pillQuake {
   0% { transform: translate(0, 0) scale(1); }
-  12% { transform: translate(2px, -1.5px) rotate(1deg) scale(1.02); }
-  25% { transform: translate(-2.5px, 1.5px) rotate(-1.2deg) scale(0.98); }
-  40% { transform: translate(2px, 1px) rotate(0.8deg); }
-  55% { transform: translate(-1.5px, -1px) rotate(-0.5deg); }
-  70% { transform: translate(1px, 0.5px) rotate(0.3deg); }
-  85% { transform: translate(-0.5px, -0.5px); }
+  12% { transform: translate(2.5px, -1.8px) rotate(1.2deg) scale(1.02); }
+  26% { transform: translate(-3px, 1.8px) rotate(-1.4deg) scale(0.98); }
+  42% { transform: translate(2.5px, 1.2px) rotate(0.9deg); }
+  58% { transform: translate(-2px, -1.2px) rotate(-0.6deg); }
+  74% { transform: translate(1.5px, 0.6px) rotate(0.3deg); }
+  88% { transform: translate(-0.8px, -0.6px); }
   100% { transform: translate(0, 0) scale(1); }
 }
 
 .exam-timer-card.is-important-exam:hover .timer-date-row {
-  animation: dateQuake 0.62s 0.06s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+  animation: dateQuake 1.3s 0.08s cubic-bezier(0.25, 0.1, 0.25, 1) both;
 }
 
 @keyframes dateQuake {
   0% { transform: translate(0, 0); }
-  15% { transform: translate(-2px, 1px); }
-  30% { transform: translate(2.5px, -1px); }
-  45% { transform: translate(-1.5px, 0.5px); }
-  60% { transform: translate(1.5px, -0.5px); }
-  78% { transform: translate(-0.8px, 0.3px); }
+  15% { transform: translate(-2.5px, 1.2px); }
+  32% { transform: translate(3px, -1.2px); }
+  48% { transform: translate(-2px, 0.8px); }
+  64% { transform: translate(2px, -0.6px); }
+  80% { transform: translate(-1px, 0.4px); }
   100% { transform: translate(0, 0); }
 }
 
 .exam-timer-card.is-important-exam:hover .countdown-digits-row {
   border-color: rgba(249, 115, 22, 0.45);
   box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.6), 0 4px 18px rgba(249, 115, 22, 0.25);
-  animation: countdownRowQuake 0.68s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+  animation: countdownRowQuake 1.4s cubic-bezier(0.25, 0.1, 0.25, 1) both;
 }
 
 @keyframes countdownRowQuake {
   0% { transform: translate(0, 0); }
-  12% { transform: translate(2px, -1.5px); }
-  24% { transform: translate(-2.5px, 1.5px); }
-  38% { transform: translate(2px, 1px); }
-  52% { transform: translate(-1.5px, -1px); }
-  68% { transform: translate(1px, 0.5px); }
-  84% { transform: translate(-0.5px, -0.5px); }
+  12% { transform: translate(2.5px, -1.8px); }
+  26% { transform: translate(-3px, 1.8px); }
+  42% { transform: translate(2.5px, 1.2px); }
+  58% { transform: translate(-2px, -1.2px); }
+  74% { transform: translate(1.5px, 0.6px); }
+  88% { transform: translate(-0.8px, -0.6px); }
   100% { transform: translate(0, 0); }
 }
 
 .exam-timer-card.is-important-exam:hover .countdown-digits-row .digit-box:nth-of-type(1) {
-  animation: digitQuakeA 0.64s 0.02s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+  animation: digitQuakeA 1.35s 0.04s cubic-bezier(0.25, 0.1, 0.25, 1) both;
 }
 .exam-timer-card.is-important-exam:hover .countdown-digits-row .digit-box:nth-of-type(2) {
-  animation: digitQuakeB 0.64s 0.07s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+  animation: digitQuakeB 1.35s 0.12s cubic-bezier(0.25, 0.1, 0.25, 1) both;
 }
 .exam-timer-card.is-important-exam:hover .countdown-digits-row .digit-box:nth-of-type(3) {
-  animation: digitQuakeA 0.64s 0.12s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+  animation: digitQuakeA 1.35s 0.20s cubic-bezier(0.25, 0.1, 0.25, 1) both;
 }
 .exam-timer-card.is-important-exam:hover .countdown-digits-row .digit-box:nth-of-type(4) {
-  animation: digitQuakeB 0.64s 0.17s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+  animation: digitQuakeB 1.35s 0.28s cubic-bezier(0.25, 0.1, 0.25, 1) both;
 }
 
 @keyframes digitQuakeA {
   0% { transform: translate(0, 0) rotate(0deg); }
-  14% { transform: translate(-2.5px, 2px) rotate(-1.5deg); }
-  28% { transform: translate(2.5px, -2px) rotate(1.2deg); }
-  44% { transform: translate(-2px, -1px) rotate(-0.8deg); }
-  60% { transform: translate(1.5px, 1.5px) rotate(0.6deg); }
-  76% { transform: translate(-1px, -0.5px) rotate(-0.3deg); }
+  14% { transform: translate(-3px, 2.5px) rotate(-1.8deg); }
+  30% { transform: translate(3px, -2.5px) rotate(1.5deg); }
+  48% { transform: translate(-2.5px, -1.2px) rotate(-1deg); }
+  65% { transform: translate(2px, 1.8px) rotate(0.8deg); }
+  80% { transform: translate(-1.2px, -0.6px) rotate(-0.4deg); }
   100% { transform: translate(0, 0) rotate(0deg); }
 }
 
 @keyframes digitQuakeB {
   0% { transform: translate(0, 0) rotate(0deg); }
-  14% { transform: translate(2.5px, -2px) rotate(1.5deg); }
-  28% { transform: translate(-2.5px, 2px) rotate(-1.2deg); }
-  44% { transform: translate(2px, 1px) rotate(0.8deg); }
-  60% { transform: translate(-1.5px, -1.5px) rotate(-0.6deg); }
-  76% { transform: translate(1px, 0.5px) rotate(0.3deg); }
+  14% { transform: translate(3px, -2.5px) rotate(1.8deg); }
+  30% { transform: translate(-3px, 2.5px) rotate(-1.5deg); }
+  48% { transform: translate(2.5px, 1.2px) rotate(1deg); }
+  65% { transform: translate(-2px, -1.8px) rotate(-0.8deg); }
+  80% { transform: translate(1.2px, 0.6px) rotate(0.4deg); }
   100% { transform: translate(0, 0) rotate(0deg); }
 }
 
 .exam-timer-card.is-important-exam:hover .digit-sep {
-  animation: digitSepQuake 0.58s 0.05s ease-in-out both;
+  animation: digitSepQuake 1.25s 0.08s ease-in-out both;
 }
 
 @keyframes digitSepQuake {
   0%, 100% { transform: translateY(0); color: #94a3b8; }
-  20% { transform: translateY(-3px) scale(1.15); color: #f97316; }
-  40% { transform: translateY(3px) scale(0.9); color: #ef4444; }
-  60% { transform: translateY(-2px); color: #f97316; }
-  80% { transform: translateY(1px); }
+  20% { transform: translateY(-3.5px) scale(1.18); color: #f97316; }
+  42% { transform: translateY(3.5px) scale(0.88); color: #ef4444; }
+  64% { transform: translateY(-2.5px); color: #f97316; }
+  82% { transform: translateY(1.2px); }
 }
 
 .exam-timer-card.is-important-exam:hover .timer-urgency-pill {
-  animation: urgencyQuake 0.65s 0.05s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+  animation: urgencyQuake 1.35s 0.08s cubic-bezier(0.25, 0.1, 0.25, 1) both;
 }
 
 @keyframes urgencyQuake {
   0% { transform: scale(1) translate(0, 0); }
-  15% { transform: scale(1.06) translate(-2px, 1px); }
-  30% { transform: scale(0.98) translate(2px, -1px); }
-  48% { transform: scale(1.03) translate(-1.5px, 0.5px); }
-  65% { transform: scale(0.99) translate(1px, -0.5px); }
-  82% { transform: scale(1.01) translate(-0.5px, 0); }
+  16% { transform: scale(1.08) translate(-2.5px, 1.2px); }
+  34% { transform: scale(0.96) translate(2.5px, -1.2px); }
+  52% { transform: scale(1.04) translate(-2px, 0.6px); }
+  70% { transform: scale(0.98) translate(1.2px, -0.6px); }
+  85% { transform: scale(1.02) translate(-0.6px, 0); }
   100% { transform: scale(1) translate(0, 0); }
 }
 
-/* 3. Falling Debris & Mini Cards Inside the Card */
+/* 3. Falling Debris & Mini Cards Inside the Card (Slower, cinematic tumble) */
 .earthquake-debris-layer {
   position: absolute;
   inset: 0;
@@ -2565,53 +2559,53 @@ button.profile:hover {
   filter: blur(1px);
 }
 
-/* Trigger tumbling fall on hover */
+/* Trigger slower tumbling fall on hover (2.1s - 3.0s) */
 .exam-timer-card.is-important-exam:hover .shard-slab-1 {
-  animation: fallSlabA 1.05s 0.02s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: fallSlabA 2.3s 0.05s cubic-bezier(0.33, 1, 0.68, 1) forwards;
 }
 
 .exam-timer-card.is-important-exam:hover .shard-slab-2 {
-  animation: fallSlabB 1.15s 0.12s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: fallSlabB 2.5s 0.2s cubic-bezier(0.33, 1, 0.68, 1) forwards;
 }
 
 .exam-timer-card.is-important-exam:hover .shard-slab-3 {
-  animation: fallSlabC 0.98s 0.22s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: fallSlabC 2.2s 0.35s cubic-bezier(0.33, 1, 0.68, 1) forwards;
 }
 
 .exam-timer-card.is-important-exam:hover .shard-rock-1 {
-  animation: fallRockA 0.92s 0.04s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: fallRockA 2.1s 0.08s cubic-bezier(0.33, 1, 0.68, 1) forwards;
 }
 
 .exam-timer-card.is-important-exam:hover .shard-rock-2 {
-  animation: fallRockB 1.02s 0.10s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: fallRockB 2.4s 0.18s cubic-bezier(0.33, 1, 0.68, 1) forwards;
 }
 
 .exam-timer-card.is-important-exam:hover .shard-rock-3 {
-  animation: fallRockC 0.95s 0.18s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: fallRockC 2.25s 0.3s cubic-bezier(0.33, 1, 0.68, 1) forwards;
 }
 
 .exam-timer-card.is-important-exam:hover .shard-rock-4 {
-  animation: fallRockA 1.08s 0.26s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: fallRockA 2.45s 0.42s cubic-bezier(0.33, 1, 0.68, 1) forwards;
 }
 
 .exam-timer-card.is-important-exam:hover .shard-rock-5 {
-  animation: fallRockB 0.94s 0.34s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: fallRockB 2.15s 0.52s cubic-bezier(0.33, 1, 0.68, 1) forwards;
 }
 
 .exam-timer-card.is-important-exam:hover .shard-dust-1 {
-  animation: fallDustA 1.25s 0.04s ease-out forwards;
+  animation: fallDustA 2.7s 0.08s ease-out forwards;
 }
 
 .exam-timer-card.is-important-exam:hover .shard-dust-2 {
-  animation: fallDustB 1.35s 0.14s ease-out forwards;
+  animation: fallDustB 2.9s 0.22s ease-out forwards;
 }
 
 .exam-timer-card.is-important-exam:hover .shard-dust-3 {
-  animation: fallDustA 1.30s 0.24s ease-out forwards;
+  animation: fallDustA 2.8s 0.38s ease-out forwards;
 }
 
 .exam-timer-card.is-important-exam:hover .shard-dust-4 {
-  animation: fallDustB 1.40s 0.32s ease-out forwards;
+  animation: fallDustB 3.0s 0.48s ease-out forwards;
 }
 
 @keyframes fallSlabA {
@@ -2622,7 +2616,7 @@ button.profile:hover {
   15% {
     opacity: 1;
   }
-  80% {
+  85% {
     opacity: 0.9;
   }
   100% {
@@ -2639,7 +2633,7 @@ button.profile:hover {
   15% {
     opacity: 1;
   }
-  80% {
+  85% {
     opacity: 0.9;
   }
   100% {
@@ -2656,7 +2650,7 @@ button.profile:hover {
   15% {
     opacity: 1;
   }
-  80% {
+  85% {
     opacity: 0.85;
   }
   100% {
@@ -2673,7 +2667,7 @@ button.profile:hover {
   12% {
     opacity: 1;
   }
-  75% {
+  80% {
     opacity: 0.85;
   }
   100% {
@@ -2690,7 +2684,7 @@ button.profile:hover {
   12% {
     opacity: 1;
   }
-  75% {
+  80% {
     opacity: 0.85;
   }
   100% {
@@ -2707,7 +2701,7 @@ button.profile:hover {
   12% {
     opacity: 1;
   }
-  75% {
+  80% {
     opacity: 0.85;
   }
   100% {
@@ -2724,7 +2718,7 @@ button.profile:hover {
   20% {
     opacity: 0.85;
   }
-  80% {
+  82% {
     opacity: 0.55;
   }
   100% {
@@ -2741,7 +2735,7 @@ button.profile:hover {
   20% {
     opacity: 0.85;
   }
-  80% {
+  82% {
     opacity: 0.55;
   }
   100% {
@@ -2768,7 +2762,7 @@ button.profile:hover {
 .exam-timer-card.is-important-exam:hover .seismic-fissure-crack {
   opacity: 1;
   transform: scaleX(1);
-  animation: fissurePulse 0.65s ease-in-out infinite alternate;
+  animation: fissurePulse 0.9s ease-in-out infinite alternate;
 }
 
 @keyframes fissurePulse {

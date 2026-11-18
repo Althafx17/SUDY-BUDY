@@ -8,7 +8,7 @@
  */
 
 export const DEVELOPER_INFO = {
-  name: "Althaf",
+  name: "thaf",
   alias: "HalalDev",
   role: "Lead Full-Stack Developer & Creator",
   tagline: "Building focused, high-impact learning tools for KTU Engineering students.",
@@ -37,7 +37,7 @@ export const DEVELOPER_INFO = {
   project: {
     name: "Orbit — KTU Study Buddy",
     version: "2.4.0",
-    releaseYear: "2025–2026",
+    releaseYear: "2026–2027",
     targetScheme: "KTU 2019 & 2024 Engineering Schemes",
     subjectsCovered: [
       "MAT101 — Linear Algebra & Calculus (S1)",
