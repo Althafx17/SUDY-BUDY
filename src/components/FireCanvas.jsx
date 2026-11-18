@@ -1,13 +1,13 @@
 import React, { useEffect, useRef } from 'react';
 
 /**
- * Authentic "OG Fire" Background Simulation for imminent exam cards.
- * Features realistic roaring fire structure:
- * - Nested procedural bezier flame columns (white-hot core -> golden body -> crimson licking tips)
- * - Dynamic air turbulence and organic swaying flame tongues
- * - Elongated teardrop rising flame plumes with thermal decay
- * - Crackling spark embers drifting in the thermal updraft
- * - Deep glowing hearth base
+ * Light, Slow & Sharp "OG Fire" Simulation.
+ * Key characteristics:
+ * - Razor-sharp pointed flame blades & spurs (zero round circles/ellipses)
+ * - Sharp diamond/shard flame particles that drift slowly
+ * - Sharp needle spark embers
+ * - Light, luminous, ethereal color palette (warm golden-amber & radiant fire orange)
+ * - Calm, hypnotic, slow-motion licking movement (~3x slower)
  */
 export default function FireCanvas() {
   const canvasRef = useRef(null);
@@ -29,45 +29,46 @@ export default function FireCanvas() {
 
     let time = 0;
 
-    // 1. Procedural Licking Flame Columns (Authentic OG Fire Tongues)
-    const tongueCount = 13;
+    // 1. Sharp Procedural Flame Blades (Pointed spearhead/dagger flame tongues)
+    const tongueCount = 12;
     const tongues = Array.from({ length: tongueCount }, (_, i) => ({
       xRatio: (i + 0.5) / tongueCount,
-      baseWidthRatio: 0.16 + Math.random() * 0.08,
-      heightRatio: 0.58 + Math.random() * 0.36,
-      speed: 1.6 + Math.random() * 1.4,
+      baseWidthRatio: 0.14 + Math.random() * 0.06,
+      heightRatio: 0.52 + Math.random() * 0.32,
+      speed: 0.45 + Math.random() * 0.4, // Slower oscillation
       offset: Math.random() * Math.PI * 2,
-      swaySpeed: 1.1 + Math.random() * 1.3,
-      swayAmp: 10 + Math.random() * 14,
+      swaySpeed: 0.35 + Math.random() * 0.35,
+      swayAmp: 7 + Math.random() * 8,
     }));
 
-    // 2. Rising Elongated Flame Plumes (Teardrop shape, authentic fire turbulence)
-    const particleCount = 46;
-    class FlameParticle {
+    // 2. Sharp Rising Flame Shards (Pointed diamond & blade geometry - NO round circles)
+    const particleCount = 38;
+    class SharpFlameShard {
       constructor() {
         this.reset(true);
       }
       reset(init = false) {
         this.x = Math.random() * width;
-        this.y = init ? height - Math.random() * (height * 0.85) : height + Math.random() * 10;
-        this.vx = (Math.random() - 0.5) * 1.1;
-        this.vy = -(Math.random() * 2.2 + 1.5);
-        this.scaleX = Math.random() * 11 + 7;
-        this.scaleY = this.scaleX * (1.7 + Math.random() * 0.7);
+        this.y = init ? height - Math.random() * (height * 0.8) : height + Math.random() * 8;
+        this.vx = (Math.random() - 0.5) * 0.45;
+        this.vy = -(Math.random() * 0.65 + 0.45); // Slower, gentle rise
+        this.halfW = Math.random() * 4 + 2.5;
+        this.halfH = this.halfW * (2.2 + Math.random() * 1.0); // Elongated sharp blade
         this.life = 1;
-        this.decay = Math.random() * 0.022 + 0.014;
+        this.decay = Math.random() * 0.009 + 0.006; // Slower decay
         this.sway = Math.random() * Math.PI * 2;
-        this.tilt = (Math.random() - 0.5) * 0.3;
+        this.rot = (Math.random() - 0.5) * 0.4;
+        this.rotSpeed = (Math.random() - 0.5) * 0.015;
       }
       update() {
-        this.sway += 0.07;
-        this.x += this.vx + Math.sin(this.sway) * 0.55;
+        this.sway += 0.025;
+        this.rot += this.rotSpeed;
+        this.x += this.vx + Math.sin(this.sway) * 0.28;
         this.y += this.vy;
-        this.tilt = Math.sin(this.sway) * 0.18;
-        this.scaleX = Math.max(0.8, this.scaleX * 0.984);
-        this.scaleY = Math.max(1.2, this.scaleY * 0.98);
+        this.halfW = Math.max(0.6, this.halfW * 0.992);
+        this.halfH = Math.max(1.2, this.halfH * 0.99);
         this.life -= this.decay;
-        if (this.life <= 0 || this.y < height * 0.08) {
+        if (this.life <= 0 || this.y < height * 0.06) {
           this.reset();
         }
       }
@@ -76,50 +77,56 @@ export default function FireCanvas() {
         const p = 1 - this.life;
         c.save();
         c.translate(this.x, this.y);
-        c.rotate(this.tilt);
+        c.rotate(this.rot);
 
+        // Draw razor-sharp diamond flame shard
         c.beginPath();
-        c.ellipse(0, 0, Math.max(1, this.scaleX), Math.max(2, this.scaleY), 0, 0, Math.PI * 2);
+        c.moveTo(0, -this.halfH); // Sharp top tip
+        c.lineTo(this.halfW, 0); // Sharp right flank
+        c.lineTo(0, this.halfH * 0.7); // Sharp bottom notch
+        c.lineTo(-this.halfW, 0); // Sharp left flank
+        c.closePath();
 
-        if (p < 0.22) {
-          // White-hot core
-          c.fillStyle = `rgba(255, 255, 230, ${this.life * 0.9})`;
-        } else if (p < 0.52) {
-          // Golden yellow flame
-          c.fillStyle = `rgba(255, 185, 25, ${this.life * 0.82})`;
-        } else if (p < 0.8) {
-          // Roaring fire orange
-          c.fillStyle = `rgba(240, 80, 10, ${this.life * 0.7})`;
+        // Light, airy, luminous palette
+        if (p < 0.25) {
+          // White-hot radiant core
+          c.fillStyle = `rgba(255, 255, 220, ${this.life * 0.65})`;
+        } else if (p < 0.58) {
+          // Light golden amber flame
+          c.fillStyle = `rgba(255, 190, 45, ${this.life * 0.52})`;
+        } else if (p < 0.84) {
+          // Warm bright orange
+          c.fillStyle = `rgba(250, 115, 20, ${this.life * 0.4})`;
         } else {
-          // Crimson flame tips
-          c.fillStyle = `rgba(180, 20, 5, ${this.life * 0.45})`;
+          // Delicate crimson tip
+          c.fillStyle = `rgba(215, 45, 15, ${this.life * 0.25})`;
         }
         c.fill();
         c.restore();
       }
     }
 
-    const particles = Array.from({ length: particleCount }, () => new FlameParticle());
+    const shards = Array.from({ length: particleCount }, () => new SharpFlameShard());
 
-    // 3. Crackling Sparks & Floating Fire Embers
-    const sparkCount = 28;
-    class Spark {
+    // 3. Sharp Needle Spark Embers (Pointed 4-point star/needle - NO round dots)
+    const sparkCount = 22;
+    class SharpNeedleSpark {
       constructor() {
         this.reset(true);
       }
       reset(init = false) {
         this.x = Math.random() * width;
-        this.y = init ? height - Math.random() * height : height + Math.random() * 6;
-        this.vx = (Math.random() - 0.5) * 1.6;
-        this.vy = -(Math.random() * 2.8 + 1.8);
-        this.radius = Math.random() * 1.8 + 0.8;
+        this.y = init ? height - Math.random() * height : height + Math.random() * 5;
+        this.vx = (Math.random() - 0.5) * 0.6;
+        this.vy = -(Math.random() * 0.9 + 0.6); // Slower rise
+        this.len = Math.random() * 3.5 + 2.0;
         this.life = 1;
-        this.decay = Math.random() * 0.016 + 0.01;
+        this.decay = Math.random() * 0.008 + 0.005;
         this.wobble = Math.random() * Math.PI * 2;
       }
       update() {
-        this.wobble += 0.11;
-        this.x += this.vx + Math.cos(this.wobble) * 0.75;
+        this.wobble += 0.04;
+        this.x += this.vx + Math.cos(this.wobble) * 0.35;
         this.y += this.vy;
         this.life -= this.decay;
         if (this.life <= 0 || this.y < 0) {
@@ -128,118 +135,101 @@ export default function FireCanvas() {
       }
       draw(c) {
         if (this.life <= 0) return;
+        // Draw sharp cross / needle ember
+        c.save();
+        c.translate(this.x, this.y);
         c.beginPath();
-        c.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        c.fillStyle = `rgba(255, ${Math.floor(210 * this.life + 45)}, 30, ${this.life * 0.95})`;
+        c.moveTo(0, -this.len);
+        c.lineTo(this.len * 0.28, 0);
+        c.lineTo(0, this.len);
+        c.lineTo(-this.len * 0.28, 0);
+        c.closePath();
+        c.fillStyle = `rgba(255, ${Math.floor(215 * this.life + 40)}, 40, ${this.life * 0.75})`;
         c.fill();
+        c.restore();
       }
     }
 
-    const sparks = Array.from({ length: sparkCount }, () => new Spark());
+    const needleSparks = Array.from({ length: sparkCount }, () => new SharpNeedleSpark());
 
     // Render loop
     const render = () => {
-      time += 0.032;
+      time += 0.011; // Slower progression (~3x slower than before)
       ctx.clearRect(0, 0, width, height);
 
-      // A. Fiery bottom bed glow (coals / hearth)
-      const hearthGrad = ctx.createLinearGradient(0, height, 0, height * 0.28);
-      hearthGrad.addColorStop(0, 'rgba(255, 60, 0, 0.52)');
-      hearthGrad.addColorStop(0.45, 'rgba(255, 120, 0, 0.24)');
-      hearthGrad.addColorStop(1, 'rgba(255, 30, 0, 0)');
+      // A. Light, luminous bottom hearth glow
+      const hearthGrad = ctx.createLinearGradient(0, height, 0, height * 0.25);
+      hearthGrad.addColorStop(0, 'rgba(255, 100, 15, 0.25)');
+      hearthGrad.addColorStop(0.5, 'rgba(255, 150, 30, 0.12)');
+      hearthGrad.addColorStop(1, 'rgba(255, 60, 0, 0)');
       ctx.fillStyle = hearthGrad;
       ctx.fillRect(0, 0, width, height);
 
-      // B. Screen blend for luminous additive flame licking
+      // B. Screen blend for clean luminous flame licking
       ctx.globalCompositeOperation = 'screen';
 
-      // C. Draw Organic Bezier Flame Tongues
+      // C. Draw Razor-Sharp Pointed Flame Blades
       tongues.forEach((t, i) => {
         const baseX = t.xRatio * width;
         const baseW = t.baseWidthRatio * width;
-        const flameH = (t.heightRatio * height) * (0.82 + Math.sin(time * t.speed + t.offset) * 0.2 + Math.cos(time * 0.65 + i) * 0.1);
+        const flameH = (t.heightRatio * height) * (0.86 + Math.sin(time * t.speed + t.offset) * 0.15 + Math.cos(time * 0.28 + i) * 0.08);
         const sway = Math.sin(time * t.swaySpeed + t.offset) * t.swayAmp;
         const tipX = baseX + sway;
-        const tipY = Math.max(height * 0.08, height - flameH);
+        const tipY = Math.max(height * 0.1, height - flameH);
 
-        // 1. Outer Crimson Flame Mantel
-        ctx.beginPath();
-        ctx.moveTo(baseX - baseW * 0.6, height);
-        ctx.bezierCurveTo(
-          baseX - baseW * 0.4 + sway * 0.3, height - flameH * 0.45,
-          tipX - baseW * 0.25, tipY + flameH * 0.2,
-          tipX, tipY
-        );
-        ctx.bezierCurveTo(
-          tipX + baseW * 0.25, tipY + flameH * 0.2,
-          baseX + baseW * 0.4 + sway * 0.3, height - flameH * 0.45,
-          baseX + baseW * 0.6, height
-        );
-        ctx.closePath();
-        const gradOuter = ctx.createLinearGradient(baseX, height, tipX, tipY);
-        gradOuter.addColorStop(0, 'rgba(220, 38, 38, 0.7)');
-        gradOuter.addColorStop(0.6, 'rgba(234, 88, 12, 0.55)');
-        gradOuter.addColorStop(1, 'rgba(185, 28, 28, 0)');
-        ctx.fillStyle = gradOuter;
-        ctx.fill();
+        // Helper to draw a sharp blade with pointed spear tip and optional side barb
+        const drawSharpBlade = (scaleW, scaleH, colorStart, colorEnd) => {
+          const w = baseW * scaleW;
+          const h = flameH * scaleH;
+          const curTipY = height - h;
 
-        // 2. Middle Bright Roaring Flame Body
-        ctx.beginPath();
-        const midH = flameH * 0.82;
-        const midTipY = height - midH;
-        ctx.moveTo(baseX - baseW * 0.4, height);
-        ctx.bezierCurveTo(
-          baseX - baseW * 0.25 + sway * 0.25, height - midH * 0.45,
-          tipX - baseW * 0.15, midTipY + midH * 0.2,
-          tipX, midTipY
-        );
-        ctx.bezierCurveTo(
-          tipX + baseW * 0.15, midTipY + midH * 0.2,
-          baseX + baseW * 0.25 + sway * 0.25, height - midH * 0.45,
-          baseX + baseW * 0.4, height
-        );
-        ctx.closePath();
-        const gradMid = ctx.createLinearGradient(baseX, height, tipX, midTipY);
-        gradMid.addColorStop(0, 'rgba(249, 115, 22, 0.85)');
-        gradMid.addColorStop(0.7, 'rgba(245, 158, 11, 0.65)');
-        gradMid.addColorStop(1, 'rgba(239, 68, 68, 0)');
-        ctx.fillStyle = gradMid;
-        ctx.fill();
+          ctx.beginPath();
+          ctx.moveTo(baseX - w * 0.5, height);
 
-        // 3. Inner White-Hot Flame Core
-        ctx.beginPath();
-        const coreH = flameH * 0.52;
-        const coreTipY = height - coreH;
-        ctx.moveTo(baseX - baseW * 0.22, height);
-        ctx.bezierCurveTo(
-          baseX - baseW * 0.12 + sway * 0.15, height - coreH * 0.4,
-          tipX - baseW * 0.08, coreTipY + coreH * 0.2,
-          tipX, coreTipY
-        );
-        ctx.bezierCurveTo(
-          tipX + baseW * 0.08, coreTipY + coreH * 0.2,
-          baseX + baseW * 0.12 + sway * 0.15, height - coreH * 0.4,
-          baseX + baseW * 0.22, height
-        );
-        ctx.closePath();
-        const gradCore = ctx.createLinearGradient(baseX, height, tipX, coreTipY);
-        gradCore.addColorStop(0, 'rgba(255, 255, 235, 0.95)');
-        gradCore.addColorStop(0.5, 'rgba(254, 240, 138, 0.85)');
-        gradCore.addColorStop(1, 'rgba(251, 191, 36, 0)');
-        ctx.fillStyle = gradCore;
-        ctx.fill();
+          // Left sharp edge with a slight sharp barb indentation
+          const leftBarbX = baseX - w * 0.28 + sway * 0.35;
+          const leftBarbY = height - h * 0.42;
+          ctx.quadraticCurveTo(baseX - w * 0.38, height - h * 0.2, leftBarbX, leftBarbY);
+          ctx.lineTo(leftBarbX + w * 0.08, leftBarbY + h * 0.06); // Sharp barb notch
+          ctx.quadraticCurveTo(tipX - w * 0.08, curTipY + h * 0.22, tipX, curTipY); // Razor-sharp tip
+
+          // Right sharp edge with sharp barb indentation
+          const rightBarbX = baseX + w * 0.26 + sway * 0.35;
+          const rightBarbY = height - h * 0.38;
+          ctx.quadraticCurveTo(tipX + w * 0.08, curTipY + h * 0.22, rightBarbX - w * 0.07, rightBarbY + h * 0.06);
+          ctx.lineTo(rightBarbX, rightBarbY); // Sharp right barb
+          ctx.quadraticCurveTo(baseX + w * 0.38, height - h * 0.2, baseX + w * 0.5, height);
+
+          ctx.closePath();
+
+          const grad = ctx.createLinearGradient(baseX, height, tipX, curTipY);
+          grad.addColorStop(0, colorStart);
+          grad.addColorStop(0.7, colorEnd);
+          grad.addColorStop(1, 'rgba(255, 60, 0, 0)');
+          ctx.fillStyle = grad;
+          ctx.fill();
+        };
+
+        // 1. Outer Sharp Amber/Crimson Blade (Light & airy)
+        drawSharpBlade(1.0, 1.0, 'rgba(245, 95, 20, 0.42)', 'rgba(220, 45, 10, 0.28)');
+
+        // 2. Middle Sharp Bright Golden Fire Blade
+        drawSharpBlade(0.68, 0.82, 'rgba(255, 165, 30, 0.55)', 'rgba(250, 110, 15, 0.35)');
+
+        // 3. Inner Razor-Sharp White-Hot Needle Spire
+        drawSharpBlade(0.35, 0.55, 'rgba(255, 255, 230, 0.72)', 'rgba(255, 205, 50, 0.45)');
       });
 
-      // D. Draw Licking Teardrop Plumes
-      for (let i = 0; i < particles.length; i++) {
-        particles[i].update();
-        particles[i].draw(ctx);
+      // D. Draw Sharp Rising Flame Shards (Pointed diamonds)
+      for (let i = 0; i < shards.length; i++) {
+        shards[i].update();
+        shards[i].draw(ctx);
       }
 
-      // E. Draw Crackling Sparks
-      for (let i = 0; i < sparks.length; i++) {
-        sparks[i].update();
-        sparks[i].draw(ctx);
+      // E. Draw Sharp Needle Sparks (Pointed crosses)
+      for (let i = 0; i < needleSparks.length; i++) {
+        needleSparks[i].update();
+        needleSparks[i].draw(ctx);
       }
 
       ctx.globalCompositeOperation = 'source-over';
@@ -256,17 +246,17 @@ export default function FireCanvas() {
 
   return (
     <div className="fire-moving-container" aria-hidden="true">
-      {/* Procedural Canvas OG Fire Simulation */}
+      {/* Procedural Canvas Light Sharp Fire Simulation */}
       <canvas ref={canvasRef} className="fire-moving-canvas" />
 
-      {/* Layered CSS organic flame crests for rich silhouette body */}
+      {/* Layered CSS sharp jagged flame crests */}
       <div className="fire-flame-tongues">
         <div className="flame-tongue tongue-back" />
         <div className="flame-tongue tongue-mid" />
         <div className="flame-tongue tongue-front" />
       </div>
 
-      {/* Burning furnace ember glow at the bottom */}
+      {/* Light burning furnace glow at the bottom */}
       <div className="fire-bottom-furnace" />
     </div>
   );
