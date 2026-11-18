@@ -10,6 +10,17 @@ const dayKey=(d=new Date())=>`${d.getFullYear()}-${String(d.getMonth()+1).padSta
 const read=(key,fallback)=>{try{return JSON.parse(localStorage.getItem(key))??fallback}catch{return fallback}};
 const STORAGE_KEY='orbit-study-ledger-v3';
 const WORKSPACE_KEY='orbit-workspace-v3';
+const USER_PROFILE_KEY='orbit-user-profile-v1';
+const DEFAULT_USER_PROFILE={
+  name:'Althaf',
+  tagline:'KTU Engineering Student · Consistency Over Perfection',
+  institution:'APJ Abdul Kalam Technological University (KTU)',
+  program:'B.Tech Computer Science & Engineering',
+  semester:'S1 & S2 (2019 Scheme)',
+  targetCgpa:'9.0',
+  avatar:'/logo.png',
+  bio:'Dedicated to systematically mastering engineering subjects, solving verified Previous Year Questions, and achieving top semester results.'
+};
 const DEFAULT_EXAM_DATES={
   'sub-mat101':'2026-12-15T09:30',
   'sub-mat102':'2026-12-17T09:30',
@@ -153,6 +164,13 @@ export default function App(){
 const [data,setData]=useState(initialLedger);const [workspace,setWorkspace]=useState(()=>({tasks:[],sessions:[],notes:[],goal:120,...read(WORKSPACE_KEY,{})}));
 const [page,setPage]=useState('Overview'),[subjectId,setSubjectId]=useState(null),[search,setSearch]=useState(''),[menu,setMenu]=useState(false),[modal,setModal]=useState(null),[toast,setToast]=useState(''),[filter,setFilter]=useState('All subjects'),[expandedQuestions,setExpandedQuestions]=useState({});
 const [devModal,setDevModal]=useState(false);
+const [userProfile,setUserProfile]=useState(()=>({...DEFAULT_USER_PROFILE,...read(USER_PROFILE_KEY,{})}));
+const [userModal,setUserModal]=useState(false);
+const [isEditingProfile,setIsEditingProfile]=useState(false);
+const [editAvatarDraft,setEditAvatarDraft]=useState(userProfile.avatar);
+useEffect(()=>{
+  try{localStorage.setItem(USER_PROFILE_KEY,JSON.stringify(userProfile));}catch{}
+},[userProfile]);
 const [currentTime,setCurrentTime]=useState(()=>Date.now());
 const [editExamModal,setEditExamModal]=useState(null);
 const [timetableOpen,setTimetableOpen]=useState(false);
@@ -249,7 +267,7 @@ useEffect(()=>{if(!toast)return;const id=setTimeout(()=>setToast(''),5000);retur
 useEffect(()=>{const id=setInterval(()=>setToday(dayKey()),30000);return()=>clearInterval(id)},[]);
 useEffect(()=>{if(!running)return;const tick=()=>{const left=Math.max(0,Math.ceil((deadline.current-Date.now())/1000));setRemaining(left);if(left===0){setRunning(false);if(timerMode==='Focus'){setWorkspace(w=>w.sessions.some(s=>s.id===sessionId.current)?w:({...w,sessions:[...w.sessions,{id:sessionId.current,date:dayKey(new Date(deadline.current)),subjectId:timerSubject,minutes:duration}]}));notify('Focus session complete. A little closer to your goals.')}else notify('Break complete. Ready for a fresh start.')}};tick();const id=setInterval(tick,250);return()=>clearInterval(id)},[running,duration,timerSubject,timerMode]);
 useEffect(()=>{const observer=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('revealed');observer.unobserve(e.target)}}),{threshold:.06});document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));return()=>observer.disconnect()},[page,subjectId,filter]);
-useEffect(()=>{const key=e=>{if(e.key==='Escape'){setModal(null);setImmersive(false);setMenu(false);setTimetableOpen(false);}};window.addEventListener('keydown',key);return()=>window.removeEventListener('keydown',key)},[]);
+useEffect(()=>{const key=e=>{if(e.key==='Escape'){setModal(null);setImmersive(false);setMenu(false);setTimetableOpen(false);setDevModal(false);setUserModal(false);setIsEditingProfile(false);}};window.addEventListener('keydown',key);return()=>window.removeEventListener('keydown',key)},[]);
 const navigate=p=>{setPage(p);setSubjectId(null);setMenu(false);setSearch('');setFilter('All subjects');window.scrollTo({top:0,behavior:'smooth'})};
 const openSubject=s=>{setSubjectId(s.id);setPage('My subjects');setMenu(false);setSearch('');window.scrollTo({top:0,behavior:'smooth'})};
 const updateTopic=(s,m,t,patch)=>setData(d=>({...d,[s.semester]:{...d[s.semester],subjects:d[s.semester].subjects.map(sub=>sub.id!==s.id?sub:{...sub,modules:sub.modules.map(mod=>mod.id!==m.id?mod:{...mod,topics:mod.topics.map(top=>top.id!==t.id?top:{...top,...patch})})})}}));
@@ -549,8 +567,8 @@ const chart=<div className="bar-chart">{week.map(d=><div className="bar-column" 
 const timer=<><div className="panel-heading"><h3><Focus size={17}/> Focus room</h3><span className="live-dot">{running?'IN SESSION':'YOUR QUIET SPACE'}</span></div><div className="timer-tabs">{['Focus','Short break'].map(mode=><button key={mode} className={timerMode===mode?'active':''} onClick={()=>resetTimer(mode==='Focus'?25:5,mode)}>{mode}</button>)}</div><div className={'clock '+(running?'ticking':'')} style={{'--timer-progress':`${100*(1-remaining/(duration*60))}%`}}><div><span>{String(Math.floor(remaining/60)).padStart(2,'0')}<b>:</b>{String(remaining%60).padStart(2,'0')}</span><small>{running?'ONE THING AT A TIME':timerMode==='Focus'?'TIME TO MAKE PROGRESS':'TAKE A BREATH'}</small></div></div><label className="select-label">WORKING ON<select aria-label="Focus subject" value={timerSubject} disabled={running} onChange={e=>setTimerSubject(e.target.value)}>{subjects.map(s=><option key={s.id} value={s.id}>{s.short}</option>)}</select></label><div className="timer-controls"><button className="primary" onClick={toggleTimer}>{running?<Pause size={16}/>:<Play size={16}/>} {running?'Pause session':'Start session'}</button><button className="icon-button" aria-label="Reset timer" onClick={()=>resetTimer()}><RotateCcw size={18}/></button></div><button className="quiet focus-expand" onClick={()=>setImmersive(!immersive)}><Focus size={13}/>{immersive?'Exit full focus':'Enter full focus'}<ArrowUpRight size={13}/></button></>;
 const taskList=tasks=>tasks.length?<div className="task-list">{tasks.map(t=>{const s=subjects.find(s=>s.id===t.subjectId);return <div className={'task-row '+(t.done?'done':'')} key={t.id}><button className="checkbox" aria-label={`${t.done?'Reopen':'Complete'} ${t.title}`} aria-pressed={t.done} onClick={()=>toggleTask(t.id)}>{t.done&&<Check size={13}/>}</button><div><strong>{t.title}</strong><small><i style={{background:s?.color}}/>{s?.short} <span>· {t.minutes} min · {t.date===today?'Today':t.date}</span></small></div><button className="icon-button delete-task" aria-label={`Delete ${t.title}`} onClick={()=>setWorkspace(w=>({...w,tasks:w.tasks.filter(x=>x.id!==t.id)}))}><Trash2 size={14}/></button></div>})}</div>:<div className="empty"><CheckCheck size={25}/><strong>A clear day. A fresh start.</strong><p>Add a small, achievable task for one of your subjects.</p><button className="quiet mint" onClick={()=>setModal('task')}>Create your first task <Plus size={14}/></button></div>;
 const subjectCards=<div className="subject-grid">{subjects.filter(s=>`${s.name} ${s.short} ${s.code}`.toLowerCase().includes(search.toLowerCase())&&(filter==='All subjects'||s.semester===filter)).map((s,i)=>{const Icon=s.icon,pct=Math.round(calculateSubjectProgress(s)*100);return <button key={s.id} className="subject-card reveal" style={{'--accent':s.color,transitionDelay:`${i*55}ms`}} onClick={()=>openSubject(s)}><div className="subject-top"><span className="subject-icon"><Icon size={24}/></span><span className="code">{s.code} <ArrowUpRight size={14}/></span></div><h3>{s.short}</h3><p>{s.label}</p><div className="subject-info"><span>{s.modules.length} modules</span><span>{s.semester} · KTU</span></div><div className="progress"><i style={{width:`${pct}%`}}/></div><div className="subject-bottom"><span>Course progress</span><strong>{pct}%</strong></div></button>})}</div>;
-return <div className="app-shell" style={shellStyle}><aside className={'sidebar '+(menu?'open':'')}><a className="brand" href="#" onClick={e=>{e.preventDefault();navigate('Overview')}}><span className="brand-symbol"><img src="/logo.png" alt="Bibiculous Logo" className="brand-logo-img"/></span>orbit<span className="brand-period">.</span></a><div className="workspace-label"><span className="workspace-icon"><GraduationCap size={18}/></span><div>My study space<small>Personal workspace</small></div><ChevronDown size={13}/></div><p className="nav-label">WORKSPACE</p><nav>{nav.map(([name,Icon])=><button key={name} className={page===name?'active':''} onClick={()=>navigate(name)}><Icon size={18}/>{name}{name==='My subjects'&&<span className="nav-count">04</span>}{name==='Revision'&&<span className="tiny-dot"/>}</button>)}</nav><p className="nav-label subjects-label">YOUR SUBJECTS <span>4</span></p><div className="subject-nav">{subjects.map(s=><button key={s.id} onClick={()=>openSubject(s)}><i style={{background:s.color}}/>{s.short}<span>{s.semester}</span></button>)}</div><div className="sidebar-bottom"><div className="sidebar-tip"><Sparkles size={19}/><strong>Small steps. Big futures.</strong><p>Your only competition is<br/>who you were yesterday.</p><span>LET’S MAKE TODAY COUNT <ArrowUpRight size={13}/></span></div><button className="settings-link" onClick={()=>navigate('Settings')}><Settings2 size={18}/> Settings & backup</button><button type="button" className="profile" onClick={()=>setDevModal(true)} title="View Developer Details (Althaf)"><span className="avatar-letter"><img src="/logo.png" alt="Althaf (Bibiculous)" className="profile-avatar-img"/></span><div>{DEVELOPER_INFO.name}<small>{DEVELOPER_INFO.alias} · Lead Dev</small></div><span className="online"/></button></div></aside>{menu&&<div className="sidebar-scrim" onClick={()=>setMenu(false)}/>}
-<div className="main-shell"><header className="topbar"><div className="breadcrumb"><button className="icon-button mobile-menu" aria-label="Open navigation" onClick={()=>setMenu(true)}><Menu size={20}/></button><span>Workspace</span><span>/</span><strong>{selected?selected.short:page}</strong></div><div className="topbar-right"><div className="timetable-dropdown-anchor" ref={timetableDropdownRef}><button type="button" className={`timetable-topbar-btn ${timetableOpen?'active':''}`} onClick={()=>setTimetableOpen(!timetableOpen)} title="Toggle Revised Exam Timetable & Module Progress" aria-expanded={timetableOpen}><Table size={14}/><span className="timetable-btn-label">Timetable</span><span className="timetable-header-badge">{totalCompletedModules}/20</span><ChevronDown size={12} className={`timetable-chevron ${timetableOpen?'open':''}`}/></button>{timetableOpen&&(<div className="timetable-dropdown-popover"><div className="timetable-popover-header"><div><div className="popover-eyebrow">KTU DEC 2026 · 2019 SCHEME</div><h4>REVISED B.TECH S1,S2 TIME TABLE</h4></div><button type="button" className="icon-button popover-close-btn" onClick={()=>setTimetableOpen(false)} aria-label="Close timetable"><X size={15}/></button></div><div className="popover-subbar"><span className="popover-session-tag">FORENOON (09:30 AM)</span><span className="popover-hour-badge">DAILY 1-3 HOUR</span></div><div className="popover-table-wrapper">{renderTimetableTable(true)}</div><div className="popover-footer"><span className="popover-progress-status"><strong>{totalCompletedModules} of 20</strong> Modules studied ({Math.round(totalCompletedModules/20*100)}%)</span><button type="button" className="popover-overview-jump" onClick={()=>{setTimetableOpen(false);if(page!=='Overview')navigate('Overview');setTimeout(()=>{const el=document.querySelector('.exam-timetable-board-section');el?.scrollIntoView({behavior:'smooth'});},120);}}>View Full Board <ArrowUpRight size={13}/></button></div></div>)}</div><button type="button" className={'gemini-topbar-btn '+(geminiOpen?'active ':'')+(geminiLoading?'loading':'')} onClick={()=>setGeminiOpen(!geminiOpen)} title="Open Free KTU AI Study Agent"><Sparkles size={14}/><span>Free AI Tutor</span><span className="free-badge">FREE</span>{geminiLoading&&<span className="gemini-pulse-dot"/>}</button><span className="local-status"><i/> Local workspace</span><button className="avatar" aria-label="Open Developer Details" onClick={()=>setDevModal(true)} title="Developer Details: Althaf (Bibiculous)"><img src="/logo.png" alt="Althaf" className="topbar-avatar-img"/></button></div></header><main><div className="page-heading"><div><div className="eyebrow">YOUR PERSONAL LEARNING OS <span>✦</span></div><h1>{selected?selected.short:page==='Overview'?'A little focus. A lot of possibility.':page}</h1><p>{selected?selected.description:page==='Overview'?'Welcome back, Althaf. Let’s turn today’s effort into tomorrow’s progress.':'Four subjects. One clear direction. Keep moving forward.'}</p></div><span className="date-pill"><CalendarDays size={15}/>{new Date(today+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}</span></div>
+return <div className="app-shell" style={shellStyle}><aside className={'sidebar '+(menu?'open':'')}><a className="brand" href="#" onClick={e=>{e.preventDefault();navigate('Overview')}}><span className="brand-symbol"><img src="/logo.png" alt="Bibiculous Logo" className="brand-logo-img"/></span>orbit<span className="brand-period">.</span></a><div className="workspace-label"><span className="workspace-icon"><GraduationCap size={18}/></span><div>My study space<small>Personal workspace</small></div><ChevronDown size={13}/></div><p className="nav-label">WORKSPACE</p><nav>{nav.map(([name,Icon])=><button key={name} className={page===name?'active':''} onClick={()=>navigate(name)}><Icon size={18}/>{name}{name==='My subjects'&&<span className="nav-count">04</span>}{name==='Revision'&&<span className="tiny-dot"/>}</button>)}</nav><p className="nav-label subjects-label">YOUR SUBJECTS <span>4</span></p><div className="subject-nav">{subjects.map(s=><button key={s.id} onClick={()=>openSubject(s)}><i style={{background:s.color}}/>{s.short}<span>{s.semester}</span></button>)}</div><div className="sidebar-bottom"><div className="sidebar-tip"><Sparkles size={19}/><strong>Small steps. Big futures.</strong><p>Your only competition is<br/>who you were yesterday.</p><span>LET’S MAKE TODAY COUNT <ArrowUpRight size={13}/></span></div><button className="settings-link" onClick={()=>navigate('Settings')}><Settings2 size={18}/> Settings & backup</button><button type="button" className="dev-credit-link" onClick={()=>setDevModal(true)} title="About Developer: Althaf (HalalDev)"><Code2 size={17}/><span>About Developer</span><span className="dev-tag-mini">Althaf</span></button><button type="button" className="profile" onClick={()=>{setUserModal(true);setIsEditingProfile(false);}} title={`Student Profile: ${userProfile.name}`}><span className="avatar-letter">{userProfile.avatar?<img src={userProfile.avatar} alt={userProfile.name} className="profile-avatar-img"/>:<span className="avatar-letter-text">{userProfile.name.charAt(0).toUpperCase()}</span>}</span><div className="profile-user-info"><strong className="profile-name-text">{userProfile.name}</strong><small className="profile-sub-text">{userProfile.program?userProfile.program.replace(/in\s+/i,'').slice(0,19):'KTU Student'}</small></div><span className="online" title="Profile Active"/></button></div></aside>{menu&&<div className="sidebar-scrim" onClick={()=>setMenu(false)}/>}
+<div className="main-shell"><header className="topbar"><div className="breadcrumb"><button className="icon-button mobile-menu" aria-label="Open navigation" onClick={()=>setMenu(true)}><Menu size={20}/></button><span>Workspace</span><span>/</span><strong>{selected?selected.short:page}</strong></div><div className="topbar-right"><div className="timetable-dropdown-anchor" ref={timetableDropdownRef}><button type="button" className={`timetable-topbar-btn ${timetableOpen?'active':''}`} onClick={()=>setTimetableOpen(!timetableOpen)} title="Toggle Revised Exam Timetable & Module Progress" aria-expanded={timetableOpen}><Table size={14}/><span className="timetable-btn-label">Timetable</span><span className="timetable-header-badge">{totalCompletedModules}/20</span><ChevronDown size={12} className={`timetable-chevron ${timetableOpen?'open':''}`}/></button>{timetableOpen&&(<div className="timetable-dropdown-popover"><div className="timetable-popover-header"><div><div className="popover-eyebrow">KTU DEC 2026 · 2019 SCHEME</div><h4>REVISED B.TECH S1,S2 TIME TABLE</h4></div><button type="button" className="icon-button popover-close-btn" onClick={()=>setTimetableOpen(false)} aria-label="Close timetable"><X size={15}/></button></div><div className="popover-subbar"><span className="popover-session-tag">FORENOON (09:30 AM)</span><span className="popover-hour-badge">DAILY 1-3 HOUR</span></div><div className="popover-table-wrapper">{renderTimetableTable(true)}</div><div className="popover-footer"><span className="popover-progress-status"><strong>{totalCompletedModules} of 20</strong> Modules studied ({Math.round(totalCompletedModules/20*100)}%)</span><button type="button" className="popover-overview-jump" onClick={()=>{setTimetableOpen(false);if(page!=='Overview')navigate('Overview');setTimeout(()=>{const el=document.querySelector('.exam-timetable-board-section');el?.scrollIntoView({behavior:'smooth'});},120);}}>View Full Board <ArrowUpRight size={13}/></button></div></div>)}</div><button type="button" className={'gemini-topbar-btn '+(geminiOpen?'active ':'')+(geminiLoading?'loading':'')} onClick={()=>setGeminiOpen(!geminiOpen)} title="Open Free KTU AI Study Agent"><Sparkles size={14}/><span>Free AI Tutor</span><span className="free-badge">FREE</span>{geminiLoading&&<span className="gemini-pulse-dot"/>}</button><span className="local-status"><i/> Local workspace</span><button type="button" className="avatar user-avatar-btn" aria-label="Open Student Profile" onClick={()=>{setUserModal(true);setIsEditingProfile(false);}} title={`Student Profile: ${userProfile.name}`}>{userProfile.avatar?<img src={userProfile.avatar} alt={userProfile.name} className="topbar-avatar-img"/>:<span className="avatar-letter-text">{userProfile.name.charAt(0).toUpperCase()}</span>}</button></div></header><main><div className="page-heading"><div><div className="eyebrow">YOUR PERSONAL LEARNING OS <span>✦</span></div><h1>{selected?selected.short:page==='Overview'?'A little focus. A lot of possibility.':page}</h1><p>{selected?selected.description:page==='Overview'?`Welcome back, ${userProfile.name}. Let’s turn today’s effort into tomorrow’s progress.`:'Four subjects. One clear direction. Keep moving forward.'}</p></div><span className="date-pill"><CalendarDays size={15}/>{new Date(today+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}</span></div>
 {page==='Overview'&&<><section className="exam-timers-section reveal">
   <div className="exam-timers-header">
     <div className="exam-timers-title">
@@ -752,7 +770,7 @@ return <div className="app-shell" style={shellStyle}><aside className={'sidebar 
 {page==='Notes library'&&<><div className="toolbar"><label className="search"><Search size={16}/><input placeholder="Search your notes…" value={search} onChange={e=>setSearch(e.target.value)}/></label><button className="primary" onClick={()=>setModal('note')}><Plus size={16}/> New note</button></div><div className="notes-grid">{workspace.notes.filter(n=>(n.title+' '+n.body).toLowerCase().includes(search.toLowerCase())).map(n=><article className="panel note-card" key={n.id}><div className="panel-heading"><small>{subjects.find(s=>s.id===n.subjectId)?.short}</small><button className="icon-button" aria-label={`Delete note ${n.title}`} onClick={()=>setWorkspace(w=>({...w,notes:w.notes.filter(x=>x.id!==n.id)}))}><Trash2 size={15}/></button></div><h3>{n.title}</h3><textarea aria-label={`Edit ${n.title}`} value={n.body} onChange={e=>setWorkspace(w=>({...w,notes:w.notes.map(x=>x.id===n.id?{...x,body:e.target.value}:x)}))}/><small>Saved automatically on this device</small></article>)}</div><div className="section-heading"><div><h2>Syllabus notebook</h2><p>Your existing topic notes, all in one place.</p></div></div><div className="notes-grid">{allTopics.filter(t=>t.notes&&`${t.name} ${t.notes}`.toLowerCase().includes(search.toLowerCase())).map(t=><button className="panel note-card syllabus-note" key={t.id} onClick={()=>openSubject(t.subject)}><small style={{color:t.subject.color}}>{t.subject.short}</small><h3>{t.name}</h3><p>{t.notes}</p><span className="quiet">Open subject <ArrowUpRight size={14}/></span></button>)}</div></>}
 {page==='Revision'&&<><div className="panel revision-intro"><RotateCcw size={26}/><div><h2>Make it stick.</h2><p>Recall a studied topic before revealing your notes. Mark it revised when you’re confident.</p></div></div><div className="notes-grid">{allTopics.filter(t=>['studied','needs-revision'].includes(t.status)).map(t=><article className="panel note-card" key={t.id}><small style={{color:t.subject.color}}>{t.subject.short}</small><h3>{t.name}</h3><details><summary>Reveal study notes</summary><p>{t.notes||'Explain this concept in your own words, then review the syllabus.'}</p></details><button className="small-button" onClick={()=>{updateTopic(t.subject,t.module,t,{status:'revised',subTopics:(t.subTopics||[]).map(s=>({...s,done:true}))});notify('Topic revised. Knowledge reinforced.')}}><Check size={15}/> Mark revised</button></article>)}</div>{!allTopics.some(t=>['studied','needs-revision'].includes(t.status))&&<div className="empty"><CheckCheck/><h3>You’re all caught up.</h3><p>Mark topics studied to add them to your revision queue.</p></div>}</>}
 {page==='Insights'&&<><section className="panel"><div className="panel-heading"><h3>Focus time · Last 7 days</h3><span>{week.reduce((a,d)=>a+d.minutes,0)} minutes</span></div>{chart}</section><div className="section-heading"><h2>Subject by subject</h2></div>{subjectCards}<section className="panel session-history"><h3>Completed focus sessions</h3>{workspace.sessions.length?workspace.sessions.slice().reverse().slice(0,30).map(s=><div className="history-row" key={s.id}><CheckCheck size={17}/><span>{subjects.find(x=>x.id===s.subjectId)?.short}</span><small>{s.date}</small><strong>{s.minutes} min</strong></div>):<div className="empty"><Clock3/><p>Finish your first focus session to start your history.</p></div>}</section></>}
-{page==='Settings'&&<section className="panel settings-panel"><h2>A space that works for you.</h2><p>Your syllabus, notes, tasks and sessions are saved in this browser. Export a backup before clearing browser data or changing devices.</p><div className="theme-customizer-card"><div className="theme-section-header"><div className="theme-icon-box" style={{background:`${theme.accent}20`,borderColor:`${theme.accent}40`,color:theme.accent}}><Palette size={20}/></div><div><h3>Page Colors & Appearance</h3><p>Select your favorite accent color and page background ambiance. Changes take effect across the entire study buddy immediately.</p></div></div><div className="theme-options-block"><label className="theme-label">PRIMARY ACCENT COLOR<small>Select from popular study palettes or choose a custom hex color</small></label><div className="accent-grid">{ACCENT_PRESETS.map(preset=>{const isSelected=theme.accent.toLowerCase()===preset.hex.toLowerCase();return <button key={preset.hex} type="button" className={'accent-swatch-btn '+(isSelected?'selected':'')} style={{'--swatch-color':preset.hex}} onClick={()=>{setTheme(t=>({...t,accent:preset.hex}));notify(`Accent color changed to ${preset.name}!`);}} title={preset.name}><span className="swatch-circle" style={{backgroundColor:preset.hex}}>{isSelected&&<Check size={13} strokeWidth={3} style={{color:getContrastColor(preset.hex)}}/>}</span><span className="swatch-name">{preset.name}</span></button>;})}<div className="custom-color-picker-wrapper"><label className="custom-color-btn" title="Pick any custom color"><input type="color" value={theme.accent} onChange={e=>setTheme(t=>({...t,accent:e.target.value}))}/><span className="swatch-circle custom-indicator" style={{backgroundColor:theme.accent}}><Palette size={12} style={{color:getContrastColor(theme.accent)}}/></span><span className="swatch-name">Custom ({theme.accent.toUpperCase()})</span></label></div></div></div><div className="theme-options-block" style={{marginTop:22}}><label className="theme-label">PAGE CANVAS THEME<small>Sets dark tone, sidebar shade, and panel contrast</small></label><div className="bg-themes-grid">{Object.values(BG_THEMES).map(bg=>{const isSelected=theme.bgTheme===bg.id;return <button key={bg.id} type="button" className={'bg-theme-card '+(isSelected?'selected':'')} style={{'--card-bg':bg.panel,'--card-border':bg.line}} onClick={()=>{setTheme(t=>({...t,bgTheme:bg.id}));notify(`Page background switched to ${bg.name}!`);}}><div className="bg-theme-preview" style={{background:bg.bg,borderColor:bg.line}}><div className="preview-mini-sidebar" style={{background:bg.sidebar}}/><div className="preview-mini-content"><div className="preview-mini-topbar" style={{borderColor:bg.line}}/><div className="preview-mini-panel" style={{background:bg.panel,borderColor:bg.line}}><span className="preview-mini-bar" style={{background:theme.accent}}/></div></div></div><div className="bg-theme-info"><strong>{bg.name}</strong><small>{bg.desc}</small></div>{isSelected&&<span className="selected-check-badge"><Check size={12} strokeWidth={3}/></span>}</button>;})}</div></div><div className="theme-preview-card"><div className="theme-preview-header"><Sparkles size={14} style={{color:theme.accent}}/><span>Live Palette Preview</span></div><div className="theme-preview-elements"><button type="button" className="primary" style={{padding:'7px 14px'}}>Primary Action</button><span className="q-badge" style={{background:`${theme.accent}22`,border:`1px solid ${theme.accent}55`,color:theme.accent}}>Active Highlight</span><div className="preview-progress-box"><div className="progress" style={{width:120}}><i style={{width:'75%',background:theme.accent}}/></div><small style={{color:theme.accent,fontSize:10,fontWeight:600}}>75% Completed</small></div><button type="button" className="small-button" style={{marginLeft:'auto'}} onClick={()=>{setTheme(DEFAULT_THEME);notify('Restored default Mint Green & Obsidian theme.');}}><RotateCcw size={13}/> Reset to Defaults</button></div></div></div><div className="dev-details-card">
+{page==='Settings'&&<section className="panel settings-panel"><h2>A space that works for you.</h2><p>Your syllabus, notes, tasks and sessions are saved in this browser. Export a backup before clearing browser data or changing devices.</p><div className="user-profile-settings-card"><div className="user-card-header"><div className="user-avatar-wrap">{userProfile.avatar?<img src={userProfile.avatar} alt={userProfile.name} className="user-settings-avatar-img"/>:<div className="user-settings-placeholder">{userProfile.name.charAt(0).toUpperCase()}</div>}</div><div className="user-card-meta"><div className="user-title-row"><h3>{userProfile.name}</h3><span className="user-status-pill">🎓 KTU Student</span><span className="user-target-pill">Target: {userProfile.targetCgpa} CGPA</span></div><p className="user-prog-label">{userProfile.program} · {userProfile.semester}</p><small className="user-inst-label">{userProfile.institution}</small></div><div className="user-card-actions"><button type="button" className="primary user-edit-btn" onClick={()=>{setUserModal(true);setIsEditingProfile(true);setEditAvatarDraft(userProfile.avatar);}} title="Edit your student profile"><Settings2 size={14}/> Edit Profile</button><button type="button" className="small-button" onClick={()=>{setUserModal(true);setIsEditingProfile(false);}} title="View full study statistics"><User size={14}/> View Info</button></div></div><p className="user-tagline-quote">“{userProfile.tagline}”</p></div><div className="theme-customizer-card"><div className="theme-section-header"><div className="theme-icon-box" style={{background:`${theme.accent}20`,borderColor:`${theme.accent}40`,color:theme.accent}}><Palette size={20}/></div><div><h3>Page Colors & Appearance</h3><p>Select your favorite accent color and page background ambiance. Changes take effect across the entire study buddy immediately.</p></div></div><div className="theme-options-block"><label className="theme-label">PRIMARY ACCENT COLOR<small>Select from popular study palettes or choose a custom hex color</small></label><div className="accent-grid">{ACCENT_PRESETS.map(preset=>{const isSelected=theme.accent.toLowerCase()===preset.hex.toLowerCase();return <button key={preset.hex} type="button" className={'accent-swatch-btn '+(isSelected?'selected':'')} style={{'--swatch-color':preset.hex}} onClick={()=>{setTheme(t=>({...t,accent:preset.hex}));notify(`Accent color changed to ${preset.name}!`);}} title={preset.name}><span className="swatch-circle" style={{backgroundColor:preset.hex}}>{isSelected&&<Check size={13} strokeWidth={3} style={{color:getContrastColor(preset.hex)}}/>}</span><span className="swatch-name">{preset.name}</span></button>;})}<div className="custom-color-picker-wrapper"><label className="custom-color-btn" title="Pick any custom color"><input type="color" value={theme.accent} onChange={e=>setTheme(t=>({...t,accent:e.target.value}))}/><span className="swatch-circle custom-indicator" style={{backgroundColor:theme.accent}}><Palette size={12} style={{color:getContrastColor(theme.accent)}}/></span><span className="swatch-name">Custom ({theme.accent.toUpperCase()})</span></label></div></div></div><div className="theme-options-block" style={{marginTop:22}}><label className="theme-label">PAGE CANVAS THEME<small>Sets dark tone, sidebar shade, and panel contrast</small></label><div className="bg-themes-grid">{Object.values(BG_THEMES).map(bg=>{const isSelected=theme.bgTheme===bg.id;return <button key={bg.id} type="button" className={'bg-theme-card '+(isSelected?'selected':'')} style={{'--card-bg':bg.panel,'--card-border':bg.line}} onClick={()=>{setTheme(t=>({...t,bgTheme:bg.id}));notify(`Page background switched to ${bg.name}!`);}}><div className="bg-theme-preview" style={{background:bg.bg,borderColor:bg.line}}><div className="preview-mini-sidebar" style={{background:bg.sidebar}}/><div className="preview-mini-content"><div className="preview-mini-topbar" style={{borderColor:bg.line}}/><div className="preview-mini-panel" style={{background:bg.panel,borderColor:bg.line}}><span className="preview-mini-bar" style={{background:theme.accent}}/></div></div></div><div className="bg-theme-info"><strong>{bg.name}</strong><small>{bg.desc}</small></div>{isSelected&&<span className="selected-check-badge"><Check size={12} strokeWidth={3}/></span>}</button>;})}</div></div><div className="theme-preview-card"><div className="theme-preview-header"><Sparkles size={14} style={{color:theme.accent}}/><span>Live Palette Preview</span></div><div className="theme-preview-elements"><button type="button" className="primary" style={{padding:'7px 14px'}}>Primary Action</button><span className="q-badge" style={{background:`${theme.accent}22`,border:`1px solid ${theme.accent}55`,color:theme.accent}}>Active Highlight</span><div className="preview-progress-box"><div className="progress" style={{width:120}}><i style={{width:'75%',background:theme.accent}}/></div><small style={{color:theme.accent,fontSize:10,fontWeight:600}}>75% Completed</small></div><button type="button" className="small-button" style={{marginLeft:'auto'}} onClick={()=>{setTheme(DEFAULT_THEME);notify('Restored default Mint Green & Obsidian theme.');}}><RotateCcw size={13}/> Reset to Defaults</button></div></div></div><div className="dev-details-card">
   <div className="dev-card-header">
     <div className="dev-avatar-glow">A</div>
     <div className="dev-header-text">
@@ -1056,6 +1074,241 @@ return <div className="app-shell" style={shellStyle}><aside className={'sidebar 
         </button>
       </div>
     </div>
+  </Dialog>
+)}
+{userModal&&(
+  <Dialog
+    title={isEditingProfile?"Edit Student Profile":"Student Profile & Academic Telemetry"}
+    close={()=>{setUserModal(false);setIsEditingProfile(false);}}
+  >
+    {!isEditingProfile?(
+      <div className="user-modal-content">
+        <div className="user-modal-hero">
+          <div className="user-modal-avatar-wrap">
+            {userProfile.avatar?(
+              <img src={userProfile.avatar} alt={userProfile.name} className="user-modal-avatar-img"/>
+            ):(
+              <div className="user-modal-avatar-placeholder">{userProfile.name.charAt(0).toUpperCase()}</div>
+            )}
+            <button
+              type="button"
+              className="user-avatar-edit-chip"
+              onClick={()=>{setIsEditingProfile(true);setEditAvatarDraft(userProfile.avatar);}}
+              title="Change Avatar"
+            >
+              <Palette size={11}/>
+            </button>
+          </div>
+          <div className="user-modal-hero-info">
+            <div className="user-name-badge-row">
+              <h3>{userProfile.name}</h3>
+              <span className="user-status-pill">🎓 KTU Student</span>
+              <span className="user-target-pill">Target: {userProfile.targetCgpa} CGPA</span>
+            </div>
+            <p className="user-tagline-text">{userProfile.tagline}</p>
+            <div className="user-meta-lines">
+              <span>🏫 {userProfile.institution}</span>
+              <span>📚 {userProfile.program} · {userProfile.semester}</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="user-modal-section">
+          <h4>Your Live Academic Telemetry</h4>
+          <div className="user-stats-grid">
+            <div className="user-stat-card">
+              <span className="stat-label">Focus Today</span>
+              <strong>{todayMinutes}m</strong>
+              <small>{workspace.sessions.reduce((a,s)=>a+s.minutes,0)}m logged all-time</small>
+            </div>
+            <div className="user-stat-card">
+              <span className="stat-label">Syllabus Completion</span>
+              <strong>{progress}%</strong>
+              <small>{completed} of {allTopics.length} topics mastered</small>
+            </div>
+            <div className="user-stat-card">
+              <span className="stat-label">Exam Modules Done</span>
+              <strong>{totalCompletedModules} / 20</strong>
+              <small>{Math.round(totalCompletedModules/20*100)}% of 4 papers done</small>
+            </div>
+            <div className="user-stat-card">
+              <span className="stat-label">Tasks Completed</span>
+              <strong>{todayTasks.filter(t=>t.done).length} / {todayTasks.length}</strong>
+              <small>Today's game plan items</small>
+            </div>
+          </div>
+        </div>
+
+        <div className="user-modal-section">
+          <h4>Study Mission & Philosophy</h4>
+          <p className="user-bio-text">{userProfile.bio||'No personal bio added yet. Click Edit Profile to set your study mission.'}</p>
+        </div>
+
+        <div className="user-modal-footer">
+          <div className="user-modal-footer-left">
+            <button
+              type="button"
+              className="dev-switch-btn"
+              onClick={()=>{setUserModal(false);setDevModal(true);}}
+              title="View Developer Details & Credits (Althaf)"
+            >
+              <Code2 size={14}/> <span>About Developer (Althaf)</span>
+            </button>
+          </div>
+          <div className="user-modal-footer-right">
+            <button
+              type="button"
+              className="small-button"
+              onClick={()=>setUserModal(false)}
+            >
+              Close
+            </button>
+            <button
+              type="button"
+              className="primary"
+              onClick={()=>{setIsEditingProfile(true);setEditAvatarDraft(userProfile.avatar);}}
+            >
+              <Settings2 size={14}/> Edit Profile
+            </button>
+          </div>
+        </div>
+      </div>
+    ):(
+      <form
+        className="user-edit-form"
+        onSubmit={e=>{
+          e.preventDefault();
+          const form=new FormData(e.currentTarget);
+          const updated={
+            name:String(form.get('name')||'').trim()||userProfile.name,
+            tagline:String(form.get('tagline')||'').trim()||userProfile.tagline,
+            institution:String(form.get('institution')||'').trim()||userProfile.institution,
+            program:String(form.get('program')||'').trim()||userProfile.program,
+            semester:String(form.get('semester')||'').trim()||userProfile.semester,
+            targetCgpa:String(form.get('targetCgpa')||'').trim()||userProfile.targetCgpa,
+            bio:String(form.get('bio')||'').trim(),
+            avatar:editAvatarDraft||userProfile.avatar
+          };
+          setUserProfile(updated);
+          setIsEditingProfile(false);
+          notify('Profile updated and saved to local storage! ✨');
+        }}
+      >
+        <div className="avatar-picker-section">
+          <label className="field-label">Profile Avatar</label>
+          <div className="avatar-picker-row">
+            <div className="avatar-preview-box">
+              {editAvatarDraft?(
+                <img src={editAvatarDraft} alt="Preview" className="avatar-draft-img"/>
+              ):(
+                <div className="avatar-draft-placeholder">{userProfile.name.charAt(0).toUpperCase()}</div>
+              )}
+            </div>
+            <div className="avatar-picker-actions">
+              <label className="custom-upload-label">
+                <input
+                  type="file"
+                  accept="image/*"
+                  style={{display:'none'}}
+                  onChange={e=>{
+                    const file=e.target.files?.[0];
+                    if(file){
+                      if(file.size>2*1024*1024){
+                        notify('File size exceeds 2MB. Please select a smaller photo.');
+                        return;
+                      }
+                      const reader=new FileReader();
+                      reader.onload=ev=>{
+                        setEditAvatarDraft(ev.target?.result);
+                        notify('Custom photo loaded! Click Save to apply.');
+                      };
+                      reader.readAsDataURL(file);
+                    }
+                  }}
+                />
+                <span className="small-button upload-btn-pill">📁 Upload Photo from PC</span>
+              </label>
+              <div className="preset-avatars">
+                <button
+                  type="button"
+                  className={`preset-avatar-btn ${editAvatarDraft==='/logo.png'?'active':''}`}
+                  onClick={()=>setEditAvatarDraft('/logo.png')}
+                  title="Bibiculous Meme Avatar"
+                >
+                  <img src="/logo.png" alt="Bibiculous"/>
+                </button>
+                <button
+                  type="button"
+                  className={`preset-avatar-btn ${editAvatarDraft==='/bibiculous.jpg'?'active':''}`}
+                  onClick={()=>setEditAvatarDraft('/bibiculous.jpg')}
+                  title="Bibiculous Mugshot Photo"
+                >
+                  <img src="/bibiculous.jpg" alt="Bibiculous Full"/>
+                </button>
+                <button
+                  type="button"
+                  className={`preset-avatar-btn ${editAvatarDraft===''?'active':''}`}
+                  onClick={()=>setEditAvatarDraft('')}
+                  title="Initials Avatar"
+                >
+                  <span>{userProfile.name.charAt(0).toUpperCase()}</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="form-grid-2">
+          <label className="field-label">
+            Student Full Name *
+            <input name="name" defaultValue={userProfile.name} required maxLength={40} placeholder="e.g. Althaf"/>
+          </label>
+          <label className="field-label">
+            Target CGPA Goal
+            <input name="targetCgpa" defaultValue={userProfile.targetCgpa} maxLength={10} placeholder="e.g. 9.2 / 10.0"/>
+          </label>
+        </div>
+
+        <label className="field-label">
+          Status Motto / Tagline
+          <input name="tagline" defaultValue={userProfile.tagline} maxLength={100} placeholder="e.g. KTU Engineering Student · Consistency Over Perfection"/>
+        </label>
+
+        <div className="form-grid-2">
+          <label className="field-label">
+            College / Institution
+            <input name="institution" defaultValue={userProfile.institution} maxLength={80} placeholder="e.g. APJ Abdul Kalam Technological University"/>
+          </label>
+          <label className="field-label">
+            Branch & Program
+            <input name="program" defaultValue={userProfile.program} maxLength={80} placeholder="e.g. B.Tech Computer Science & Engineering"/>
+          </label>
+        </div>
+
+        <label className="field-label">
+          Scheme & Current Batch
+          <input name="semester" defaultValue={userProfile.semester} maxLength={50} placeholder="e.g. S1 & S2 (2019 Scheme)"/>
+        </label>
+
+        <label className="field-label">
+          Study Mission & Philosophy
+          <textarea name="bio" rows={3} defaultValue={userProfile.bio} maxLength={400} placeholder="Write your personal study mission..."/>
+        </label>
+
+        <div className="form-actions-row">
+          <button
+            type="button"
+            className="small-button"
+            onClick={()=>setIsEditingProfile(false)}
+          >
+            Cancel
+          </button>
+          <button type="submit" className="primary" style={{flex:1}}>
+            <Check size={14}/> Save Profile Changes
+          </button>
+        </div>
+      </form>
+    )}
   </Dialog>
 )}
 {devModal&&(
