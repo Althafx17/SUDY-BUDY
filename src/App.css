@@ -4760,3 +4760,339 @@ button.profile:hover {
   border-color: rgba(43, 212, 103, 0.5) !important;
   box-shadow: 0 16px 45px rgba(0, 0, 0, 0.8), 0 0 28px rgba(43, 212, 103, 0.15) !important;
 }
+
+/* ─── 11. HERO BREAKTHROUGH BANNER WITH VIDEO BACKGROUND ─── */
+.hero-breakthrough-banner {
+  position: relative;
+  min-height: 280px;
+  border-radius: 16px;
+  border: 1px solid rgba(43, 212, 103, 0.28);
+  overflow: hidden;
+  margin-bottom: 28px;
+  box-shadow: 0 16px 42px rgba(0, 0, 0, 0.6), 0 0 35px rgba(43, 212, 103, 0.08);
+  background: 
+    radial-gradient(ellipse at 80% 20%, rgba(43, 212, 103, 0.16) 0%, transparent 60%),
+    radial-gradient(ellipse at 15% 85%, rgba(20, 38, 27, 0.85) 0%, transparent 70%),
+    #0b0f0d;
+  display: flex;
+  align-items: stretch;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hero-breakthrough-banner:hover {
+  border-color: rgba(43, 212, 103, 0.45);
+  box-shadow: 0 22px 50px rgba(0, 0, 0, 0.7), 0 0 45px rgba(43, 212, 103, 0.14);
+}
+
+.hero-bg-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.52;
+  filter: brightness(0.85) contrast(1.15) saturate(1.15);
+  transform: scale(1.02);
+  transition: opacity 0.5s ease;
+}
+
+.hero-video-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: 
+    linear-gradient(90deg, rgba(11, 15, 13, 0.95) 0%, rgba(11, 15, 13, 0.82) 48%, rgba(11, 15, 13, 0.58) 100%),
+    linear-gradient(180deg, rgba(11, 15, 13, 0.25) 0%, rgba(11, 15, 13, 0.85) 100%);
+}
+
+.hero-breakthrough-content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 34px 38px;
+  gap: 28px;
+}
+
+.hero-breakthrough-copy {
+  max-width: 680px;
+}
+
+.hero-breakthrough-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--secondary, #2bd467);
+  background: rgba(43, 212, 103, 0.1);
+  border: 1px solid rgba(43, 212, 103, 0.28);
+  padding: 5px 13px;
+  border-radius: 999px;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+  backdrop-filter: blur(8px);
+}
+
+.badge-pulsar {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--secondary, #2bd467);
+  box-shadow: 0 0 10px var(--secondary, #2bd467);
+  animation: pulse-badge 2s infinite ease-in-out;
+}
+
+@keyframes pulse-badge {
+  0%, 100% { transform: scale(1); opacity: 0.9; }
+  50% { transform: scale(1.4); opacity: 1; box-shadow: 0 0 14px var(--secondary, #2bd467); }
+}
+
+.hero-breakthrough-title {
+  font-size: 34px;
+  line-height: 1.22;
+  letter-spacing: -1.2px;
+  font-weight: 700;
+  color: #f1f5f3;
+  margin: 0 0 14px 0;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.6);
+}
+
+.hero-gradient-text {
+  background: linear-gradient(90deg, #b3efc7 0%, var(--secondary, #2bd467) 50%, #4ae586 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+}
+
+.hero-breakthrough-desc {
+  font-size: 11.5px;
+  line-height: 1.85;
+  color: #9cad9f;
+  margin: 0 0 24px 0;
+  max-width: 540px;
+}
+
+.hero-breakthrough-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.hero-btn-focus {
+  padding: 12px 22px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  border-radius: 9px !important;
+  box-shadow: 0 4px 18px rgba(43, 212, 103, 0.35) !important;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hero-btn-focus:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(43, 212, 103, 0.5) !important;
+}
+
+.hero-btn-plan {
+  padding: 12px 20px !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  border-radius: 9px !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  color: #dbe4df !important;
+  backdrop-filter: blur(8px);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.hero-btn-plan:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(43, 212, 103, 0.4) !important;
+  color: #fff !important;
+  transform: translateY(-2px);
+}
+
+.hero-breakthrough-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: space-between;
+  min-height: 220px;
+  position: relative;
+}
+
+.hero-date-pill {
+  background: rgba(20, 27, 23, 0.8) !important;
+  border: 1px solid rgba(43, 212, 103, 0.25) !important;
+  color: #b3cbbd !important;
+  padding: 6px 14px !important;
+  border-radius: 20px !important;
+  font-size: 10px !important;
+  backdrop-filter: blur(10px);
+}
+
+.hero-tag-box {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: rgba(18, 25, 21, 0.8);
+  border: 1px solid rgba(43, 212, 103, 0.25);
+  padding: 7px 14px;
+  border-radius: 8px;
+  backdrop-filter: blur(8px);
+  margin-top: 10px;
+}
+
+.hero-tag-sign {
+  color: var(--secondary, #2bd467);
+  font-size: 11px;
+}
+
+.hero-orbital-tag {
+  font-size: 9px;
+  letter-spacing: 2px;
+  font-weight: 700;
+  color: #b3efc7;
+}
+
+/* ─── Hero Mini Orbital Animation ─── */
+.hero-mini-orbital {
+  position: relative;
+  width: 140px;
+  height: 120px;
+  margin-top: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.mini-orbit {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px dashed rgba(43, 212, 103, 0.25);
+  box-shadow: 0 0 15px rgba(43, 212, 103, 0.08);
+}
+
+.mini-orbit-1 {
+  width: 95px;
+  height: 95px;
+  animation: spin 18s linear infinite;
+}
+
+.mini-orbit-2 {
+  width: 125px;
+  height: 60px;
+  border-style: dotted;
+  transform: rotate(25deg);
+  animation: spin 24s linear infinite reverse;
+}
+
+.mini-planet {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #2bd467, #10261a 75%);
+  border: 1px solid rgba(179, 239, 199, 0.5);
+  box-shadow: 0 0 25px rgba(43, 212, 103, 0.4), inset 0 0 10px rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  z-index: 2;
+  animation: pulse-mini-planet 4s ease-in-out infinite alternate;
+}
+
+@keyframes pulse-mini-planet {
+  0% { transform: scale(0.96); box-shadow: 0 0 20px rgba(43, 212, 103, 0.3); }
+  100% { transform: scale(1.04); box-shadow: 0 0 32px rgba(43, 212, 103, 0.55); }
+}
+
+.mini-satellite {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(18, 28, 23, 0.9);
+  border: 1px solid rgba(43, 212, 103, 0.4);
+  color: #b3efc7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+  box-shadow: 0 0 12px rgba(43, 212, 103, 0.3);
+}
+
+.mini-sat-1 {
+  top: 10px;
+  left: 18px;
+  animation: float 4s ease-in-out infinite;
+}
+
+.mini-sat-2 {
+  bottom: 12px;
+  right: 14px;
+  animation: float 5s ease-in-out infinite reverse;
+}
+
+@media (max-width: 950px) {
+  .hero-breakthrough-banner {
+    min-height: auto;
+  }
+  .hero-breakthrough-content {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 24px 22px;
+    gap: 20px;
+  }
+  .hero-breakthrough-title {
+    font-size: 28px;
+  }
+  .hero-breakthrough-right {
+    align-items: flex-start;
+    min-height: auto;
+    width: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .hero-mini-orbital {
+    display: none;
+  }
+}
+
+@media (max-width: 700px) {
+  .hero-breakthrough-title {
+    font-size: 24px;
+    letter-spacing: -0.8px;
+  }
+  .hero-breakthrough-desc {
+    font-size: 10.5px;
+  }
+  .hero-breakthrough-actions {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+  }
+  .hero-btn-focus,
+  .hero-btn-plan {
+    justify-content: center;
+    width: 100%;
+  }
+}
