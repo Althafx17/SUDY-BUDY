@@ -5,6 +5,60 @@
 
 ---
 
+## ⚡ Formula Sheet & Key Equations — Module 2: Spectroscopic Techniques & Analytical Applications
+
+> **Quick Jump to Equation Areas**:
+- [Area 1: Beer-Lambert Law & Absorption Photometry](#-area%201%20beerlambert%20law%20%20absorption%20photometry)
+- [Area 2: IR Spectroscopy & Hooke’s Law for Vibrational Frequency](#-area%202%20ir%20spectroscopy%20%20hookes%20law%20for%20vibrational%20frequency)
+- [Area 3: 1H-NMR Spectroscopy & Chemical Shift](#-area%203%201hnmr%20spectroscopy%20%20chemical%20shift)
+
+### 📐 Area 1: Beer-Lambert Law & Absorption Photometry
+*Light attenuation, absorbance, and concentration measurements.*
+
+#### 🔹 Beer-Lambert Absorption Law
+
+$$A = \log_{10}\left(\frac{I_0}{I}\right) = \epsilon \cdot c \cdot l$$
+
+> **Key Notes & Application**: $A$ = absorbance (unitless); $\epsilon$ = molar absorptivity (L$\cdot$mol$^{-1}\cdot$cm$^{-1}$); $c$ = concentration (mol/L); $l$ = path length (cm).
+
+#### 🔹 Transmittance to Absorbance Conversion
+
+$$A = -\log_{10}(T) = 2 - \log_{10}(\%T) \quad (T = I / I_0)$$
+
+> **Key Notes & Application**: When $T = 100\%$, $A = 0$; when $T = 10\%$, $A = 1$; when $T = 1\%$, $A = 2$.
+
+### 📐 Area 2: IR Spectroscopy & Hooke’s Law for Vibrational Frequency
+*Harmonic oscillator model, wavenumber, and vibrational degrees of freedom.*
+
+#### 🔹 Hooke’s Law for Diatomic Vibrational Frequency
+
+$$\bar{\nu} = \frac{1}{2\pi c} \sqrt{\frac{k}{\mu}} \quad (\text{cm}^{-1})$$
+
+> **Key Notes & Application**: $k$ = bond force constant (dynes/cm); $\mu = \frac{m_1 m_2}{m_1 + m_2}$ = reduced mass (g); $c = 3 \times 10^{10}\text{ cm/s}$.
+
+#### 🔹 Vibrational Degrees of Freedom
+
+$$\text{Linear Molecules: } 3N - 5, \qquad \text{Non-Linear Molecules: } 3N - 6$$
+
+> **Key Notes & Application**: $N$ = number of atoms in the molecule. (e.g., $\text{CO}_2$ has $3(3)-5 = 4$ modes; $\text{H}_2\text{O}$ has $3(3)-6 = 3$ modes).
+
+### 📐 Area 3: 1H-NMR Spectroscopy & Chemical Shift
+*Nuclear resonance frequency, chemical shifts, and multiplicity.*
+
+#### 🔹 Chemical Shift Definition (\delta Scale)
+
+$$\delta = \frac{\nu_{\text{sample}} - \nu_{\text{TMS}}}{\nu_{\text{operating}}} \times 10^6 \quad (\text{ppm})$$
+
+> **Key Notes & Application**: TMS (Tetramethylsilane) is the universal internal standard reference set at $\delta = 0\text{ ppm}$.
+
+#### 🔹 Spin-Spin Splitting Rule (Multiplicity)
+
+$$M = n + 1$$
+
+> **Key Notes & Application**: $n$ = number of equivalent neighboring protons giving rise to singlet (1), doublet (2), triplet (3), or quartet (4).
+
+---
+
 ## 📚 Syllabus & Core Topics
 
 ### Topic 1: UV-Visible & Infrared (IR) Spectroscopy

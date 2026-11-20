@@ -5,6 +5,72 @@
 
 ---
 
+## ⚡ Formula Sheet & Key Equations — Module 5: Superconductivity & Lasers / Photonics
+
+> **Quick Jump to Equation Areas**:
+- [Area 1: Superconductivity Critical Parameters & Penetration Depth](#-area%201%20superconductivity%20critical%20parameters%20%20penetration%20depth)
+- [Area 2: Einstein’s Laser A & B Coefficients](#-area%202%20einsteins%20laser%20a%20%20b%20coefficients)
+- [Area 3: Optical Fibers & Numerical Aperture (NA)](#-area%203%20optical%20fibers%20%20numerical%20aperture%20na)
+
+### 📐 Area 1: Superconductivity Critical Parameters & Penetration Depth
+*Critical magnetic field, temperature decay, Meissner effect, and London depth.*
+
+#### 🔹 Critical Magnetic Field vs Temperature
+
+$$H_c(T) = H_c(0) \left[ 1 - \left( \frac{T}{T_c} \right)^2 \right]$$
+
+> **Key Notes & Application**: $H_c(0)$ is critical field at $0\text{ K}$; $T_c$ is critical transition temperature where $H_c(T_c) = 0$.
+
+#### 🔹 Silsbee’s Rule for Critical Current
+
+$$I_c = 2\pi r H_c(T) \quad (\text{for cylindrical wire of radius } r)$$
+
+> **Key Notes & Application**: Current creates surface magnetic field; superconductivity breaks when self-field exceeds $H_c$.
+
+#### 🔹 London Penetration Depth (\lambda_L)
+
+$$B(x) = B(0) e^{-x / \lambda_L}, \qquad \lambda_L(0) = \sqrt{\frac{m}{\mu_0 n_s e^2}}, \quad \lambda_L(T) = \frac{\lambda_L(0)}{\sqrt{1 - (T/T_c)^4}}$$
+
+> **Key Notes & Application**: Meissner effect: interior $\mathbf{B} = 0$, susceptibility $\chi_m = -1$ (perfect diamagnetism).
+
+### 📐 Area 2: Einstein’s Laser A & B Coefficients
+*Spontaneous and stimulated emission probability ratios and population inversion.*
+
+#### 🔹 Ratio of Spontaneous to Stimulated Emission
+
+$$\frac{A_{21}}{B_{21}} = \frac{8\pi h \nu^3}{c^3}, \qquad B_{12} = B_{21} \quad (\text{for equal degeneracies})$$
+
+> **Key Notes & Application**: $A_{21}$ = spontaneous rate; $B_{21}$ = stimulated emission rate; $B_{12}$ = stimulated absorption rate.
+
+#### 🔹 Population Ratio (Boltzmann Equilibrium)
+
+$$\frac{N_2}{N_1} = e^{-\frac{E_2 - E_1}{k_B T}} = e^{-\frac{h\nu}{k_B T}}$$
+
+> **Key Notes & Application**: At thermal equilibrium, $N_1 > N_2$. Laser amplification requires population inversion ($N_2 > N_1$) by optical pumping.
+
+### 📐 Area 3: Optical Fibers & Numerical Aperture (NA)
+*Total internal reflection, acceptance angle, light-gathering capacity, and $V$-number.*
+
+#### 🔹 Critical Angle for Core-Cladding Interface
+
+$$\sin \theta_c = \frac{n_2}{n_1} \quad (n_1 > n_2)$$
+
+> **Key Notes & Application**: $n_1$ is core refractive index, $n_2$ is cladding refractive index.
+
+#### 🔹 Numerical Aperture (NA) & Acceptance Angle (\theta_{\text{max}})
+
+$$\text{NA} = \sin \theta_{\text{max}} = \sqrt{n_1^2 - n_2^2} \approx n_1 \sqrt{2\Delta}, \qquad \Delta = \frac{n_1 - n_2}{n_1}$$
+
+> **Key Notes & Application**: $\Delta$ is the fractional refractive index change; higher NA means greater light-gathering ability.
+
+#### 🔹 Normalized Frequency (V-Number) & Mode Count
+
+$$V = \frac{2\pi a}{\lambda} \text{NA} = \frac{2\pi a}{\lambda} \sqrt{n_1^2 - n_2^2}, \qquad N_{\text{modes}} \approx \frac{V^2}{2} \quad (\text{Step Index, } V \gg 1)$$
+
+> **Key Notes & Application**: Single-mode condition: $V < 2.405$; $a$ is core radius; $\lambda$ is free space wavelength.
+
+---
+
 ## 📚 Syllabus & Core Topics
 
 ### Topic 1: Superconductivity, Meissner Effect & BCS Theory

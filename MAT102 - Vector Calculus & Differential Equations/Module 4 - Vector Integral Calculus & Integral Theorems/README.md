@@ -5,6 +5,44 @@
 
 ---
 
+## ⚡ Formula Sheet & Key Equations — Module 4: Vector Integral Calculus & Integral Theorems
+
+> **Quick Jump to Equation Areas**:
+- [Area 1: Line Integrals & Work Done](#-area%201%20line%20integrals%20%20work%20done)
+- [Area 2: Green’s, Stokes’ & Gauss Divergence Integral Theorems](#-area%202%20greens%20stokes%20%20gauss%20divergence%20integral%20theorems)
+
+### 📐 Area 1: Line Integrals & Work Done
+*Vector circulation along paths and conservative line integral independence.*
+
+#### 🔹 Work Done by Force Field $\mathbf{F}$
+
+$$W = \int_C \mathbf{F} \cdot d\mathbf{r} = \int_C (F_1 dx + F_2 dy + F_3 dz)$$
+
+> **Key Notes & Application**: If field is conservative ($\mathbf{F} = \nabla \phi$), $W = \phi(B) - \phi(A)$ independent of path, and $\oint_C \mathbf{F} \cdot d\mathbf{r} = 0$.
+
+### 📐 Area 2: Green’s, Stokes’ & Gauss Divergence Integral Theorems
+*Three fundamental bridge theorems connecting line, surface, and volume integrals.*
+
+#### 🔹 Green’s Theorem in the Plane
+
+$$\oint_C (M \, dx + N \, dy) = \iint_R \left( \frac{\partial N}{\partial x} - \frac{\partial M}{\partial y} \right) dx \, dy$$
+
+> **Key Notes & Application**: Converts line integral around closed curve $C$ into a double integral over enclosed region $R$.
+
+#### 🔹 Stokes’ Theorem (Contour to Surface)
+
+$$\oint_C \mathbf{F} \cdot d\mathbf{r} = \iint_S (\nabla \times \mathbf{F}) \cdot \hat{\mathbf{n}} \, dS$$
+
+> **Key Notes & Application**: Equates circulation of $\mathbf{F}$ along boundary $C$ to the surface flux of $\text{curl } \mathbf{F}$.
+
+#### 🔹 Gauss’ Divergence Theorem (Surface to Volume)
+
+$$\iint_S \mathbf{F} \cdot \hat{\mathbf{n}} \, dS = \iiint_V (\nabla \cdot \mathbf{F}) \, dV$$
+
+> **Key Notes & Application**: Converts total outward flux through closed boundary surface $S$ into a volume integral of divergence.
+
+---
+
 ## 📚 Syllabus & Core Topics
 
 ### Topic 1: Green Theorem, Gauss Divergence Theorem & Stokes Theorem

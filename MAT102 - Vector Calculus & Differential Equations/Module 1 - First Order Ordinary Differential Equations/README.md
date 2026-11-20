@@ -5,6 +5,60 @@
 
 ---
 
+## ⚡ Formula Sheet & Key Equations — Module 1: First Order Ordinary Differential Equations
+
+> **Quick Jump to Equation Areas**:
+- [Area 1: Exact Differential Equations & Integrating Factors](#-area%201%20exact%20differential%20equations%20%20integrating%20factors)
+- [Area 2: Linear First Order ODEs & Bernoulli’s Equation](#-area%202%20linear%20first%20order%20odes%20%20bernoullis%20equation)
+- [Area 3: Orthogonal Trajectories in Cartesian & Polar Coordinates](#-area%203%20orthogonal%20trajectories%20in%20cartesian%20%20polar%20coordinates)
+
+### 📐 Area 1: Exact Differential Equations & Integrating Factors
+*Necessary and sufficient exactness conditions and integrating factor rules.*
+
+#### 🔹 Exactness Condition for $M(x, y) dx + N(x, y) dy = 0$
+
+$$\frac{\partial M}{\partial y} = \frac{\partial N}{\partial x}$$
+
+> **Key Notes & Application**: General solution: $\int_{y=\text{constant}} M \, dx + \int (\text{terms of } N \text{ not containing } x) \, dy = C$.
+
+#### 🔹 Integrating Factor Rules
+
+$$\text{Case 1: } \frac{1}{N}\left(\frac{\partial M}{\partial y} - \frac{\partial N}{\partial x}\right) = f(x) \implies \text{IF} = e^{\int f(x) dx}$$
+
+> **Key Notes & Application**: Case 2: $\frac{1}{M}\left(\frac{\partial N}{\partial x} - \frac{\partial M}{\partial y}\right) = g(y) \implies \text{IF} = e^{\int g(y) dy}$.
+
+### 📐 Area 2: Linear First Order ODEs & Bernoulli’s Equation
+*Standard linear integrating factor and reduction of non-linear Bernoulli forms.*
+
+#### 🔹 Linear First Order ODE (Leibniz Form)
+
+$$\frac{dy}{dx} + P(x) y = Q(x) \implies y \cdot e^{\int P dx} = \int Q(x) e^{\int P dx} \, dx + C$$
+
+> **Key Notes & Application**: Integrating factor is $\text{IF} = e^{\int P(x) dx}$.
+
+#### 🔹 Bernoulli’s Non-Linear ODE Transformation
+
+$$\frac{dy}{dx} + P(x) y = Q(x) y^n \implies \frac{dv}{dx} + (1 - n) P(x) v = (1 - n) Q(x) \quad (v = y^{1 - n})$$
+
+> **Key Notes & Application**: Substitute $v = y^{1 - n}$ after dividing through by $y^n$ to reduce into a linear ODE in $v$.
+
+### 📐 Area 3: Orthogonal Trajectories in Cartesian & Polar Coordinates
+*Differential equations of orthogonal curves.*
+
+#### 🔹 Cartesian Orthogonal Trajectories
+
+$$\text{Replace } \frac{dy}{dx} \text{ with } -\frac{dx}{dy}$$
+
+> **Key Notes & Application**: Eliminate parameter $c$ from original family $f(x, y, c) = 0$ to get ODE, replace slope with negative reciprocal, and integrate.
+
+#### 🔹 Polar Orthogonal Trajectories
+
+$$\text{Replace } \frac{dr}{d\theta} \text{ with } -r^2 \frac{d\theta}{dr}$$
+
+> **Key Notes & Application**: For polar family $f(r, \theta, c) = 0$.
+
+---
+
 ## 📚 Syllabus & Core Topics
 
 ### Topic 1: Exact Differential Equations & Integrating Factors

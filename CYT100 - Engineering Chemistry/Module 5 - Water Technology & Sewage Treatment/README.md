@@ -5,6 +5,54 @@
 
 ---
 
+## ⚡ Formula Sheet & Key Equations — Module 5: Water Technology & Sewage Treatment
+
+> **Quick Jump to Equation Areas**:
+- [Area 1: Water Hardness Calculations & Equivalents](#-area%201%20water%20hardness%20calculations%20%20equivalents)
+- [Area 2: EDTA Titration Hardness Formulas](#-area%202%20edta%20titration%20hardness%20formulas)
+- [Area 3: Biological (BOD) & Chemical Oxygen Demand (COD)](#-area%203%20biological%20bod%20%20chemical%20oxygen%20demand%20cod)
+
+### 📐 Area 1: Water Hardness Calculations & Equivalents
+*$\text{CaCO}_3$ equivalent calculations for temporary and permanent hardness.*
+
+#### 🔹 Equivalent of $\text{CaCO}_3$
+
+$$\text{Equiv. } \text{CaCO}_3 = \frac{\text{Mass of hardness causing salt} \times 50}{\text{Equivalent weight of salt}} = \text{Mass} \times \text{Multiplication Factor}$$
+
+> **Key Notes & Application**: Multiplication factors: $\text{Ca(HCO}_3)_2 = 100/162$; $\text{Mg(HCO}_3)_2 = 100/146$; $\text{CaSO}_4 = 100/136$; $\text{MgSO}_4 = 100/120$; $\text{CaCl}_2 = 100/111$; $\text{MgCl}_2 = 100/95$.
+
+#### 🔹 Total, Temporary & Permanent Hardness
+
+$$\text{Total Hardness} = \text{Temporary Hardness} + \text{Permanent Hardness}$$
+
+> **Key Notes & Application**: Temporary = Carbonate/Bicarbonate hardness (removable by boiling); Permanent = Non-carbonate hardness (sulfates/chlorides).
+
+### 📐 Area 2: EDTA Titration Hardness Formulas
+*Standard volumetric determination using disodium EDTA and EBT indicator.*
+
+#### 🔹 Total Hardness by EDTA Titration
+
+$$\text{Hardness (ppm)} = \frac{V_{\text{EDTA}} \times M_{\text{EDTA}} \times 100 \times 1000}{V_{\text{water sample}}}$$
+
+> **Key Notes & Application**: $1\text{ ppm} = 1\text{ mg/L} = 0.1\text{ mg/100 mL} = 0.07^\circ\text{Clark} = 0.1^\circ\text{French}$.
+
+### 📐 Area 3: Biological (BOD) & Chemical Oxygen Demand (COD)
+*Organic pollution metrics in industrial and domestic wastewater.*
+
+#### 🔹 5-Day Biochemical Oxygen Demand ($\text{BOD}_5$)
+
+$$\text{BOD}_5 = \frac{(D_1 - D_2) - (B_1 - B_2)(1 - P)}{P} \quad (\text{mg/L or ppm})$$
+
+> **Key Notes & Application**: $D_1, D_2$ = dissolved oxygen before & after 5 days incubation at $20^\circ\text{C}$; $P$ = dilution factor ($V_{\text{sample}} / V_{\text{total}}$); $B_1, B_2$ = blank values.
+
+#### 🔹 Chemical Oxygen Demand (COD)
+
+$$\text{COD} = \frac{(V_b - V_s) \times N_{\text{FAS}} \times 8 \times 1000}{V_{\text{sample}}} \quad (\text{mg/L or ppm})$$
+
+> **Key Notes & Application**: $V_b, V_s$ = titre values for blank and sample against standard ferrous ammonium sulfate; $8$ is the equivalent weight of oxygen.
+
+---
+
 ## 📚 Syllabus & Core Topics
 
 ### Topic 1: Hardness of Water & EDTA Titration

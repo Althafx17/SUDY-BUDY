@@ -5,6 +5,106 @@
 
 ---
 
+## ⚡ Formula Sheet & Key Equations — Module 2: Eigenvalues, Diagonalization & Quadratic Forms
+
+> **Quick Jump to Equation Areas**:
+- [Area 1: Characteristic Equation & Eigenvalue Properties](#-area%201%20characteristic%20equation%20%20eigenvalue%20properties)
+- [Area 2: Eigenvectors & Orthogonality Conditions](#-area%202%20eigenvectors%20%20orthogonality%20conditions)
+- [Area 3: Cayley-Hamilton Theorem & Matrix Inversion](#-area%203%20cayleyhamilton%20theorem%20%20matrix%20inversion)
+- [Area 4: Orthogonal Diagonalization & Quadratic Forms](#-area%204%20orthogonal%20diagonalization%20%20quadratic%20forms)
+
+### 📐 Area 1: Characteristic Equation & Eigenvalue Properties
+*Equations for characteristic polynomial, trace, and determinant relations.*
+
+#### 🔹 Characteristic Equation for Matrix Order 3
+
+$$\det(A - \lambda I) = \lambda^3 - S_1 \lambda^2 + S_2 \lambda - S_3 = 0$$
+
+> **Key Notes & Application**: $S_1 = \text{tr}(A) = a_{11} + a_{22} + a_{33}$; $S_2 = M_{11} + M_{22} + M_{33}$ (sum of principal minors); $S_3 = \det(A)$.
+
+#### 🔹 Trace & Determinant in Terms of Eigenvalues
+
+$$\sum_{i=1}^n \lambda_i = \text{trace}(A), \qquad \prod_{i=1}^n \lambda_i = \det(A)$$
+
+> **Key Notes & Application**: If matrix $A$ has eigenvalues $\lambda_i$, then $A^k$ has eigenvalues $\lambda_i^k$, and $A^{-1}$ has eigenvalues $1/\lambda_i$.
+
+#### 🔹 Eigenvalues of Special Matrices
+
+$$\text{Symmetric: } \lambda_i \in \mathbb{R}; \quad \text{Orthogonal: } |\lambda_i| = 1; \quad \text{Skew-symmetric: } \lambda_i \in i\mathbb{R} \cup \{0\}$$
+
+> **Key Notes & Application**: Triangular or diagonal matrix eigenvalues are simply the main diagonal entries: $\lambda_i = a_{ii}$.
+
+### 📐 Area 2: Eigenvectors & Orthogonality Conditions
+*Homogeneous eigenvector systems and Gram-Schmidt normalization.*
+
+#### 🔹 Eigenvector Determining Equation
+
+$$(A - \lambda_i I) X_i = 0, \quad X_i \neq 0$$
+
+> **Key Notes & Application**: Solved by cross-multiplication or row reduction of the singular matrix $(A - \lambda_i I)$.
+
+#### 🔹 Orthogonality of Eigenvectors (Symmetric Matrix)
+
+$$X_1^T X_2 = x_1 x_2 + y_1 y_2 + z_1 z_2 = 0 \quad (\text{for } \lambda_1 \neq \lambda_2)$$
+
+> **Key Notes & Application**: Eigenvectors corresponding to distinct eigenvalues of a real symmetric matrix are always mutually orthogonal.
+
+#### 🔹 Normalized Eigenvector (Unit Norm)
+
+$$\hat{X} = \frac{X}{\|X\|} = \frac{1}{\sqrt{x^2 + y^2 + z^2}} \begin{bmatrix} x \\ y \\ z \end{bmatrix}$$
+
+> **Key Notes & Application**: The normalized modal matrix $N = [\hat{X}_1 \ \hat{X}_2 \ \hat{X}_3]$ forms an orthogonal matrix ($N^T = N^{-1}$).
+
+### 📐 Area 3: Cayley-Hamilton Theorem & Matrix Inversion
+*Matrix polynomial evaluations and inverse computations.*
+
+#### 🔹 Cayley-Hamilton Theorem Statement
+
+$$A^3 - S_1 A^2 + S_2 A - S_3 I = 0$$
+
+> **Key Notes & Application**: Every square matrix satisfies its own characteristic equation.
+
+#### 🔹 Matrix Inverse via Cayley-Hamilton
+
+$$A^{-1} = \frac{1}{S_3} (A^2 - S_1 A + S_2 I) \quad (S_3 = \det(A) \neq 0)$$
+
+> **Key Notes & Application**: Obtained by multiplying the Cayley-Hamilton identity throughout by $A^{-1}$.
+
+#### 🔹 High Powers of Matrix
+
+$$A^4 = S_1 A^3 - S_2 A^2 + S_3 A$$
+
+> **Key Notes & Application**: Allows reduction of any polynomial $P(A)$ of arbitrary high degree into a quadratic polynomial in $A$.
+
+### 📐 Area 4: Orthogonal Diagonalization & Quadratic Forms
+*Canonical reduction, matrix of quadratic forms, and definiteness classification.*
+
+#### 🔹 Orthogonal Transformation to Diagonal Matrix
+
+$$D = N^T A N = \text{diag}(\lambda_1, \lambda_2, \lambda_3) = \begin{bmatrix} \lambda_1 & 0 & 0 \\ 0 & \lambda_2 & 0 \\ 0 & 0 & \lambda_3 \end{bmatrix}$$
+
+> **Key Notes & Application**: $N$ is the normalized modal matrix composed of normalized column eigenvectors.
+
+#### 🔹 Matrix of a Quadratic Form
+
+$$Q = X^T A X = a_{11}x^2 + a_{22}y^2 + a_{33}z^2 + 2a_{12}xy + 2a_{23}yz + 2a_{13}xz$$
+
+> **Key Notes & Application**: Diagonal entries are coefficients of squared terms; off-diagonal entries $a_{ij} = a_{ji} = \frac{1}{2} (\text{coeff of } x_i x_j)$.
+
+#### 🔹 Canonical Form (Sum of Squares)
+
+$$Q = Y^T D Y = \lambda_1 y_1^2 + \lambda_2 y_2^2 + \lambda_3 y_3^2 \quad (X = N Y)$$
+
+> **Key Notes & Application**: Expresses the quadratic form along its principal axes.
+
+#### 🔹 Definiteness & Signature of Quadratic Form
+
+$$\begin{cases} \text{Positive Definite:} & \forall \lambda_i > 0 \\ \text{Negative Definite:} & \forall \lambda_i < 0 \\ \text{Positive Semi-definite:} & \lambda_i \ge 0 \text{ with at least one } 0 \\ \text{Negative Semi-definite:} & \lambda_i \le 0 \text{ with at least one } 0 \\ \text{Indefinite:} & \text{Eigenvalues have both positive & negative signs} \end{cases}$$
+
+> **Key Notes & Application**: Index $p$ = number of positive terms; Signature $s = 2p - r$, where $r$ is the rank.
+
+---
+
 ## 📚 Syllabus & Core Topics
 
 ### Topic 1: Eigenvalues, Eigenvectors & Cayley-Hamilton Theorem

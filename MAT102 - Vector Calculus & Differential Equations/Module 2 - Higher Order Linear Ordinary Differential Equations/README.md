@@ -5,6 +5,60 @@
 
 ---
 
+## ⚡ Formula Sheet & Key Equations — Module 2: Higher Order Linear Ordinary Differential Equations
+
+> **Quick Jump to Equation Areas**:
+- [Area 1: Homogeneous Linear ODEs with Constant Coefficients](#-area%201%20homogeneous%20linear%20odes%20with%20constant%20coefficients)
+- [Area 2: Particular Integral ($y_p$) Short Methods](#-area%202%20particular%20integral%20yp%20short%20methods)
+- [Area 3: Method of Variation of Parameters & Cauchy-Euler Equation](#-area%203%20method%20of%20variation%20of%20parameters%20%20cauchyeuler%20equation)
+
+### 📐 Area 1: Homogeneous Linear ODEs with Constant Coefficients
+*Auxiliary equation roots and complementary function ($y_c$) rules.*
+
+#### 🔹 Auxiliary Equation (AE)
+
+$$y'' + a y' + b y = 0 \implies m^2 + a m + b = 0$$
+
+> **Key Notes & Application**: Roots $m_1, m_2$ determine the complementary solution $y_c$.
+
+#### 🔹 Complementary Function Cases
+
+$$\begin{cases} \text{Real & Distinct } (m_1 \neq m_2): & y_c = c_1 e^{m_1 x} + c_2 e^{m_2 x} \\ \text{Real & Equal } (m_1 = m_2 = m): & y_c = (c_1 + c_2 x) e^{m x} \\ \text{Complex } (\alpha \pm i \beta): & y_c = e^{\alpha x} (c_1 \cos \beta x + c_2 \sin \beta x) \end{cases}$$
+
+> **Key Notes & Application**: For repeated complex roots: $e^{\alpha x}[(c_1 + c_2 x)\cos \beta x + (c_3 + c_4 x)\sin \beta x]$.
+
+### 📐 Area 2: Particular Integral ($y_p$) Short Methods
+*Inverse differential operator rules $\frac{1}{f(D)} X$.*
+
+#### 🔹 Exponential & Trigonometric Short Rules
+
+$$\frac{1}{f(D)} e^{ax} = \frac{1}{f(a)} e^{ax}, \qquad \frac{1}{f(D^2)} \sin ax = \frac{1}{f(-a^2)} \sin ax$$
+
+> **Key Notes & Application**: Case of failure: if $f(a) = 0$, $y_p = x \frac{1}{f'(a)} e^{ax}$; if $f(-a^2) = 0$, $y_p = x \frac{1}{f'(D^2)} \sin ax$.
+
+#### 🔹 Exponential Shift Theorem
+
+$$\frac{1}{f(D)} [e^{ax} V] = e^{ax} \frac{1}{f(D + a)} V$$
+
+> **Key Notes & Application**: Shifts $e^{ax}$ outside by replacing operator $D$ with $(D + a)$.
+
+### 📐 Area 3: Method of Variation of Parameters & Cauchy-Euler Equation
+*Wronskian solutions and variable-coefficient reductions.*
+
+#### 🔹 Variation of Parameters Formula
+
+$$y_p = -y_1 \int \frac{y_2 X}{W} dx + y_2 \int \frac{y_1 X}{W} dx, \quad W = y_1 y_2' - y_2 y_1'$$
+
+> **Key Notes & Application**: $W = W(y_1, y_2)$ is the Wronskian of linearly independent solutions $y_1, y_2$.
+
+#### 🔹 Cauchy-Euler Reduction
+
+$$x^2 \frac{d^2y}{dx^2} + a x \frac{dy}{dx} + b y = X(x) \implies [\theta(\theta - 1) + a \theta + b]y = X(e^z) \quad (x = e^z, \ \theta = d/dz)$$
+
+> **Key Notes & Application**: Converts variable-coefficient ODE into a constant-coefficient ODE in $z$.
+
+---
+
 ## 📚 Syllabus & Core Topics
 
 ### Topic 1: Method of Variation of Parameters & Cauchy-Euler Equations

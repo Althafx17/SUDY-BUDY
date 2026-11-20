@@ -5,6 +5,54 @@
 
 ---
 
+## ⚡ Formula Sheet & Key Equations — Module 4: Fuels & Combustion Calculations
+
+> **Quick Jump to Equation Areas**:
+- [Area 1: Calorific Value Formulas & Dulong’s Formula](#-area%201%20calorific%20value%20formulas%20%20dulongs%20formula)
+- [Area 2: Bomb Calorimeter Formula](#-area%202%20bomb%20calorimeter%20formula)
+- [Area 3: Theoretical Air Requirement for Complete Combustion](#-area%203%20theoretical%20air%20requirement%20for%20complete%20combustion)
+
+### 📐 Area 1: Calorific Value Formulas & Dulong’s Formula
+*High and low heat values based on ultimate analysis composition.*
+
+#### 🔹 Dulong’s Formula for Gross/Higher Calorific Value (HCV)
+
+$$\text{HCV} = \frac{1}{100} \left[ 8080 \, \text{C} + 34500 \left( \text{H} - \frac{\text{O}}{8} \right) + 2240 \, \text{S} \right] \quad (\text{kcal/kg})$$
+
+> **Key Notes & Application**: $\text{C}, \text{H}, \text{O}, \text{S}$ represent the percentage weights of carbon, hydrogen, oxygen, and sulfur in the fuel.
+
+#### 🔹 Lower / Net Calorific Value (LCV / NCV)
+
+$$\text{LCV} = \text{HCV} - [0.09 \times \text{H} \times 587] \quad (\text{kcal/kg})$$
+
+> **Key Notes & Application**: Accounts for the latent heat of condensation of steam ($587\text{ kcal/kg}$ of water vapor formed).
+
+### 📐 Area 2: Bomb Calorimeter Formula
+*Experimental determination of calorific value of solid and non-volatile liquid fuels.*
+
+#### 🔹 Bomb Calorimeter Gross Calorific Value (GCV)
+
+$$\text{GCV} = \frac{(W + w)(t_2 - t_1 + \text{cooling correction}) - (\text{acid + fuse + cotton corrections})}{m}$$
+
+> **Key Notes & Application**: $W$ = mass of water in calorimeter (g); $w$ = water equivalent of apparatus (g); $m$ = mass of fuel burnt (g); $(t_2 - t_1)$ = observed temperature rise ($^\circ$C).
+
+### 📐 Area 3: Theoretical Air Requirement for Complete Combustion
+*Stoichiometric oxygen and air calculation per kg of fuel.*
+
+#### 🔹 Theoretical Minimum Oxygen ($O_{2,\text{min}}$)
+
+$$O_{2,\text{min}} = \frac{32}{12}\text{C} + 8\left(\text{H} - \frac{\text{O}}{8}\right) + \text{S} \quad (\text{kg per kg fuel})$$
+
+> **Key Notes & Application**: Carbon burns to $\text{CO}_2$ ($12\text{g C} + 32\text{g } O_2$), Hydrogen burns to $\text{H}_2\text{O}$ ($4\text{g H} + 32\text{g } O_2$), Sulfur burns to $\text{SO}_2$ ($32\text{g S} + 32\text{g } O_2$).
+
+#### 🔹 Theoretical Minimum Air by Mass & Volume
+
+$$\text{Air}_{\text{mass}} = O_{2,\text{min}} \times \frac{100}{23} \, \text{kg}, \qquad \text{Air}_{\text{volume}} = O_{2,\text{min}} \times \frac{100}{21} \, \text{m}^3$$
+
+> **Key Notes & Application**: Air contains $23\%$ oxygen by weight and $21\%$ oxygen by volume.
+
+---
+
 ## 📚 Syllabus & Core Topics
 
 ### Topic 1: Calorific Value & Bomb Calorimeter

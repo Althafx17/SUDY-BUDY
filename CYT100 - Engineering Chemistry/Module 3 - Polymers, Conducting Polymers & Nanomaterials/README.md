@@ -5,6 +5,50 @@
 
 ---
 
+## ⚡ Formula Sheet & Key Equations — Module 3: Polymers, Conducting Polymers & Nanomaterials
+
+> **Quick Jump to Equation Areas**:
+- [Area 1: Polymer Molecular Weights & Polydispersity Index](#-area%201%20polymer%20molecular%20weights%20%20polydispersity%20index)
+- [Area 2: Nanomaterial Surface-to-Volume Ratio](#-area%202%20nanomaterial%20surfacetovolume%20ratio)
+
+### 📐 Area 1: Polymer Molecular Weights & Polydispersity Index
+*Statistical averages and molecular weight distribution index.*
+
+#### 🔹 Number-Average Molecular Weight ($\bar{M}_n$)
+
+$$\bar{M}_n = \frac{\sum N_i M_i}{\sum N_i}$$
+
+> **Key Notes & Application**: Determined by colligative property methods (osmometry, ebulliometry).
+
+#### 🔹 Weight-Average Molecular Weight ($\bar{M}_w$)
+
+$$\bar{M}_w = \frac{\sum N_i M_i^2}{\sum N_i M_i}$$
+
+> **Key Notes & Application**: Determined by light scattering and ultracentrifugation; sensitive to high-mass chains.
+
+#### 🔹 Polydispersity Index (PDI)
+
+$$\text{PDI} = \frac{\bar{M}_w}{\bar{M}_n} \ge 1$$
+
+> **Key Notes & Application**: Monodisperse polymers (proteins) have $\text{PDI} = 1$; synthetic polymers typically have $\text{PDI} > 1.5$.
+
+#### 🔹 Degree of Polymerization (DP)
+
+$$\text{DP} = \frac{\bar{M}_n}{M_0} \quad (M_0 = \text{monomer repeating unit mass})$$
+
+> **Key Notes & Application**: Indicates the average number of repeating monomer units in polymer chains.
+
+### 📐 Area 2: Nanomaterial Surface-to-Volume Ratio
+*Scaling law equations showing nanoscale property enhancements.*
+
+#### 🔹 Spherical Nanoparticle Surface-to-Volume Ratio
+
+$$\frac{\text{Surface Area}}{\text{Volume}} = \frac{4\pi r^2}{\frac{4}{3}\pi r^3} = \frac{3}{r} = \frac{6}{d}$$
+
+> **Key Notes & Application**: As particle diameter $d$ drops into the nanometer regime ($1-100\text{ nm}$), surface area increases dramatically, supercharging catalytic activity.
+
+---
+
 ## 📚 Syllabus & Core Topics
 
 ### Topic 1: Polymers & Conducting Polymers

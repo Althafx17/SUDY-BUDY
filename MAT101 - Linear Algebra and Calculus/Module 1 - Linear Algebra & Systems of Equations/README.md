@@ -5,6 +5,94 @@
 
 ---
 
+## ⚡ Formula Sheet & Key Equations — Module 1: Linear Algebra & Systems of Equations
+
+> **Quick Jump to Equation Areas**:
+- [Area 1: Matrix Rank & Row Echelon Forms](#-area%201%20matrix%20rank%20%20row%20echelon%20forms)
+- [Area 2: Non-Homogeneous Linear Systems (AX = B) & Consistency](#-area%202%20nonhomogeneous%20linear%20systems%20ax%20%20b%20%20consistency)
+- [Area 3: Homogeneous Linear Systems (AX = 0)](#-area%203%20homogeneous%20linear%20systems%20ax%20%200)
+- [Area 4: Gauss Elimination & Gauss-Jordan Reduction Algorithm](#-area%204%20gauss%20elimination%20%20gaussjordan%20reduction%20algorithm)
+
+### 📐 Area 1: Matrix Rank & Row Echelon Forms
+*Fundamental conditions, elementary operations, and rank properties.*
+
+#### 🔹 Definition of Matrix Rank
+
+$$\rho(A) = \text{Number of non-zero rows in the row echelon form of } A$$
+
+> **Key Notes & Application**: For matrix $A$ of order $m \times n$: $\rho(A) \le \min(m, n)$. A square matrix of order $n$ is invertible $\iff \rho(A) = n$.
+
+#### 🔹 Elementary Row Operations (ERO)
+
+$$R_i \leftrightarrow R_j, \quad R_i \to k R_i \ (k \neq 0), \quad R_i \to R_i + k R_j$$
+
+> **Key Notes & Application**: Elementary row operations preserve the rank of the matrix: $\rho(E A) = \rho(A)$.
+
+#### 🔹 Rank Inequalities & Matrix Product
+
+$$\rho(A + B) \le \rho(A) + \rho(B), \quad \rho(A B) \le \min\{\rho(A), \rho(B)\}$$
+
+> **Key Notes & Application**: Sylvester's law of nullity: $\text{nullity}(A) = n - \rho(A)$, where $n$ is the number of columns.
+
+### 📐 Area 2: Non-Homogeneous Linear Systems (AX = B) & Consistency
+*Rouché–Capelli theorem criteria for existence and uniqueness of solutions.*
+
+#### 🔹 Rouché–Capelli Consistency Criterion
+
+$$\text{System is consistent} \iff \rho(A) = \rho([A|B]) = r$$
+
+> **Key Notes & Application**: $[A|B]$ is the augmented matrix formed by joining the constant column vector $B$ to $A$.
+
+#### 🔹 Unique Solution Condition
+
+$$\rho(A) = \rho([A|B]) = r = n \implies \text{Unique Solution}$$
+
+> **Key Notes & Application**: Here $n$ equals the number of variables (unknowns). The echelon form has non-zero pivots for all variables.
+
+#### 🔹 Infinitely Many Solutions & Free Parameters
+
+$$\rho(A) = \rho([A|B]) = r < n \implies \infty\text{-many solutions with } (n - r) \text{ arbitrary parameters}$$
+
+> **Key Notes & Application**: Assign parameters $(k_1, k_2, \dots, k_{n-r})$ to the free variables to express the general solution.
+
+#### 🔹 Inconsistent System (No Solution)
+
+$$\rho(A) < \rho([A|B]) \implies \text{No Solution (Inconsistent)}$$
+
+> **Key Notes & Application**: Occurs when the augmented matrix contains a row of the form $[0 \ 0 \ \dots \ 0 \mid b_i]$ with $b_i \neq 0$.
+
+### 📐 Area 3: Homogeneous Linear Systems (AX = 0)
+*Trivial and non-trivial solutions for square and rectangular systems.*
+
+#### 🔹 Trivial vs Non-Trivial Solution
+
+$$\text{Trivial solution: } X = 0 \quad (x_1 = x_2 = \dots = x_n = 0)$$
+
+> **Key Notes & Application**: Trivial solution always exists for any homogeneous system since $A(0) = 0$.
+
+#### 🔹 Condition for Non-Trivial Solution
+
+$$\text{Non-trivial solution exists} \iff \rho(A) < n \iff \det(A) = 0 \text{ (for square matrix } n \times n)$$
+
+> **Key Notes & Application**: Number of linearly independent solutions is given by the dimension of null space: $k = n - \rho(A)$.
+
+### 📐 Area 4: Gauss Elimination & Gauss-Jordan Reduction Algorithm
+*Step-by-step reduction equations for triangularization and full diagonalization.*
+
+#### 🔹 Forward Elimination Pivot Multiplier
+
+$$m_{ik} = \frac{a_{ik}^{(k)}}{a_{kk}^{(k)}}, \quad R_i \to R_i - m_{ik} R_k \quad (i > k)$$
+
+> **Key Notes & Application**: Creates zeros below pivot $a_{kk}$. If pivot $a_{kk} = 0$, perform row interchange $R_k \leftrightarrow R_p$ ($p > k$).
+
+#### 🔹 Gauss-Jordan Full Inversion
+
+$$[A \mid I_n] \xrightarrow{\text{ERO}} [I_n \mid A^{-1}]$$
+
+> **Key Notes & Application**: Transforms matrix $A$ into reduced row echelon form (identity) while transforming $I_n$ directly into $A^{-1}$.
+
+---
+
 ## 📚 Syllabus & Core Topics
 
 ### Topic 1: Rank of a Matrix & Echelon Form

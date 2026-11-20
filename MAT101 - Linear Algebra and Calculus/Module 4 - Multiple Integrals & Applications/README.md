@@ -5,6 +5,82 @@
 
 ---
 
+## ⚡ Formula Sheet & Key Equations — Module 4: Multiple Integrals & Applications
+
+> **Quick Jump to Equation Areas**:
+- [Area 1: Double Integrals in Cartesian Coordinates](#-area%201%20double%20integrals%20in%20cartesian%20coordinates)
+- [Area 2: Change of Order of Integration](#-area%202%20change%20of%20order%20of%20integration)
+- [Area 3: Double Integrals in Polar Coordinates](#-area%203%20double%20integrals%20in%20polar%20coordinates)
+- [Area 4: Triple Integrals in Cylindrical & Spherical Polar Coordinates](#-area%204%20triple%20integrals%20in%20cylindrical%20%20spherical%20polar%20coordinates)
+
+### 📐 Area 1: Double Integrals in Cartesian Coordinates
+*Formulas for area, volume, mass, and limits evaluation.*
+
+#### 🔹 Area of Plane Region $R$
+
+$$A = \iint_R dx \, dy = \int_{x=a}^b \int_{y=g_1(x)}^{g_2(x)} dy \, dx$$
+
+> **Key Notes & Application**: Vertical strip: integrate with respect to $y$ first ($y$ runs from lower curve to upper curve), then $x$ from $a$ to $b$.
+
+#### 🔹 Volume Under a Surface $z = f(x, y)$
+
+$$V = \iint_R f(x, y) \, dx \, dy$$
+
+> **Key Notes & Application**: Represents the cylindrical volume bounded above by surface $z = f(x, y)$ and below by region $R$ in $xy$-plane.
+
+#### 🔹 Mass with Variable Surface Density $\rho(x, y)$
+
+$$M = \iint_R \rho(x, y) \, dx \, dy$$
+
+> **Key Notes & Application**: Center of gravity: $\bar{x} = \frac{1}{M}\iint x \rho \, dx dy, \quad \bar{y} = \frac{1}{M}\iint y \rho \, dx dy$.
+
+### 📐 Area 2: Change of Order of Integration
+*Reversing integration order by re-sketching and boundary slicing.*
+
+#### 🔹 Cartesian Order Interchange Identity
+
+$$\int_a^b \int_{g_1(x)}^{g_2(x)} f(x, y) \, dy \, dx = \int_c^d \int_{h_1(y)}^{h_2(y)} f(x, y) \, dx \, dy$$
+
+> **Key Notes & Application**: Essential technique when the inner integrand $\int f(x, y) dy$ lacks an elementary antiderivative (e.g., $e^{-x^2}, \frac{\sin x}{x}$).
+
+### 📐 Area 3: Double Integrals in Polar Coordinates
+*Coordinate transformations, area elements, and Jacobian conversions.*
+
+#### 🔹 Polar Coordinate Transformations & Jacobian
+
+$$x = r \cos \theta, \quad y = r \sin \theta, \quad x^2 + y^2 = r^2, \quad dx \, dy = r \, dr \, d\theta$$
+
+> **Key Notes & Application**: The Jacobian determinant $J = \frac{\partial(x, y)}{\partial(r, \theta)} = r$. Always remember the extra factor of $r$!
+
+#### 🔹 Polar Area Formula
+
+$$A = \iint_{R'} r \, dr \, d\theta = \int_{\theta_1}^{\theta_2} \int_{r_1(\theta)}^{r_2(\theta)} r \, dr \, d\theta = \frac{1}{2} \int_{\theta_1}^{\theta_2} [r_2^2 - r_1^2] \, d\theta$$
+
+> **Key Notes & Application**: Used for circular, cardioid ($r = a(1 + \cos\theta)$), and rose petal regions.
+
+### 📐 Area 4: Triple Integrals in Cylindrical & Spherical Polar Coordinates
+*3D volume elements and transformations for spheres and cylinders.*
+
+#### 🔹 Volume by Cartesian Triple Integral
+
+$$V = \iiint_D dx \, dy \, dz$$
+
+> **Key Notes & Application**: Limits are evaluated in inside-out order: $z$ limits first, then $y$, then $x$.
+
+#### 🔹 Cylindrical Coordinates Transformation
+
+$$x = r \cos \theta, \ y = r \sin \theta, \ z = z \implies dV = r \, dr \, d\theta \, dz$$
+
+> **Key Notes & Application**: Ideal for regions bounded by paraboloids ($z = x^2 + y^2$) and cylinders ($x^2 + y^2 = a^2$).
+
+#### 🔹 Spherical Polar Coordinates Transformation
+
+$$x = \rho \sin\phi \cos\theta, \ y = \rho \sin\phi \sin\theta, \ z = \rho \cos\phi \implies dV = \rho^2 \sin\phi \, d\rho \, d\phi \, d\theta$$
+
+> **Key Notes & Application**: Ranges for full sphere: $\rho \in [0, R], \ \phi \in [0, \pi], \ \theta \in [0, 2\pi]$.
+
+---
+
 ## 📚 Syllabus & Core Topics
 
 ### Topic 1: Double Integrals & Change of Order of Integration

@@ -5,6 +5,94 @@
 
 ---
 
+## ⚡ Formula Sheet & Key Equations — Module 5: Infinite Series & Power Series
+
+> **Quick Jump to Equation Areas**:
+- [Area 1: Standard Reference Series & Convergence Tests](#-area%201%20standard%20reference%20series%20%20convergence%20tests)
+- [Area 2: Positive Term Series Tests (Comparison & Ratio Tests)](#-area%202%20positive%20term%20series%20tests%20comparison%20%20ratio%20tests)
+- [Area 3: Alternating Series & Absolute Convergence](#-area%203%20alternating%20series%20%20absolute%20convergence)
+- [Area 4: Power Series, Radius & Interval of Convergence](#-area%204%20power%20series%20radius%20%20interval%20of%20convergence)
+
+### 📐 Area 1: Standard Reference Series & Convergence Tests
+*Geometric series, p-series, and divergence test baselines.*
+
+#### 🔹 Geometric Series Sum & Condition
+
+$$\sum_{n=0}^\infty a r^n = \frac{a}{1 - r} \iff |r| < 1$$
+
+> **Key Notes & Application**: Diverges if $|r| \ge 1$.
+
+#### 🔹 p-Series (Harmonic Series) Test
+
+$$\sum_{n=1}^\infty \frac{1}{n^p} \quad \begin{cases} \text{Converges} & \text{if } p > 1 \\ \text{Diverges} & \text{if } p \le 1 \end{cases}$$
+
+> **Key Notes & Application**: Crucial reference benchmark for limit comparison tests.
+
+#### 🔹 Divergence Test ($n^{\text{th}}$ Term Test)
+
+$$\lim_{n \to \infty} a_n \neq 0 \implies \sum a_n \text{ Diverges}$$
+
+> **Key Notes & Application**: Warning: $\lim a_n = 0$ does NOT guarantee convergence (e.g., harmonic series $\sum 1/n$).
+
+### 📐 Area 2: Positive Term Series Tests (Comparison & Ratio Tests)
+*Limit comparison, D’Alembert’s ratio test, and Raabe’s test for series of positive terms.*
+
+#### 🔹 Limit Comparison Test (LCT)
+
+$$L = \lim_{n \to \infty} \frac{a_n}{b_n} \quad (0 < L < \infty) \implies \sum a_n \text{ and } \sum b_n \text{ both converge or both diverge}$$
+
+> **Key Notes & Application**: Choose $b_n = 1/n^p$ by taking the dominant terms of numerator and denominator.
+
+#### 🔹 D’Alembert’s Ratio Test
+
+$$L = \lim_{n \to \infty} \left| \frac{a_{n+1}}{a_n} \right| \quad \begin{cases} L < 1 & \implies \text{Converges} \\ L > 1 & \implies \text{Diverges} \\ L = 1 & \implies \text{Test Inconclusive (Apply Raabe's)} \end{cases}$$
+
+> **Key Notes & Application**: Extremely effective for expressions containing factorials ($n!$) and exponentials ($x^n$).
+
+#### 🔹 Raabe’s Test (When Ratio Test Fails $L = 1$)
+
+$$R = \lim_{n \to \infty} n \left( \frac{a_n}{a_{n+1}} - 1 \right) \quad \begin{cases} R > 1 & \implies \text{Converges} \\ R < 1 & \implies \text{Diverges} \\ R = 1 & \implies \text{Test Inconclusive} \end{cases}$$
+
+> **Key Notes & Application**: Notice the ratio inside Raabe's is $a_n / a_{n+1}$ (reciprocal of ratio test).
+
+#### 🔹 Cauchy’s Root Test
+
+$$L = \lim_{n \to \infty} (a_n)^{1/n} \quad (L < 1 \implies \text{Conv}, \ L > 1 \implies \text{Div})$$
+
+> **Key Notes & Application**: Ideal when $a_n$ contains powers of $n$, e.g., $\left(\frac{n}{n+1}\right)^{n^2}$.
+
+### 📐 Area 3: Alternating Series & Absolute Convergence
+*Leibniz test and conditional convergence classification.*
+
+#### 🔹 Leibniz’s Alternating Series Test
+
+$$\sum_{n=1}^\infty (-1)^{n-1} u_n \text{ Converges if: } (1) \ u_{n+1} \le u_n \ \forall n, \quad (2) \ \lim_{n \to \infty} u_n = 0$$
+
+> **Key Notes & Application**: $u_n > 0$ for all $n$.
+
+#### 🔹 Absolute vs Conditional Convergence
+
+$$\begin{cases} \sum |a_n| \text{ converges} & \implies \sum a_n \text{ is Absolutely Convergent} \\ \sum a_n \text{ converges but } \sum |a_n| \text{ diverges} & \implies \sum a_n \text{ is Conditionally Convergent} \end{cases}$$
+
+> **Key Notes & Application**: Every absolutely convergent series is automatically convergent.
+
+### 📐 Area 4: Power Series, Radius & Interval of Convergence
+*Interval calculations and endpoint evaluations for power series.*
+
+#### 🔹 Radius of Convergence ($R$)
+
+$$R = \lim_{n \to \infty} \left| \frac{c_n}{c_{n+1}} \right| = \frac{1}{\lim_{n \to \infty} |c_n|^{1/n}}$$
+
+> **Key Notes & Application**: For power series $\sum_{n=0}^\infty c_n (x - a)^n$.
+
+#### 🔹 Interval of Convergence
+
+$$(a - R, a + R)$$
+
+> **Key Notes & Application**: Always check endpoints $x = a - R$ and $x = a + R$ separately using standard positive/alternating tests.
+
+---
+
 ## 📚 Syllabus & Core Topics
 
 ### Topic 1: Convergence Tests for Positive Term Series

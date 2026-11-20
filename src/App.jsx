@@ -7,6 +7,7 @@ import {DEVELOPER_INFO} from './constants/developer';
 import FormattedSolution from './components/FormattedSolution';
 import TomWritingSolution from './components/TomWritingSolution';
 import FireCanvas from './components/FireCanvas';
+import {MODULE_EQUATIONS} from './constants/moduleEquations';
 import './App.css';
 const dayKey=(d=new Date())=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 const read=(key,fallback)=>{try{return JSON.parse(localStorage.getItem(key))??fallback}catch{return fallback}};
@@ -839,6 +840,53 @@ return <div className="app-shell" style={shellStyle}><aside className={'sidebar 
         <ChevronDown size={18}/>
       </summary>
       <div className="topics">
+        {MODULE_EQUATIONS[selected.id]?.[i+1] && (
+          <details className="module-equations-accordion" open={false}>
+            <summary className="module-equations-summary">
+              <div className="module-equations-summary-left">
+                <span className="eq-icon-badge">📐</span>
+                <div>
+                  <h4>{MODULE_EQUATIONS[selected.id][i+1].heading}</h4>
+                  <small>Formula Reference & Key Equation Areas for KTU Examination</small>
+                </div>
+              </div>
+              <ChevronDown size={15} className="eq-chevron" />
+            </summary>
+            <div className="module-equations-body">
+              <div className="eq-areas-grid">
+                {MODULE_EQUATIONS[selected.id][i+1].areas.map((area, aIdx) => (
+                  <div key={aIdx} className="eq-area-card">
+                    <div className="eq-area-header">
+                      <span className="eq-area-num">0{aIdx + 1}</span>
+                      <div>
+                        <h5>{area.name}</h5>
+                        <p>{area.description}</p>
+                      </div>
+                    </div>
+                    <div className="eq-list">
+                      {area.equations.map((eq, eIdx) => (
+                        <div key={eIdx} className="eq-item">
+                          <div className="eq-item-title">
+                            <span className="eq-bullet">✦</span>
+                            <strong>{eq.title}</strong>
+                          </div>
+                          <div className="eq-item-formula-box">
+                            <code>{eq.formula}</code>
+                          </div>
+                          {eq.notes && (
+                            <div className="eq-item-notes">
+                              <small><strong>Note:</strong> {eq.notes}</small>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </details>
+        )}
         {m.topics.map(t=>{
           const totalTopPqs=t.previousQuestions?.length||0;
           const solvedTopPqs=t.previousQuestions?.filter(q=>q.solved)?.length||0;

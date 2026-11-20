@@ -5,6 +5,50 @@
 
 ---
 
+## ⚡ Formula Sheet & Key Equations — Module 5: Laplace Transforms & Differential Equations
+
+> **Quick Jump to Equation Areas**:
+- [Area 1: Standard Laplace Transforms & Shifting Properties](#-area%201%20standard%20laplace%20transforms%20%20shifting%20properties)
+- [Area 2: Transforms of Derivatives & Initial Value Problems (IVPs)](#-area%202%20transforms%20of%20derivatives%20%20initial%20value%20problems%20ivps)
+
+### 📐 Area 1: Standard Laplace Transforms & Shifting Properties
+*Transforms of elementary functions and frequency-domain translations.*
+
+#### 🔹 Standard Transforms Table
+
+$$\mathcal{L}\{1\} = \frac{1}{s}, \quad \mathcal{L}\{t^n\} = \frac{n!}{s^{n+1}}, \quad \mathcal{L}\{e^{at}\} = \frac{1}{s - a}, \quad \mathcal{L}\{\sin at\} = \frac{a}{s^2 + a^2}, \quad \mathcal{L}\{\cos at\} = \frac{s}{s^2 + a^2}$$
+
+> **Key Notes & Application**: Hyperbolic transforms: $\mathcal{L}\{\sinh at\} = \frac{a}{s^2 - a^2}, \quad \mathcal{L}\{\cosh at\} = \frac{s}{s^2 - a^2}$.
+
+#### 🔹 First Shifting Theorem
+
+$$\mathcal{L}\{e^{at} f(t)\} = F(s - a) \quad (\text{where } F(s) = \mathcal{L}\{f(t)\})$$
+
+> **Key Notes & Application**: Replaces every instance of $s$ with $(s - a)$.
+
+#### 🔹 Multiplication by $t$ & Division by $t$
+
+$$\mathcal{L}\{t f(t)\} = -\frac{d}{ds}F(s), \qquad \mathcal{L}\left\{\frac{f(t)}{t}\right\} = \int_s^\infty F(u) \, du$$
+
+> **Key Notes & Application**: General multiplication: $\mathcal{L}\{t^n f(t)\} = (-1)^n \frac{d^n}{ds^n} F(s)$.
+
+### 📐 Area 2: Transforms of Derivatives & Initial Value Problems (IVPs)
+*Converting differential equations into algebraic equations.*
+
+#### 🔹 Laplace Transform of Derivatives
+
+$$\mathcal{L}\{y'(t)\} = s Y(s) - y(0), \qquad \mathcal{L}\{y''(t)\} = s^2 Y(s) - s y(0) - y'(0)$$
+
+> **Key Notes & Application**: Directly incorporates initial conditions $y(0), y'(0)$ into the algebraic solution for $Y(s)$.
+
+#### 🔹 Convolution Theorem for Inverse Transforms
+
+$$\mathcal{L}^{-1}\{F(s) G(s)\} = (f * g)(t) = \int_0^t f(\tau) g(t - \tau) \, d\tau$$
+
+> **Key Notes & Application**: Eliminates the need for complicated partial fractions when inverting products of transforms.
+
+---
+
 ## 📚 Syllabus & Core Topics
 
 ### Topic 1: Laplace Transforms, Convolution Theorem & IVPs

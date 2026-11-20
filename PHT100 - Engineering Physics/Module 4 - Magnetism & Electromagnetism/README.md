@@ -5,6 +5,72 @@
 
 ---
 
+## ⚡ Formula Sheet & Key Equations — Module 4: Magnetism & Electromagnetism
+
+> **Quick Jump to Equation Areas**:
+- [Area 1: Magnetic Vector Fields & Constitutive Relations](#-area%201%20magnetic%20vector%20fields%20%20constitutive%20relations)
+- [Area 2: Maxwell’s Four Fundamental Electromagnetic Equations](#-area%202%20maxwells%20four%20fundamental%20electromagnetic%20equations)
+- [Area 3: EM Wave Propagation & Poynting Vector in Free Space](#-area%203%20em%20wave%20propagation%20%20poynting%20vector%20in%20free%20space)
+
+### 📐 Area 1: Magnetic Vector Fields & Constitutive Relations
+*Flux density, magnetization, susceptibility, and permeability relationships.*
+
+#### 🔹 Fundamental Magnetic Constitutive Relation
+
+$$\mathbf{B} = \mu_0 (\mathbf{H} + \mathbf{M}) = \mu_0 \mu_r \mathbf{H} = \mu \mathbf{H}$$
+
+> **Key Notes & Application**: $\mathbf{B}$ = flux density (Tesla); $\mathbf{H}$ = field intensity (A/m); $\mathbf{M} = \chi_m \mathbf{H}$ = magnetization (A/m); $\mu_r = 1 + \chi_m$.
+
+#### 🔹 Curie & Curie-Weiss Temperature Laws
+
+$$\chi_{\text{paramagnetic}} = \frac{C}{T}, \qquad \chi_{\text{ferromagnetic}} = \frac{C}{T - T_c} \quad (T > T_c)$$
+
+> **Key Notes & Application**: $T_c$ is the Curie temperature above which ferromagnetic materials transition to paramagnetic behavior.
+
+### 📐 Area 2: Maxwell’s Four Fundamental Electromagnetic Equations
+*Differential and integral forms unifying electrodynamics.*
+
+#### 🔹 1. Gauss’s Law for Electricity
+
+$$\nabla \cdot \mathbf{D} = \rho_v \iff \oint_S \mathbf{D} \cdot d\mathbf{S} = Q_{\text{enclosed}}$$
+
+> **Key Notes & Application**: Electric charges are sources and sinks of electric displacement field $\mathbf{D}$.
+
+#### 🔹 2. Gauss’s Law for Magnetism
+
+$$\nabla \cdot \mathbf{B} = 0 \iff \oint_S \mathbf{B} \cdot d\mathbf{S} = 0$$
+
+> **Key Notes & Application**: Magnetic field lines are continuous closed loops; isolated magnetic monopoles do not exist.
+
+#### 🔹 3. Faraday’s Law of Electromagnetic Induction
+
+$$\nabla \times \mathbf{E} = -\frac{\partial \mathbf{B}}{\partial t} \iff \oint_C \mathbf{E} \cdot d\mathbf{r} = -\frac{\partial}{\partial t}\iint_S \mathbf{B} \cdot d\mathbf{S}$$
+
+> **Key Notes & Application**: A time-varying magnetic field induces a circulating non-conservative electric field.
+
+#### 🔹 4. Ampere-Maxwell Law with Displacement Current
+
+$$\nabla \times \mathbf{H} = \mathbf{J} + \frac{\partial \mathbf{D}}{\partial t} \iff \oint_C \mathbf{H} \cdot d\mathbf{r} = \iint_S \left( \mathbf{J} + \frac{\partial \mathbf{D}}{\partial t} \right) \cdot d\mathbf{S}$$
+
+> **Key Notes & Application**: $\mathbf{J}_d = \frac{\partial \mathbf{D}}{\partial t} = \epsilon \frac{\partial \mathbf{E}}{\partial t}$ is Maxwell's displacement current density.
+
+### 📐 Area 3: EM Wave Propagation & Poynting Vector in Free Space
+*Speed of light, intrinsic wave impedance, and directional power flow.*
+
+#### 🔹 Speed of Light & Intrinsic Impedance in Free Space
+
+$$c = \frac{1}{\sqrt{\mu_0 \epsilon_0}} \approx 3 \times 10^8\text{ m/s}, \qquad \eta_0 = \sqrt{\frac{\mu_0}{\epsilon_0}} \approx 377\ \Omega \approx 120\pi\ \Omega$$
+
+> **Key Notes & Application**: Ratio of wave amplitudes: $\frac{E_0}{H_0} = \eta_0 = \sqrt{\frac{\mu_0}{\epsilon_0}}$.
+
+#### 🔹 Poynting Vector (Instantaneous Energy Flux)
+
+$$\mathbf{S} = \mathbf{E} \times \mathbf{H} = \frac{1}{\mu_0} (\mathbf{E} \times \mathbf{B}) \quad (\text{W/m}^2)$$
+
+> **Key Notes & Application**: Time-averaged power flow: $\langle S \rangle = \frac{1}{2} E_0 H_0 = \frac{E_0^2}{2 \eta_0}$.
+
+---
+
 ## 📚 Syllabus & Core Topics
 
 ### Topic 1: Maxwell Equations & Displacement Current

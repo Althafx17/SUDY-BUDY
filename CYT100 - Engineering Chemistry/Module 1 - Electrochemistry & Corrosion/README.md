@@ -5,6 +5,66 @@
 
 ---
 
+## ⚡ Formula Sheet & Key Equations — Module 1: Electrochemistry & Corrosion
+
+> **Quick Jump to Equation Areas**:
+- [Area 1: Nernst Equation & Thermodynamic Parameters](#-area%201%20nernst%20equation%20%20thermodynamic%20parameters)
+- [Area 2: Reference Electrodes & Potentiometric pH Measurement](#-area%202%20reference%20electrodes%20%20potentiometric%20ph%20measurement)
+- [Area 3: Corrosion Kinetics & Pilling-Bedworth Ratio](#-area%203%20corrosion%20kinetics%20%20pillingbedworth%20ratio)
+
+### 📐 Area 1: Nernst Equation & Thermodynamic Parameters
+*Electrode potentials, cell EMF, Gibbs free energy, and equilibrium constants.*
+
+#### 🔹 Nernst Equation for Single Electrode Potential
+
+$$E = E^\circ - \frac{2.303 R T}{n F} \log_{10} \left( \frac{[\text{Red}]}{[\text{Ox}]} \right)$$
+
+> **Key Notes & Application**: At $T = 298\text{ K}$ ($25^\circ\text{C}$): $E = E^\circ + \frac{0.0591}{n} \log_{10} [M^{n+}]$.
+
+#### 🔹 Standard EMF of Electrochemical Cell
+
+$$E^\circ_{\text{cell}} = E^\circ_{\text{cathode}} - E^\circ_{\text{anode}} \quad (\text{Standard Reduction Potentials})$$
+
+> **Key Notes & Application**: Electrons flow from anode to cathode; spontaneous cell reaction has $E_{\text{cell}} > 0$.
+
+#### 🔹 Free Energy & Equilibrium Constant Relationship
+
+$$\Delta G^\circ = -n F E^\circ_{\text{cell}} = -2.303 R T \log_{10} K_{\text{eq}}$$
+
+> **Key Notes & Application**: $F = 96500\text{ C/mol}$; $\Delta G^\circ < 0$ signifies thermodynamic spontaneity.
+
+### 📐 Area 2: Reference Electrodes & Potentiometric pH Measurement
+*Calomel and glass electrode potentials and pH calculations.*
+
+#### 🔹 Saturated Calomel Electrode (SCE) Potential
+
+$$E_{\text{SCE}} = E^\circ_{\text{calomel}} - 0.0591 \log [\text{Cl}^-] = +0.2422\text{ V (at } 298\text{ K)}$$
+
+> **Key Notes & Application**: Reversible with respect to chloride ions: $\text{Hg}_2\text{Cl}_2 + 2e^- \rightleftharpoons 2\text{Hg} + 2\text{Cl}^-$.
+
+#### 🔹 Glass Electrode Potential & pH Formula
+
+$$E_G = E^\circ_G - 0.0591 \cdot \text{pH} \implies \text{pH} = \frac{E^\circ_G - E_{\text{SCE}} - E_{\text{cell}}}{0.0591}$$
+
+> **Key Notes & Application**: Measured using cell: $\text{Glass Electrode} \mid \text{Unknown Solution} \mid\mid \text{SCE}$.
+
+### 📐 Area 3: Corrosion Kinetics & Pilling-Bedworth Ratio
+*Corrosion rate quantification and oxide protective layer criteria.*
+
+#### 🔹 Corrosion Penetration Rate (CPR)
+
+$$\text{CPR} = \frac{K \cdot W}{D \cdot A \cdot t} \quad (\text{mpy = mils per year})$$
+
+> **Key Notes & Application**: $W$ = weight loss (mg), $D$ = density (g/cm$^3$), $A$ = surface area (in$^2$), $t$ = exposure time (hr), $K = 534$ for mpy.
+
+#### 🔹 Pilling-Bedworth Ratio (PBR)
+
+$$\text{PBR} = \frac{V_{\text{oxide}}}{V_{\text{metal}}} = \frac{M \cdot d}{n \cdot m \cdot D}$$
+
+> **Key Notes & Application**: $M, D$ = molar mass & density of oxide; $m, d$ = atomic weight & density of metal; $n$ = metal atoms per oxide formula. Protective oxide if $1 \le \text{PBR} \le 2$.
+
+---
+
 ## 📚 Syllabus & Core Topics
 
 ### Topic 1: Electrode Potential, Reference Electrodes & Nernst Equation

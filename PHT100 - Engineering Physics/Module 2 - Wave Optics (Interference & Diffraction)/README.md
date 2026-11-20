@@ -5,6 +5,60 @@
 
 ---
 
+## ⚡ Formula Sheet & Key Equations — Module 2: Wave Optics (Interference & Diffraction)
+
+> **Quick Jump to Equation Areas**:
+- [Area 1: Thin Film Interference & Air Wedge](#-area%201%20thin%20film%20interference%20%20air%20wedge)
+- [Area 2: Newton’s Rings Experiment](#-area%202%20newtons%20rings%20experiment)
+- [Area 3: Fraunhofer Diffraction at Single Slit & Transmission Grating](#-area%203%20fraunhofer%20diffraction%20at%20single%20slit%20%20transmission%20grating)
+
+### 📐 Area 1: Thin Film Interference & Air Wedge
+*Optical path difference with Stokes’ phase shift, bright/dark conditions, and wedge thickness.*
+
+#### 🔹 Thin Film Optical Path Difference
+
+$$\Delta = 2\mu t \cos r \pm \frac{\lambda}{2}$$
+
+> **Key Notes & Application**: Constructive (Bright): $2\mu t \cos r = (2n + 1)\frac{\lambda}{2}$; Destructive (Dark): $2\mu t \cos r = n \lambda$.
+
+#### 🔹 Air Wedge Fringe Width ($\beta$) & Wire Thickness ($t$)
+
+$$\beta = \frac{\lambda}{2\theta} = \frac{\lambda L}{2 t} \implies t = \frac{\lambda L}{2 \beta}$$
+
+> **Key Notes & Application**: $L$ = wedge length; $t$ = wire thickness at distance $L$; $\theta = t/L$ is the wedge angle.
+
+### 📐 Area 2: Newton’s Rings Experiment
+*Fringe diameters by reflection and determination of wavelength and refractive index.*
+
+#### 🔹 Diameter of $n^{\text{th}}$ Dark Ring
+
+$$D_n^2 = 4 n \lambda R \implies D_n = 2\sqrt{n \lambda R}$$
+
+> **Key Notes & Application**: Central ring is dark under reflected light due to the $\pi$ phase shift at the glass-plate interface.
+
+#### 🔹 Wavelength ($\lambda$) & Liquid Refractive Index ($\mu$)
+
+$$\lambda = \frac{D_{n+m}^2 - D_n^2}{4 m R}, \qquad \mu = \frac{(D_{n+m}^2 - D_n^2)_{\text{air}}}{(D_{n+m}^2 - D_n^2)_{\text{liquid}}}$$
+
+> **Key Notes & Application**: $R$ is the radius of curvature of the plano-convex lens; $m$ is the ring interval.
+
+### 📐 Area 3: Fraunhofer Diffraction at Single Slit & Transmission Grating
+*Diffraction minima, grating equation, resolving power, and dispersive power.*
+
+#### 🔹 Single Slit Diffraction Minima Condition
+
+$$a \sin \theta = n \lambda \quad (n = \pm 1, \pm 2, \dots)$$
+
+> **Key Notes & Application**: $a$ is slit width; central maximum width: $2\theta = 2\frac{\lambda}{a}$.
+
+#### 🔹 Plane Diffraction Grating Equation & Resolving Power
+
+$$(a + b) \sin \theta = n \lambda, \qquad \text{Resolving Power} = \frac{\lambda}{d\lambda} = n \cdot N$$
+
+> **Key Notes & Application**: $(a + b) = 1/N'$ is the grating element; $n$ is spectrum order; $N$ is total number of illuminated lines.
+
+---
+
 ## 📚 Syllabus & Core Topics
 
 ### Topic 1: Interference in Thin Films, Air-Wedge & Newton Rings

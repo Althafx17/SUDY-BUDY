@@ -5,6 +5,44 @@
 
 ---
 
+## ⚡ Formula Sheet & Key Equations — Module 3: Multivariable Vector Differential Calculus
+
+> **Quick Jump to Equation Areas**:
+- [Area 1: Gradient & Directional Derivative](#-area%201%20gradient%20%20directional%20derivative)
+- [Area 2: Divergence, Curl & Physical Field Classifications](#-area%202%20divergence%20curl%20%20physical%20field%20classifications)
+
+### 📐 Area 1: Gradient & Directional Derivative
+*Vector differential operator, normal to surfaces, and rate of maximum increase.*
+
+#### 🔹 Gradient of Scalar Field
+
+$$\nabla \phi = \frac{\partial \phi}{\partial x} \mathbf{i} + \frac{\partial \phi}{\partial y} \mathbf{j} + \frac{\partial \phi}{\partial z} \mathbf{k}$$
+
+> **Key Notes & Application**: Represents a vector normal to the level surface $\phi(x, y, z) = C$. Unit normal is $\hat{\mathbf{n}} = \frac{\nabla \phi}{|\nabla \phi|}$.
+
+#### 🔹 Directional Derivative along Vector $\mathbf{a}$
+
+$$\text{DD} = \nabla \phi \cdot \hat{\mathbf{a}} = \nabla \phi \cdot \frac{\mathbf{a}}{|\mathbf{a}|}$$
+
+> **Key Notes & Application**: Maximum directional derivative occurs along $\nabla \phi$, with magnitude equal to $|\nabla \phi|$.
+
+### 📐 Area 2: Divergence, Curl & Physical Field Classifications
+*Flux per unit volume, circulation density, solenoidal, and conservative fields.*
+
+#### 🔹 Divergence of Vector Field & Solenoidal Condition
+
+$$\text{div } \mathbf{F} = \nabla \cdot \mathbf{F} = \frac{\partial F_1}{\partial x} + \frac{\partial F_2}{\partial y} + \frac{\partial F_3}{\partial z} = 0 \iff \mathbf{F} \text{ is Solenoidal}$$
+
+> **Key Notes & Application**: Represents net outward flux per unit volume. Incompressible fluid flows are solenoidal.
+
+#### 🔹 Curl of Vector Field & Irrotational Condition
+
+$$\text{curl } \mathbf{F} = \nabla \times \mathbf{F} = \begin{vmatrix} \mathbf{i} & \mathbf{j} & \mathbf{k} \\ \frac{\partial}{\partial x} & \frac{\partial}{\partial y} & \frac{\partial}{\partial z} \\ F_1 & F_2 & F_3 \end{vmatrix} = \mathbf{0} \iff \mathbf{F} \text{ is Irrotational}$$
+
+> **Key Notes & Application**: If $\nabla \times \mathbf{F} = 0$, $\mathbf{F}$ is conservative and can be written as $\mathbf{F} = \nabla \phi$, where $\phi$ is the scalar potential.
+
+---
+
 ## 📚 Syllabus & Core Topics
 
 ### Topic 1: Gradient, Directional Derivative & Vector Fields

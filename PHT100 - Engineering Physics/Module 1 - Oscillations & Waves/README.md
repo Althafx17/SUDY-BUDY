@@ -5,6 +5,60 @@
 
 ---
 
+## ⚡ Formula Sheet & Key Equations — Module 1: Oscillations & Waves
+
+> **Quick Jump to Equation Areas**:
+- [Area 1: Simple Harmonic Motion (SHM)](#-area%201%20simple%20harmonic%20motion%20shm)
+- [Area 2: Damped Harmonic Oscillations](#-area%202%20damped%20harmonic%20oscillations)
+- [Area 3: Forced Oscillations & Resonance](#-area%203%20forced%20oscillations%20%20resonance)
+
+### 📐 Area 1: Simple Harmonic Motion (SHM)
+*Restoring forces, angular frequency, displacement, and total mechanical energy.*
+
+#### 🔹 SHM Governing Differential Equation
+
+$$\frac{d^2x}{dt^2} + \omega_0^2 x = 0, \quad \omega_0 = \sqrt{\frac{k}{m}} \implies T = 2\pi \sqrt{\frac{m}{k}}$$
+
+> **Key Notes & Application**: Displacement equation: $x(t) = A \cos(\omega_0 t + \phi)$.
+
+#### 🔹 Total Mechanical Energy in SHM
+
+$$E = K + U = \frac{1}{2}m v^2 + \frac{1}{2}k x^2 = \frac{1}{2}m \omega_0^2 A^2 = \text{Constant}$$
+
+> **Key Notes & Application**: Energy oscillates between pure kinetic at mean position ($x=0$) and pure potential at extremes ($x = \pm A$).
+
+### 📐 Area 2: Damped Harmonic Oscillations
+*Resistive forces, damping coefficients, relaxation time, and quality factors.*
+
+#### 🔹 Damped Oscillation Differential Equation
+
+$$\frac{d^2x}{dt^2} + 2\gamma \frac{dx}{dt} + \omega_0^2 x = 0 \quad \left(2\gamma = \frac{b}{m}, \ \omega_0^2 = \frac{k}{m}\right)$$
+
+> **Key Notes & Application**: Underdamped condition ($\gamma < \omega_0$): $x(t) = A_0 e^{-\gamma t} \cos(\omega_d t + \phi)$, with $\omega_d = \sqrt{\omega_0^2 - \gamma^2}$.
+
+#### 🔹 Quality Factor ($Q$) & Logarithmic Decrement ($\delta$)
+
+$$Q = \frac{\omega_0}{2\gamma} = \frac{\omega_0 \tau}{2}, \qquad \delta = \gamma T = \ln\left(\frac{A_n}{A_{n+1}}\right) = \frac{\pi}{Q}$$
+
+> **Key Notes & Application**: $\tau = 1/(2\gamma)$ is the amplitude relaxation time. Higher $Q$ signifies less energy dissipation per cycle.
+
+### 📐 Area 3: Forced Oscillations & Resonance
+*External harmonic excitation, resonance amplitude, and frequency response.*
+
+#### 🔹 Forced Oscillation Steady-State Amplitude
+
+$$A = \frac{f_0}{\sqrt{(\omega_0^2 - \omega^2)^2 + 4\gamma^2 \omega^2}} \quad \left(f_0 = \frac{F_0}{m}\right)$$
+
+> **Key Notes & Application**: Amplitude resonance frequency: $\omega_r = \sqrt{\omega_0^2 - 2\gamma^2}$. Phase lag $\tan\delta = \frac{2\gamma\omega}{\omega_0^2 - \omega^2}$.
+
+#### 🔹 One-Dimensional Wave Equation & Wave Speed
+
+$$\frac{\partial^2 y}{\partial t^2} = v^2 \frac{\partial^2 y}{\partial x^2}, \quad v = \sqrt{\frac{T}{\mu}} \quad (\text{Stretched String})$$
+
+> **Key Notes & Application**: $T$ is string tension (N), $\mu$ is linear mass density (kg/m).
+
+---
+
 ## 📚 Syllabus & Core Topics
 
 ### Topic 1: Damped & Forced Harmonic Oscillations

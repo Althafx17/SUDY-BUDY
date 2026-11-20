@@ -5,6 +5,50 @@
 
 ---
 
+## ⚡ Formula Sheet & Key Equations — Module 3: Quantum Mechanics & Particle in a Box
+
+> **Quick Jump to Equation Areas**:
+- [Area 1: De Broglie Hypothesis & Uncertainty Principle](#-area%201%20de%20broglie%20hypothesis%20%20uncertainty%20principle)
+- [Area 2: 1D Schrödinger Equations & Particle in a Box](#-area%202%201d%20schrdinger%20equations%20%20particle%20in%20a%20box)
+
+### 📐 Area 1: De Broglie Hypothesis & Uncertainty Principle
+*Matter waves, momentum-wavelength relations, and fundamental quantum limits.*
+
+#### 🔹 De Broglie Matter Wavelength
+
+$$\lambda = \frac{h}{p} = \frac{h}{m v} = \frac{h}{\sqrt{2 m E}} = \frac{h}{\sqrt{2 m q V}}$$
+
+> **Key Notes & Application**: For an accelerated electron: $\lambda = \frac{1.227}{\sqrt{V}}\text{ nm} = \frac{12.27}{\sqrt{V}}\text{ \AA}$.
+
+#### 🔹 Heisenberg’s Uncertainty Principle
+
+$$\Delta x \cdot \Delta p_x \ge \frac{\hbar}{2} = \frac{h}{4\pi}, \qquad \Delta E \cdot \Delta t \ge \frac{\hbar}{2}$$
+
+> **Key Notes & Application**: Precludes electrons from existing inside the atomic nucleus.
+
+### 📐 Area 2: 1D Schrödinger Equations & Particle in a Box
+*Wave equations, quantization, normalized wavefunctions, and zero-point energy.*
+
+#### 🔹 Time-Independent Schrödinger Equation (1D)
+
+$$\frac{d^2\psi}{dx^2} + \frac{2m}{\hbar^2} [E - V(x)] \psi = 0$$
+
+> **Key Notes & Application**: $\hbar = h / (2\pi) = 1.054 \times 10^{-34}\text{ J}\cdot\text{s}$. Total probability: $\int_{-\infty}^\infty |\psi|^2 dx = 1$.
+
+#### 🔹 Quantized Energy Levels in 1D Infinite Well ($0 \le x \le L$)
+
+$$E_n = \frac{n^2 h^2}{8 m L^2} = \frac{n^2 \pi^2 \hbar^2}{2 m L^2} \quad (n = 1, 2, 3, \dots)$$
+
+> **Key Notes & Application**: Zero-point ground state energy ($n=1$): $E_1 = \frac{h^2}{8 m L^2} \neq 0$. Energy levels are discrete and scale with $n^2$.
+
+#### 🔹 Normalized Eigenfunctions (Wavefunctions)
+
+$$\psi_n(x) = \sqrt{\frac{2}{L}} \sin\left( \frac{n \pi x}{L} \right)$$
+
+> **Key Notes & Application**: Probability density is maximum where $\sin(n\pi x / L) = \pm 1$ and zero at nodes.
+
+---
+
 ## 📚 Syllabus & Core Topics
 
 ### Topic 1: Schrödinger Wave Equation & 1D Potential Box
